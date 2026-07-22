@@ -1,0 +1,49 @@
+import { type Href, router, useRouter } from "expo-router";
+
+export type AppRoute =
+  | "/"
+  | "/splash"
+  | "/login"
+  | "//phone-number"
+  | "/step1"
+  | "/step2"
+  | "/step3"
+  | "/step4"
+  | "/home"
+  | "/map"
+  | "/saved"
+  | "/profile"
+  | "/settings/edit-profile"
+  | "/property/${string}";
+
+export const navigation = {
+  splash: "/splash" as Href,
+  login: "/login" as Href,
+  phone_number: "/phone-number" as Href,
+  onboarding: {
+    step1: "/step1" as Href,
+    step2: "/step2" as Href,
+    step3: "/step3" as Href,
+    step4: "/step4" as Href,
+  },
+  tabs: {
+    home: "/home" as Href,
+    map: "/map" as Href,
+    saved: "/saved" as Href,
+    profile: "/profile" as Href,
+  },
+  property: (id: string) => `/property/${id}` as Href,
+  editProfile: "/settings/edit-profile" as Href,
+} as const;
+
+export function useAppRouter() {
+  return useRouter();
+}
+
+export function replaceTo(path: Href) {
+  router.replace(path);
+}
+
+export function pushTo(path: Href) {
+  router.push(path);
+}

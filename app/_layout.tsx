@@ -1,24 +1,60 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Stack, useRouter } from "expo-router";
+import * as Linking from "expo-linking";
+import { useEffect } from "react";
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import * as SplashScreen from "expo-splash-screen";
+import { useFonts } from "expo-font";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { Inter_400Regular, Inter_600SemiBold } from "@expo-google-fonts/inter";
+
+import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces";
+
+import { navigation } from "@/lib/navigation";
+
+void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const router = useRouter();
+
+  const [loaded] = useFonts({
+    Inter_400Regular,
+    Inter_600SemiBold,
+    Fraunces_600SemiBold,
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      void SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  useEffect(() => {
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+      const parsed = Linking.parse(url);
+      const segments = parsed.path?.split("/").filter(Boolean) ?? [];
+
+      if (segments[0] === "property" && segments[1]) {
+        router.replace(navigation.property(segments[1]));
+      }
+    });
+
+    return () => subscription.remove();
+  }, [router]);
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <Stack
+        initialRouteName="index"
+        screenOptions={{
+          headerShown: false,
+          animation: "slide_from_right",
+        }}
+      />
+    </SafeAreaProvider>
   );
 }

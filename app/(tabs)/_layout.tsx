@@ -1,35 +1,62 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Redirect, Tabs } from "expo-router";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { navigation } from "@/lib/navigation";
+import { useAuthStore } from "@/stores/auth";
+import FloatingBottomBar from "@/components/navigation/FloatingBottomBar";
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+export default function TabsLayout() {
+  const { isAuthenticated, onboardingCompleted, isHydrated } = useAuthStore();
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  if (!isHydrated) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Redirect href={navigation.login} />;
+  }
+
+  if (!onboardingCompleted) {
+    return <Redirect href={navigation.onboarding.step1} />;
+  }
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
+        tabBarActiveTintColor: "#2563eb",
+        tabBarInactiveTintColor: "#64748b",
+        animation: "shift",
+      }}
+      tabBar={(props) => <FloatingBottomBar {...props} />}
+    >
       <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
+        name="home"
+        options={{ title: "Home", href: navigation.tabs.home }}
       />
       <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
+        name="map"
+        options={{ title: "Map", href: navigation.tabs.map }}
+      />
+      <Tabs.Screen
+        name="saved"
+        options={{ title: "Saved", href: navigation.tabs.saved }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{ title: "Profile", href: navigation.tabs.profile }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
