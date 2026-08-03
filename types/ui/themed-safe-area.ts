@@ -1,16 +1,10 @@
 import { SafeAreaViewProps } from "react-native-safe-area-context";
-
-import { BackgroundColorToken } from "@/types/theme-color";
-
-export type ThemedSafeAreaVariant =
-  | "primary"
-  | "secondary"
-  | "tertiary"
-  | "elevated"
-  | "transparent";
+import { sizes } from "@/theme/size";
+import { ThemedColorToken } from "@/types/theme-color";
+import { ThemedViewVariant } from "@/types/ui/themed-view";
 
 export interface ThemedSafeAreaProps extends SafeAreaViewProps {
-  variant?: ThemedSafeAreaVariant;
-  backgroundColor?: BackgroundColorToken;
+  variant?: ThemedViewVariant;
+  padding?: keyof typeof sizes;
   children?: React.ReactNode;
 }

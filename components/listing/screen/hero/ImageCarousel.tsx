@@ -36,9 +36,5 @@ export default function ImageCarousel({ images }: Props) {
 const styles = StyleSheet.create({
   image: {
     height: 420,
-
-    borderBottomLeftRadius: radius.screen,
-
-    borderBottomRightRadius: radius.screen,
   },
 });

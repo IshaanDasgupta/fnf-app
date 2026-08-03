@@ -1,6 +1,6 @@
-import { spacing } from "@/theme/spacing";
+import { sizes } from "@/theme/size";
 
 export interface SpacerProps {
-  size?: keyof typeof spacing | number;
+  size?: keyof typeof sizes | number;
   horizontal?: boolean;
 }

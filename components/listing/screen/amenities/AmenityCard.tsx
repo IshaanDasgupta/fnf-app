@@ -13,10 +13,17 @@ export default function AmenityCard({ icon, label }: AmenityCardProps) {
     <ThemedView
       variant="tertiary"
       borderRadius="card"
-      padding="lg"
+      padding="2xl"
       style={{ width: "48%" }}
     >
-      <ThemedIconText icon={icon} text={label} color="primary" gap="sm" />
+      <ThemedIconText
+        icon={icon}
+        iconColor="accent.primary"
+        label={label}
+        labelColor="foreground.primary"
+        gap="sm"
+        style={{}}
+      />
     </ThemedView>
   );
 }

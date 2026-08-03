@@ -1,46 +1,28 @@
 import React from "react";
-import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { useColors } from "@/hooks/useColors";
-import { BackgroundColorToken } from "@/types/theme-color";
-import {
-  ThemedSafeAreaProps,
-  ThemedSafeAreaVariant,
-} from "@/types/ui/themed-safe-area";
-import { resolveThemeColor } from "@/utils/resolve-theme-color";
-
-const variantBackgroundMap: Record<
-  Exclude<ThemedSafeAreaVariant, "transparent">,
-  BackgroundColorToken
-> = {
-  primary: "background.primary",
-  secondary: "background.secondary",
-  tertiary: "background.tertiary",
-  elevated: "background.elevated",
-};
+import { ThemedSafeAreaProps } from "@/types/ui/themed-safe-area";
+import { viewVariants } from "@/theme/variants";
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
+import { sizes } from "@/theme/size";
 
 export function ThemedSafeArea({
   variant = "primary",
-  backgroundColor,
+  padding,
   style,
   children,
   ...rest
 }: ThemedSafeAreaProps) {
-  const colors = useColors();
+  const config = viewVariants[variant];
 
-  const resolvedBackgroundColor = backgroundColor
-    ? resolveThemeColor(colors, backgroundColor)
-    : variant === "transparent"
-      ? "transparent"
-      : resolveThemeColor(colors, variantBackgroundMap[variant]);
+  const resolvedBackground = useResolveThemeColor(config.background);
 
   return (
     <SafeAreaView
       style={[
-        styles.base,
         {
-          backgroundColor: resolvedBackgroundColor,
+          flex: 1,
+          backgroundColor: resolvedBackground,
+          padding: padding ? sizes[padding] : undefined,
         },
         style,
       ]}
@@ -50,11 +32,5 @@ export function ThemedSafeArea({
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    flex: 1,
-  },
-});
 
 export default ThemedSafeArea;

@@ -11,15 +11,14 @@ import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { ThemedText } from "@/components/themed-ui/ThemedText";
 import { ThemedButton } from "@/components/themed-ui/ThemedButton";
 
-import { radius } from "@/theme/radius";
-import { spacing } from "@/theme/spacing";
-import { useColors } from "@/hooks/useColors";
 import { useTheme } from "@/hooks/useTheme";
+import { sizes } from "@/theme/size";
+import Spacer from "@/components/themed-ui/Spacer";
 
 const WELCOME_ILLUSTRATION = require("@/assets/images/welcome-illustration.png");
 
 export default function LoginScreen() {
-  const colors = useColors();
+  const { colors } = useTheme();
 
   const router = useRouter();
 
@@ -30,20 +29,24 @@ export default function LoginScreen() {
   const authProviders = [
     {
       label: "Continue with Apple",
-      icon: <Ionicons name="logo-apple" size={20} color={colors.white} />,
-      variant: "primary" as const,
+      icon: <Ionicons name="logo-apple" size={24} />,
+      variant: "accent-secondary" as const,
     },
     {
       label: "Continue with Google",
       icon: (
-        <Ionicons name="logo-google" size={18} color={colors.text.primary} />
+        <Ionicons
+          name="logo-google"
+          size={22}
+          color={colors.foreground.primary}
+        />
       ),
-      variant: "outline" as const,
+      variant: "tertiary" as const,
     },
     {
       label: "Continue with Phone",
-      icon: <Ionicons name="call" size={18} color={colors.text.primary} />,
-      variant: "outline" as const,
+      icon: <Ionicons name="call" size={22} />,
+      variant: "tertiary" as const,
     },
   ];
 
@@ -51,8 +54,8 @@ export default function LoginScreen() {
     <ThemedSafeArea>
       <ThemedScrollView padding="lg">
         <ThemedView style={styles.logoRow}>
-          <ThemedView variant="secondary" borderRadius="md" padding="sm">
-            <Ionicons name="home" size={20} color={colors.primary} />
+          <ThemedView variant="accent-primary" borderRadius="md" padding="sm">
+            <Ionicons name="home" size={20} color={colors.foreground.white} />
           </ThemedView>
 
           <ThemedText variant="h3">FlatMate</ThemedText>
@@ -63,8 +66,10 @@ export default function LoginScreen() {
           borderRadius="card"
           padding="lg"
           margin="xl"
-          alignItems="center"
-          justifyContent="center"
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
           <Image
             source={WELCOME_ILLUSTRATION}
@@ -74,15 +79,19 @@ export default function LoginScreen() {
           />
         </ThemedView>
 
-        <ThemedView alignItems="center">
-          <ThemedText variant="display" align="center">
+        <ThemedView style={{ alignItems: "center" }}>
+          <ThemedText variant="display" style={{ textAlign: "center" }}>
             Welcome home,{"\n"}before you move in.
           </ThemedText>
 
-          <ThemedView margin="sm" />
+          <Spacer size="lg" />
 
-          <ThemedText variant="body" color="text.secondary" align="center">
-            Meet flatmates who match your rhythm, routine and vibe.
+          <ThemedText
+            variant="body"
+            color="foreground.secondary"
+            style={{ textAlign: "center" }}
+          >
+            Meet flatmates who match your rhythm,{"\n"} routine and vibe.
           </ThemedText>
         </ThemedView>
 
@@ -91,21 +100,24 @@ export default function LoginScreen() {
             <ThemedButton
               key={provider.label}
               variant={provider.variant}
-              fullWidth
+              label={provider.label}
+              labelVariant="title"
               leftIcon={provider.icon}
               onPress={handleContinue}
-            >
-              {provider.label}
-            </ThemedButton>
+            />
           ))}
         </ThemedView>
 
-        <ThemedView margin="lg" alignItems="center">
-          <ThemedText variant="caption" color="text.tertiary" align="center">
+        <ThemedView margin="lg" style={{ alignItems: "center" }}>
+          <ThemedText
+            variant="caption"
+            color="foreground.tertiary"
+            style={{ textAlign: "center" }}
+          >
             By continuing you agree to our{" "}
             <ThemedText
               variant="caption"
-              color="primary"
+              color="accent.primary"
               onPress={() => Linking.openURL("https://google.com")}
             >
               Terms
@@ -113,7 +125,7 @@ export default function LoginScreen() {
             {" & "}
             <ThemedText
               variant="caption"
-              color="primary"
+              color="accent.primary"
               onPress={() => Linking.openURL("https://google.com")}
             >
               Privacy Policy
@@ -129,7 +141,7 @@ const styles = StyleSheet.create({
   logoRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
+    gap: sizes.sm,
   },
 
   illustration: {

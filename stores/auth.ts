@@ -7,17 +7,35 @@ export interface AuthUser {
   name?: string;
   email?: string;
   phone?: string;
+  avatar?: string;
 }
 
 interface AuthState {
   user: AuthUser | null;
-  isAuthenticated: boolean;
-  onboardingCompleted: boolean;
+
+  accessToken: string | null;
+  refreshToken: string | null;
+  expiresAt: number | null;
+
+  basicOnboardingCompleted: boolean;
   isHydrated: boolean;
-  login: (user?: AuthUser) => void;
+
+  login: (
+    user: AuthUser,
+    basicOnboardingCompleted: boolean,
+    accessToken: string,
+    refreshToken: string,
+    expiresAt: number,
+  ) => void;
+  updateTokens: (
+    accessToken: string,
+    refreshToken: string,
+    expiresAt: number,
+  ) => void;
   logout: () => void;
+
   completeOnboarding: () => void;
-  resetOnboarding: () => void;
+
   setHydrated: (value: boolean) => void;
 }
 
@@ -25,35 +43,68 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      isAuthenticated: false,
-      onboardingCompleted: false,
+
+      accessToken: null,
+      refreshToken: null,
+      expiresAt: null,
+
+      basicOnboardingCompleted: false,
       isHydrated: false,
-      login: (user) =>
+
+      login: (
+        user,
+        basicOnboardingCompleted,
+        accessToken,
+        refreshToken,
+        expiresAt,
+      ) =>
         set({
-          user: user ?? { id: "demo-user", name: "Demo User" },
-          isAuthenticated: true,
-          onboardingCompleted: false,
+          user,
+          basicOnboardingCompleted,
+          accessToken,
+          refreshToken,
+          expiresAt,
+        }),
+      updateTokens: (accessToken, refreshToken, expiresAt) =>
+        set({
+          accessToken,
+          refreshToken,
+          expiresAt,
         }),
       logout: () =>
         set({
           user: null,
-          isAuthenticated: false,
-          onboardingCompleted: false,
+          accessToken: null,
+          refreshToken: null,
+          expiresAt: null,
+          basicOnboardingCompleted: false,
         }),
-      completeOnboarding: () => set({ onboardingCompleted: true }),
-      resetOnboarding: () => set({ onboardingCompleted: false }),
-      setHydrated: (value) => set({ isHydrated: value }),
+
+      completeOnboarding: () =>
+        set({
+          basicOnboardingCompleted: true,
+        }),
+
+      setHydrated: (value) =>
+        set({
+          isHydrated: value,
+        }),
     }),
     {
       name: "fnf-auth-store",
+
       storage: createJSONStorage(() => AsyncStorage),
+
       partialize: (state) => ({
         user: state.user,
-        isAuthenticated: state.isAuthenticated,
-        onboardingCompleted: state.onboardingCompleted,
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
+        expiresAt: state.expiresAt,
+        basicOnboardingCompleted: state.basicOnboardingCompleted,
       }),
-      onRehydrateStorage: (state) => {
-        return (state, error) => {
+
+      onRehydrateStorage: () => {
+        return (state) => {
           state?.setHydrated(true);
         };
       },

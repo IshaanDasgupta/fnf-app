@@ -1,135 +1,101 @@
-import React from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  PressableStateCallbackType,
-  StyleSheet,
-  View,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
 
-import { ThemedText } from "./ThemedText";
-
-import { useColors } from "@/hooks/useColors";
-
-import { chipVariants } from "@/theme/chip-variant";
+import { ThemedText } from "@/components/themed-ui/ThemedText";
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
 import { radius } from "@/theme/radius";
-import { spacing } from "@/theme/spacing";
 import { shadows } from "@/theme/shadows";
-
-import { resolveThemeColor } from "@/utils/resolve-theme-color";
-
+import { sizes } from "@/theme/size";
+import { chipVariants } from "@/theme/variants/chip";
 import { ThemedChipProps } from "@/types/ui/themed-chip";
-import { resolveToken } from "@/utils/resolve-token";
+import { renderIcon } from "@/utils/iconUtils";
 
 export function ThemedChip({
   variant = "primary",
+  selectedVariant = "selected-primary",
 
-  selected = false,
-
+  selected: initSelectedVal = false,
   loading = false,
 
   leftIcon,
   rightIcon,
 
   label,
-
-  textVariant = "caption",
+  labelVariant,
 
   borderRadius = "button",
 
-  horizontalPadding = "lg",
-  verticalPadding = "sm",
-
   style,
+  disabled,
 
-  ...rest
+  onPress: handelPress,
+
+  ...props
 }: ThemedChipProps) {
-  const colors = useColors();
+  const [selected, setSelected] = useState(initSelectedVal);
 
-  const config = chipVariants[variant];
+  useEffect(() => {
+    setSelected(initSelectedVal);
+  }, [initSelectedVal]);
 
-  const chipStyle = (state: PressableStateCallbackType) => {
-    const backgroundColor = resolveThemeColor(
-      colors,
-      selected
-        ? (config.selectedBackground ?? config.background)
-        : state.pressed
-          ? (config.pressedBackground ?? config.background)
-          : config.background,
-    );
+  const config = chipVariants[selected ? selectedVariant : variant];
 
-    const borderColor = resolveThemeColor(
-      colors,
-      selected ? (config.selectedBorder ?? config.border) : config.border,
-    );
-
-    return [
-      styles.base,
-
-      {
-        backgroundColor,
-
-        borderColor,
-
-        borderWidth: config.border ? (config.borderWidth ?? 1) : 0,
-
-        borderRadius: resolveToken(borderRadius, radius),
-
-        paddingHorizontal: resolveToken(horizontalPadding, spacing),
-
-        paddingVertical: resolveToken(verticalPadding, spacing),
-
-        ...(config.shadow ? shadows[config.shadow] : {}),
-      },
-
-      style,
-    ];
-  };
-
-  const textColor = selected
-    ? (config.selectedText ?? config.text)
-    : config.text;
+  const backgroundColor = useResolveThemeColor(config.background);
+  const borderColor = config.borderColor
+    ? useResolveThemeColor(config.borderColor)
+    : undefined;
+  const foregroundColor = useResolveThemeColor(config.foregroundColor);
 
   return (
     <Pressable
-      accessibilityRole="button"
-      accessibilityState={{
-        selected,
-        busy: loading,
+      {...props}
+      disabled={disabled || loading}
+      style={[
+        styles.base,
+        {
+          backgroundColor,
+          borderColor,
+          borderWidth: borderColor ? 1 : undefined,
+
+          borderRadius: radius[borderRadius],
+
+          ...(config.shadow ? shadows[config.shadow] : {}),
+        },
+        style,
+      ]}
+      onPress={(event) => {
+        handelPress?.(event);
+        setSelected((prev) => !prev);
       }}
-      disabled={loading}
-      style={chipStyle}
-      {...rest}
     >
       {loading ? (
-        <ActivityIndicator color={resolveThemeColor(colors, textColor)} />
+        <ActivityIndicator color={foregroundColor} />
       ) : (
         <>
-          {leftIcon && <View>{leftIcon}</View>}
+          {leftIcon && renderIcon(leftIcon, foregroundColor)}
 
-          <ThemedText variant={textVariant} color={textColor}>
+          <ThemedText variant={labelVariant} color={config.foregroundColor}>
             {label}
           </ThemedText>
 
-          {rightIcon && <View>{rightIcon}</View>}
+          {rightIcon && renderIcon(rightIcon, foregroundColor)}
         </>
       )}
     </Pressable>
   );
 }
 
-export default ThemedChip;
-
 const styles = StyleSheet.create({
   base: {
+    alignSelf: "flex-start",
+
     flexDirection: "row",
-
     alignItems: "center",
-
     justifyContent: "center",
 
-    gap: spacing.sm,
+    gap: sizes.xs,
 
-    alignSelf: "flex-start",
+    paddingHorizontal: sizes.sm,
+    paddingVertical: sizes.xs,
   },
 });

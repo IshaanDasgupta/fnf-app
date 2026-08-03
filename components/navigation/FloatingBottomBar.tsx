@@ -1,17 +1,12 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
 
 import { ThemedView } from "@/components/themed-ui/ThemedView";
-import { ThemedIconButton } from "@/components/themed-ui/ThemedIconButton";
-import { radius } from "@/theme/radius";
 import { shadows } from "@/theme/shadows";
-import { spacing } from "@/theme/spacing";
-import ThemedIconText from "@/components/themed-ui/ThemedIconText";
 
-import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import BottomTabItem from "@/components/navigation/BottomBarItem";
+import { sizes } from "@/theme/size";
 
 const icons = {
   home: {
@@ -90,9 +85,9 @@ export default function FloatingBottomBar({
 const styles = StyleSheet.create({
   wrapper: {
     position: "absolute",
-    left: spacing.lg,
-    right: spacing.lg,
-    bottom: spacing["3xl"],
+    left: sizes.lg,
+    right: sizes.lg,
+    bottom: sizes["3xl"],
     alignItems: "center",
   },
 
@@ -100,7 +95,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: spacing.sm,
+    gap: sizes.sm,
     ...shadows.lg,
   },
 });

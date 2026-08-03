@@ -2,7 +2,7 @@ import React from "react";
 import { TextInput } from "react-native";
 
 import { ThemedView } from "@/components/themed-ui/ThemedView";
-import ThemedTextInput from "@/components/themed-ui/ThemedTextInput";
+import { ThemedTextInput } from "@/components/themed-ui/ThemedTextInput";
 
 interface Props {
   value: string;
@@ -11,7 +11,12 @@ interface Props {
 
 export function OTPInput({ value, onChange }: Props) {
   return (
-    <ThemedView flexDirection="row" justifyContent="space-between">
+    <ThemedView
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+      }}
+    >
       <ThemedTextInput
         variant="ghost"
         value={value}
@@ -19,12 +24,16 @@ export function OTPInput({ value, onChange }: Props) {
         keyboardType="number-pad"
         maxLength={6}
         autoFocus
-        inputTypography="h1"
-        textAlign="center"
+        textVariant="h1"
         inputStyle={{
           letterSpacing: 20,
+          textAlign: "center",
         }}
         placeholder="XXXXXX"
+        containerStyle={{
+          flex: 1,
+          alignItems: "center",
+        }}
       />
     </ThemedView>
   );

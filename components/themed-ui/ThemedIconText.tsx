@@ -1,99 +1,54 @@
 import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
-import { useColors } from "@/hooks/useColors";
-
-import { resolveThemeColor } from "@/utils/resolve-theme-color";
-import { resolveToken } from "@/utils/resolve-token";
-
-import { spacing } from "@/theme/spacing";
-
-import { ThemedText } from "./ThemedText";
-
+import { ThemedText } from "@/components/themed-ui/ThemedText";
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
+import { sizes } from "@/theme/size";
 import { ThemedIconTextProps } from "@/types/ui/themed-icon-text";
-
-function cloneIcon(icon: React.ReactNode, color: string) {
-  if (!React.isValidElement(icon)) {
-    return icon;
-  }
-
-  const element = icon as React.ReactElement<{
-    color?: string;
-  }>;
-
-  return React.cloneElement(element, {
-    color: element.props.color ?? color,
-  });
-}
+import { renderIcon } from "@/utils/iconUtils";
+import { ThemedView } from "@/components/themed-ui/ThemedView";
 
 export function ThemedIconText({
   icon,
-  text,
+  label,
 
-  color = "text.secondary",
+  iconColor = "foreground.primary",
+  iconSize,
+
+  labelColor = "foreground.primary",
   variant = "body",
 
   gap = "sm",
 
-  iconPosition = "left",
-
-  alignItems = "center",
-  justifyContent,
-
   style,
 
-  onPress,
-
-  ...rest
+  ...props
 }: ThemedIconTextProps) {
-  const colors = useColors();
-
-  const resolvedColor = resolveThemeColor(colors, color);
-
-  const iconElement = cloneIcon(icon, resolvedColor);
-
-  const content = (
-    <>
-      {iconElement}
-
-      <ThemedText variant={variant} color={color}>
-        {text}
-      </ThemedText>
-    </>
-  );
-
-  const containerStyle = [
-    styles.container,
-    {
-      gap: resolveToken(gap, spacing),
-
-      alignItems,
-      justifyContent,
-
-      flexDirection: iconPosition === "left" ? "row" : "row-reverse",
-    },
-    style,
-  ];
-
-  if (onPress) {
-    return (
-      <Pressable style={containerStyle} onPress={onPress} {...rest}>
-        {content}
-      </Pressable>
-    );
-  }
+  const resolvedIconColor = useResolveThemeColor(iconColor);
 
   return (
-    <View style={containerStyle} {...rest}>
-      {content}
-    </View>
+    <ThemedView
+      {...props}
+      style={[
+        styles.base,
+        {
+          gap: sizes[gap],
+        },
+        style,
+      ]}
+    >
+      {renderIcon(icon, resolvedIconColor, iconSize)}
+
+      <ThemedText variant={variant} color={labelColor}>
+        {label}
+      </ThemedText>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  base: {
     flexDirection: "row",
+    alignItems: "center",
   },
 });
-
-export default ThemedIconText;

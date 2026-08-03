@@ -1,41 +1,35 @@
 import { PressableProps, StyleProp, ViewStyle } from "react-native";
 
 import { radius } from "@/theme/radius";
-import { spacing } from "@/theme/spacing";
-import { typography } from "@/theme/typography";
 
-import {
-  BackgroundColorToken,
-  BorderColorToken,
-  ForegroundColorToken,
-  BrandColorToken,
-  StatusColorToken,
-} from "@/types/theme-color";
 import { shadows } from "@/theme/shadows";
+import { ThemedTextVariant } from "@/types/ui/themed-text";
+import { ThemedColorToken } from "@/types/theme-color";
 
 export type ThemedChipVariant =
   | "primary"
   | "secondary"
   | "tertiary"
-  | "black"
+  | "inverse"
   | "outline"
-  | "ghost";
+  | "ghost"
+  | "accent-primary"
+  | "accent-secondary"
+  | "black"
+  | "selected-primary"
+  | "selected-secondary"
+  | "selected-tertiary"
+  | "selected-outline"
+  | "selected-ghost"
+  | "selected-accent-primary"
+  | "selected-accent-secondary"
+  | "selected-black"
+  | "listing-chip";
 
 export interface ChipVariantConfig {
-  background?: BackgroundColorToken | BrandColorToken;
-
-  pressedBackground?: BackgroundColorToken | BrandColorToken;
-
-  selectedBackground?: BackgroundColorToken | BrandColorToken;
-
-  border?: BorderColorToken | BrandColorToken;
-  selectedBorder?: BorderColorToken | BrandColorToken;
-
-  text: ForegroundColorToken;
-  selectedText?: ForegroundColorToken;
-
-  borderWidth?: number;
-
+  background: ThemedColorToken;
+  borderColor?: ThemedColorToken;
+  foregroundColor: ThemedColorToken;
   shadow?: keyof typeof shadows;
 }
 
@@ -44,22 +38,18 @@ export interface ThemedChipProps extends Omit<
   "children" | "style"
 > {
   variant?: ThemedChipVariant;
+  selectedVariant?: ThemedChipVariant;
 
   selected?: boolean;
-
   loading?: boolean;
 
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
 
   label: string;
+  labelVariant: ThemedTextVariant;
 
-  textVariant?: keyof typeof typography;
-
-  borderRadius?: keyof typeof radius | number;
-
-  horizontalPadding?: keyof typeof spacing | number;
-  verticalPadding?: keyof typeof spacing | number;
+  borderRadius?: keyof typeof radius;
 
   style?: StyleProp<ViewStyle>;
 }

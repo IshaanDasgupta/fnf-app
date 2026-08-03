@@ -1,83 +1,80 @@
-import React from "react";
 import { View } from "react-native";
 
-import { useColors } from "@/hooks/useColors";
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
 import { radius } from "@/theme/radius";
-import { spacing } from "@/theme/spacing";
-import { BackgroundColorToken } from "@/types/theme-color";
-import { ThemedViewProps, ThemedViewVariant } from "@/types/ui/themed-view";
-import { resolveThemeColor } from "@/utils/resolve-theme-color";
-import { resolveToken } from "@/utils/resolve-token";
-
-const variantBackgroundMap: Record<
-  Exclude<ThemedViewVariant, "transparent">,
-  BackgroundColorToken
-> = {
-  primary: "background.primary",
-  secondary: "background.secondary",
-  tertiary: "background.tertiary",
-  elevated: "background.elevated",
-  black: "black",
-};
+import { sizes } from "@/theme/size";
+import { viewVariants } from "@/theme/variants/view";
+import { ThemedViewProps } from "@/types/ui/themed-view";
 
 export function ThemedView({
-  variant = "primary",
-  backgroundColor,
-  borderColor,
-  borderRadius,
-  padding,
-  margin,
-  gap,
-  flex,
-  flexGrow,
-  flexShrink,
-  flexDirection,
-  alignSelf,
-  justifyContent,
-  alignItems,
-  style,
-  children,
-  ...rest
-}: ThemedViewProps) {
-  const colors = useColors();
+  variant = "transparent",
 
-  const resolvedBackgroundColor = backgroundColor
-    ? resolveThemeColor(colors, backgroundColor)
-    : variant === "transparent"
-      ? "transparent"
-      : resolveThemeColor(colors, variantBackgroundMap[variant]);
+  borderRadius,
+
+  padding,
+  paddingHorizontal,
+  paddingVertical,
+  paddingTop,
+  paddingBottom,
+  paddingLeft,
+  paddingRight,
+
+  margin,
+  marginHorizontal,
+  marginVertical,
+  marginTop,
+  marginBottom,
+  marginLeft,
+  marginRight,
+
+  gap,
+
+  style,
+
+  ...props
+}: ThemedViewProps) {
+  const config = viewVariants[variant];
+
+  const resolvedBackground = useResolveThemeColor(config.background);
+
+  const resolvedBorder = useResolveThemeColor(config.borderColor);
 
   return (
     <View
+      {...props}
       style={[
         {
-          backgroundColor: resolvedBackgroundColor,
+          backgroundColor: resolvedBackground,
 
-          borderColor: resolveThemeColor(colors, borderColor),
+          borderColor: resolvedBorder,
+          borderWidth: resolvedBorder ? 1 : undefined,
 
-          borderRadius: resolveToken(borderRadius, radius),
+          borderRadius: borderRadius ? radius[borderRadius] : undefined,
 
-          padding: resolveToken(padding, spacing),
-          margin: resolveToken(margin, spacing),
-          gap: resolveToken(gap, spacing),
+          padding: padding ? sizes[padding] : undefined,
+          paddingHorizontal: paddingHorizontal
+            ? sizes[paddingHorizontal]
+            : undefined,
+          paddingVertical: paddingVertical ? sizes[paddingVertical] : undefined,
+          paddingTop: paddingTop ? sizes[paddingTop] : undefined,
+          paddingBottom: paddingBottom ? sizes[paddingBottom] : undefined,
+          paddingLeft: paddingLeft ? sizes[paddingLeft] : undefined,
+          paddingRight: paddingRight ? sizes[paddingRight] : undefined,
 
-          flex,
-          flexGrow,
-          flexShrink,
+          margin: margin ? sizes[margin] : undefined,
+          marginHorizontal: marginHorizontal
+            ? sizes[marginHorizontal]
+            : undefined,
+          marginVertical: marginVertical ? sizes[marginVertical] : undefined,
+          marginTop: marginTop ? sizes[marginTop] : undefined,
+          marginBottom: marginBottom ? sizes[marginBottom] : undefined,
+          marginLeft: marginLeft ? sizes[marginLeft] : undefined,
+          marginRight: marginRight ? sizes[marginRight] : undefined,
 
-          flexDirection,
-
-          alignSelf,
-          justifyContent,
-          alignItems,
+          gap: gap ? sizes[gap] : undefined,
         },
         style,
       ]}
-      {...rest}
-    >
-      {children}
-    </View>
+    />
   );
 }
-
-export default ThemedView;

@@ -1,93 +1,76 @@
 import React from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  PressableStateCallbackType,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
 
-import { ThemedText } from "@/components/themed-ui/ThemedText";
-import { useColors } from "@/hooks/useColors";
-import { buttonVariants } from "@/theme/button-variant";
+import { useTheme } from "@/hooks/useTheme";
+
 import { radius } from "@/theme/radius";
 import { shadows } from "@/theme/shadows";
-import { spacing } from "@/theme/spacing";
+import { sizes } from "@/theme/size";
 import { ThemedButtonProps } from "@/types/ui/themed-button";
-import { resolveThemeColor } from "@/utils/resolve-theme-color";
+import { buttonVariants } from "@/theme/variants";
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
+import { ThemedText } from "@/components/themed-ui/ThemedText";
+import { renderIcon } from "@/utils/iconUtils";
 
 export function ThemedButton({
-  variant = "primary",
-  loading = false,
-  disabled = false,
-  fullWidth = false,
+  variant = "accent-primary",
+  label,
+  labelVariant = "body",
   leftIcon,
   rightIcon,
-  children,
-  style,
-  ...rest
-}: ThemedButtonProps) {
-  const colors = useColors();
+  loading,
+  loadingPlaceholder,
 
+  gap = "sm",
+  radius: borderRadius = "button",
+
+  style,
+  disabled,
+
+  ...props
+}: ThemedButtonProps) {
   const config = buttonVariants[variant];
 
-  const resolvedStyle = (state: PressableStateCallbackType) => {
-    const backgroundColor = disabled
-      ? resolveThemeColor(colors, "background.tertiary")
-      : resolveThemeColor(
-          colors,
-          state.pressed
-            ? (config.pressedBackground ?? config.background)
-            : config.background,
-        );
-
-    return [
-      styles.base,
-
-      {
-        backgroundColor,
-        borderColor: resolveThemeColor(colors, config.border),
-        borderWidth: config.border ? (config.borderWidth ?? 1) : 0,
-
-        opacity: disabled ? 0.7 : 1,
-
-        ...(config.shadow ? shadows.sm : {}),
-
-        ...(config.compact && {
-          paddingHorizontal: spacing.md,
-        }),
-      },
-
-      fullWidth && styles.fullWidth,
-
-      typeof style === "function" ? style(state) : style,
-    ];
-  };
-
-  const textColor = disabled ? "text.tertiary" : config.text;
+  const backgroundColor = useResolveThemeColor(config.background);
+  const borderColor = config.borderColor
+    ? useResolveThemeColor(config.borderColor)
+    : undefined;
+  const foregroundColor = useResolveThemeColor(config.foregroundColor);
 
   return (
     <Pressable
-      accessibilityRole="button"
-      accessibilityState={{
-        disabled,
-        busy: loading,
-      }}
       disabled={disabled || loading}
-      style={resolvedStyle}
-      {...rest}
+      {...props}
+      style={[
+        styles.base,
+
+        {
+          backgroundColor: backgroundColor,
+          borderColor,
+          borderWidth: config.borderColor ? 1 : undefined,
+
+          borderRadius: radius[borderRadius],
+          gap: sizes[gap],
+
+          ...(config.shadow ? shadows[config.shadow] : {}),
+        },
+
+        style,
+      ]}
     >
       {loading ? (
-        <ActivityIndicator color={resolveThemeColor(colors, textColor)} />
+        (loadingPlaceholder ?? <ActivityIndicator color={foregroundColor} />)
       ) : (
         <>
-          {leftIcon && <View>{leftIcon}</View>}
+          {leftIcon && renderIcon(leftIcon, foregroundColor)}
 
-          <ThemedText variant="body" color={textColor}>
-            {children}
-          </ThemedText>
+          {label && (
+            <ThemedText variant={labelVariant} color={config.foregroundColor}>
+              {label}
+            </ThemedText>
+          )}
 
-          {rightIcon && <View>{rightIcon}</View>}
+          {rightIcon && renderIcon(rightIcon, foregroundColor)}
         </>
       )}
     </Pressable>
@@ -96,26 +79,13 @@ export function ThemedButton({
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 48,
-
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-
-    borderRadius: radius.button,
+    width: "100%",
 
     flexDirection: "row",
-
     alignItems: "center",
     justifyContent: "center",
 
-    gap: spacing.sm,
-
-    borderColor: "transparent",
-  },
-
-  fullWidth: {
-    width: "100%",
+    paddingHorizontal: sizes.lg,
+    paddingVertical: sizes.lg,
   },
 });
-
-export default ThemedButton;

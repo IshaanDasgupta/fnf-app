@@ -4,6 +4,7 @@ import { Image } from "react-native";
 import { ThemedButton } from "@/components/themed-ui/ThemedButton";
 import { ThemedText } from "@/components/themed-ui/ThemedText";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
+import { sizes } from "@/theme/size";
 
 interface OwnerCardProps {
   image: string;
@@ -23,11 +24,19 @@ export default function OwnerCard({
       variant="tertiary"
       borderRadius="card"
       padding="md"
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
     >
-      <ThemedView flexDirection="row" alignItems="center" gap="md">
+      <ThemedView
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+        gap="md"
+      >
         <Image
           source={{ uri: image }}
           style={{
@@ -42,13 +51,21 @@ export default function OwnerCard({
             {name}, {age}
           </ThemedText>
 
-          <ThemedText variant="caption" color="text.secondary">
+          <ThemedText variant="caption" color="foreground.secondary">
             {subtitle}
           </ThemedText>
         </ThemedView>
       </ThemedView>
 
-      <ThemedButton variant="secondary">Say Hi</ThemedButton>
+      <ThemedButton
+        variant="secondary"
+        style={{
+          width: "auto",
+          paddingHorizontal: sizes.md,
+          paddingVertical: sizes.sm,
+        }}
+        label="Say Hi!"
+      />
     </ThemedView>
   );
 }

@@ -1,63 +1,51 @@
-import { TextInputProps, TextStyle, ViewStyle } from "react-native";
+import { StyleProp, TextInputProps, TextStyle, ViewStyle } from "react-native";
 
-import { spacing } from "@/theme/spacing";
+import { sizes } from "@/theme/size";
 import { radius } from "@/theme/radius";
 
-import {
-  BackgroundColorToken,
-  BorderColorToken,
-  ForegroundColorToken,
-} from "@/types/theme-color";
-
 import { ThemedTextVariant } from "@/types/ui/themed-text";
-import { typography } from "@/theme/typography";
+import { shadows } from "@/theme/shadows";
+import { ThemedColorToken } from "@/types/theme-color";
 
-export type ThemedTextInputVariant = "default" | "filled" | "outline" | "ghost";
+export type ThemedTextInputVariant =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "inverse"
+  | "outline"
+  | "ghost";
 
-export interface TextInputVariantConfig {
-  background?: BackgroundColorToken | "white";
+export interface ThemedInputVariantConfig {
+  background: ThemedColorToken;
+  borderColor?: ThemedColorToken;
 
-  border?: BorderColorToken | "primary";
-  borderWidth?: number;
+  labelColor: ThemedColorToken;
 
-  focusedBorder?: BorderColorToken | "primary";
-  errorBorder?: BorderColorToken | "status.error";
+  textColor: ThemedColorToken;
+  placeholderColor: ThemedColorToken;
 
-  text: ForegroundColorToken;
-  placeholder: ForegroundColorToken;
+  iconColor: ThemedColorToken;
 
-  label: ForegroundColorToken;
-  helper: ForegroundColorToken;
-  error: ForegroundColorToken;
-
-  shadow?: boolean;
-
-  inputTypography?: keyof typeof typography;
+  focusedBorder?: ThemedColorToken;
 }
 
 export interface ThemedTextInputProps extends Omit<TextInputProps, "style"> {
   variant?: ThemedTextInputVariant;
 
-  label?: React.ReactNode;
-  helperText?: React.ReactNode;
-  error?: React.ReactNode;
+  label?: string;
+  labelVariant?: ThemedTextVariant;
+
+  textVariant?: ThemedTextVariant;
 
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
 
-  fullWidth?: boolean;
-
-  labelVariant?: ThemedTextVariant;
-  helperVariant?: ThemedTextVariant;
-  errorVariant?: ThemedTextVariant;
-
+  paddingHorizontal?: keyof typeof sizes;
+  paddingVertical?: keyof typeof sizes;
   borderRadius?: keyof typeof radius;
+  shadow?: keyof typeof shadows;
+  gap?: keyof typeof sizes;
 
-  paddingHorizontal?: keyof typeof spacing;
-  paddingVertical?: keyof typeof spacing;
-
-  inputTypography?: keyof typeof typography;
-
-  containerStyle?: ViewStyle;
-  inputStyle?: TextStyle;
+  containerStyle?: StyleProp<ViewStyle>;
+  inputStyle?: StyleProp<TextStyle>;
 }

@@ -1,5 +1,5 @@
-import ThemedText from "@/components/themed-ui/ThemedText";
-import ThemedView from "@/components/themed-ui/ThemedView";
+import { ThemedText } from "@/components/themed-ui/ThemedText";
+import { ThemedView } from "@/components/themed-ui/ThemedView";
 
 export default function SplashScreen() {
   return (

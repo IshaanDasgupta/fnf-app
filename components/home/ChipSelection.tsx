@@ -3,7 +3,7 @@ import { FlatList, Pressable, StyleSheet } from "react-native";
 
 import { ThemedChip } from "@/components/themed-ui/ThemedChip";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
-import { spacing } from "@/theme/spacing";
+import { sizes } from "@/theme/size";
 import { ChipSelectionListProps } from "@/types/home/chip-selection-list";
 
 export function ChipSelectionList({
@@ -23,12 +23,15 @@ export function ChipSelectionList({
         renderItem={({ item }) => (
           <Pressable onPress={() => onSelect?.(item.id)}>
             <ThemedChip
+              variant="tertiary"
+              selectedVariant="accent-primary"
               label={item.label}
-              textVariant="subTitle"
               leftIcon={item.icon}
-              variant={selectedId === item.id ? "black" : "tertiary"}
-              verticalPadding={spacing.md}
-              horizontalPadding={spacing.xl}
+              labelVariant="subTitle"
+              style={{
+                paddingVertical: sizes.md,
+                paddingHorizontal: sizes.xl,
+              }}
             />
           </Pressable>
         )}
@@ -39,11 +42,11 @@ export function ChipSelectionList({
 
 const styles = StyleSheet.create({
   content: {
-    paddingVertical: spacing.lg,
+    paddingVertical: sizes.lg,
   },
 
   separator: {
-    width: spacing.sm,
+    width: sizes.sm,
   },
 });
 

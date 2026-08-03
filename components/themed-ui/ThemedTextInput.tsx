@@ -1,44 +1,35 @@
 import React, { useState } from "react";
 import { Pressable, StyleSheet, TextInput, View } from "react-native";
 
-import { useColors } from "@/hooks/useColors";
-
+import { ThemedText } from "@/components/themed-ui/ThemedText";
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
 import { radius } from "@/theme/radius";
 import { shadows } from "@/theme/shadows";
-import { spacing } from "@/theme/spacing";
-import { textInputVariants } from "@/theme/text-input-variant";
-
-import { resolveThemeColor } from "@/utils/resolve-theme-color";
-
-import { ThemedText } from "./ThemedText";
-
+import { sizes } from "@/theme/size";
+import { textInputVariants } from "@/theme/variants/text-input";
+import { renderIcon } from "@/utils/iconUtils";
 import { ThemedTextInputProps } from "@/types/ui/themed-text-input";
-import { resolveToken } from "@/utils/resolve-token";
+import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { typography } from "@/theme/typography";
 
 export function ThemedTextInput({
-  variant = "default",
+  variant = "primary",
 
   label,
-  helperText,
-  error,
+  labelVariant = "label",
+
+  textVariant = "body",
 
   leftIcon,
   rightIcon,
 
-  fullWidth = true,
+  paddingHorizontal = "sm",
+  paddingVertical = "sm",
 
-  labelVariant = "label",
-  helperVariant = "caption",
-  errorVariant = "caption",
+  borderRadius = "button",
+  shadow,
 
-  borderRadius = "input",
-  paddingHorizontal = "lg",
-  paddingVertical = "md",
-
-  editable = true,
-
-  inputTypography,
+  gap = "xs",
 
   containerStyle,
   inputStyle,
@@ -46,65 +37,71 @@ export function ThemedTextInput({
   onFocus,
   onBlur,
 
-  ...rest
+  ...props
 }: ThemedTextInputProps) {
-  const colors = useColors();
+  const [focused, setFocused] = useState(false);
 
   const config = textInputVariants[variant];
 
-  const [focused, setFocused] = useState(false);
+  const backgroundColor = useResolveThemeColor(config.background);
+  const borderColor = useResolveThemeColor(
+    focused ? config.focusedBorder : config.borderColor,
+  );
 
-  const borderColor = error
-    ? resolveThemeColor(colors, config.errorBorder)
-    : focused
-      ? resolveThemeColor(colors, config.focusedBorder)
-      : resolveThemeColor(colors, config.border);
-
-  const inputTypographyStyle =
-    typography[inputTypography ?? config.inputTypography ?? "body"];
+  const textColor = useResolveThemeColor(config.textColor);
+  const placeholderColor = useResolveThemeColor(config.placeholderColor);
+  const iconColor = useResolveThemeColor(config.iconColor);
 
   return (
-    <View style={[fullWidth && styles.fullWidth]}>
-      {label && (
-        <ThemedText
-          variant={labelVariant}
-          color={config.label}
-          style={styles.label}
-        >
-          {label}
-        </ThemedText>
-      )}
+    <ThemedView
+      style={[
+        styles.container,
+        {
+          backgroundColor,
+          borderColor,
+          borderWidth: borderColor ? 1 : undefined,
+          borderRadius: radius[borderRadius],
 
-      <Pressable
+          paddingHorizontal: sizes[paddingHorizontal],
+          paddingVertical: sizes[paddingVertical],
+
+          ...(shadow ? shadows[shadow] : {}),
+          gap: sizes[gap],
+        },
+        containerStyle,
+      ]}
+    >
+      {leftIcon && renderIcon(leftIcon, iconColor)}
+
+      <ThemedView
         style={[
-          styles.container,
+          styles.inputContainer,
           {
-            backgroundColor: resolveThemeColor(colors, config.background),
-            borderColor,
-            borderWidth: config.borderWidth ?? 1,
-            borderRadius: resolveToken(borderRadius, radius),
-            paddingHorizontal: resolveToken(paddingHorizontal, spacing),
-            paddingVertical: resolveToken(paddingVertical, spacing),
-            opacity: editable ? 1 : 0.6,
-            ...(config.shadow ? shadows.lg : {}),
+            backgroundColor,
+            gap: sizes[gap],
           },
-          containerStyle,
         ]}
       >
-        {leftIcon}
+        {label && (
+          <ThemedText variant={labelVariant} color={config.labelColor}>
+            {label}
+          </ThemedText>
+        )}
 
         <TextInput
-          {...rest}
-          editable={editable}
+          {...props}
           style={[
-            styles.input,
-            inputTypographyStyle,
+            typography[textVariant],
             {
-              color: resolveThemeColor(colors, config.text),
+              color: textColor,
             },
+            ,
             inputStyle,
           ]}
-          placeholderTextColor={resolveThemeColor(colors, config.placeholder)}
+          placeholderTextColor={placeholderColor}
+          cursorColor={textColor}
+          selectionColor={textColor}
+          underlineColorAndroid="transparent"
           onFocus={(e) => {
             setFocused(true);
             onFocus?.(e);
@@ -114,59 +111,21 @@ export function ThemedTextInput({
             onBlur?.(e);
           }}
         />
+      </ThemedView>
 
-        {rightIcon}
-      </Pressable>
-
-      {error ? (
-        <ThemedText
-          variant={errorVariant}
-          color={config.error}
-          style={styles.footer}
-        >
-          {error}
-        </ThemedText>
-      ) : helperText ? (
-        <ThemedText
-          variant={helperVariant}
-          color={config.helper}
-          style={styles.footer}
-        >
-          {helperText}
-        </ThemedText>
-      ) : null}
-    </View>
+      {rightIcon && renderIcon(rightIcon, iconColor)}
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  fullWidth: {
-    width: "100%",
-  },
-
-  label: {
-    marginBottom: spacing.sm,
-  },
-
   container: {
-    minHeight: 52,
-
     flexDirection: "row",
     alignItems: "center",
-
-    gap: spacing.sm,
-
-    borderWidth: 1,
   },
 
-  input: {
+  inputContainer: {
     flex: 1,
-    padding: 0,
-  },
-
-  footer: {
-    marginTop: spacing.xs,
+    flexDirection: "column",
   },
 });
-
-export default ThemedTextInput;

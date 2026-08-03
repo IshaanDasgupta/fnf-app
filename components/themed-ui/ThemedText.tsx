@@ -1,32 +1,24 @@
-import React from "react";
-import { Text, TextStyle } from "react-native";
+import { Text, TextProps } from "react-native";
 
-import { useColors } from "@/hooks/useColors";
 import { typography } from "@/theme/typography";
+import { ThemedColorToken } from "@/types/theme-color";
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
 import { ThemedTextProps } from "@/types/ui/themed-text";
-import { resolveThemeColor } from "@/utils/resolve-theme-color";
 
 export function ThemedText({
   variant = "body",
-  color = "text.primary",
-  align = "left",
+  color = "foreground.primary",
   style,
-  children,
-  ...rest
+  ...props
 }: ThemedTextProps) {
-  const colors = useColors();
-
-  const textStyle: TextStyle = {
-    ...(typography[variant] as TextStyle),
-    color: resolveThemeColor(colors, color),
-    textAlign: align,
-  };
-
   return (
-    <Text style={[textStyle, style]} {...rest}>
-      {children}
-    </Text>
+    <Text
+      {...props}
+      style={[
+        typography[variant],
+        { color: useResolveThemeColor(color) },
+        style,
+      ]}
+    />
   );
 }
-
-export default ThemedText;

@@ -1,7 +1,7 @@
 export const typography = {
   display: {
     fontFamily: "Fraunces_600SemiBold",
-    fontSize: 48,
+    fontSize: 44,
     lineHeight: 52,
   },
 
@@ -28,17 +28,6 @@ export const typography = {
     fontSize: 18,
   },
 
-  subTitle: {
-    fontFamily: "Inter_600SemiBold",
-    fontSize: 14,
-  },
-
-  label: {
-    fontFamily: "Inter_600SemiBold",
-    fontSize: 12,
-    lineHeight: 16,
-  },
-
   tab: {
     fontFamily: "Inter_400Regular",
     fontSize: 16,
@@ -50,10 +39,21 @@ export const typography = {
     lineHeight: 24,
   },
 
+  subTitle: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 14,
+  },
+
   bodySmall: {
     fontFamily: "Inter_400Regular",
     fontSize: 14,
     lineHeight: 20,
+  },
+
+  label: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 12,
+    lineHeight: 16,
   },
 
   caption: {

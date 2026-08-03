@@ -6,41 +6,40 @@ import { ThemedButton } from "@/components/themed-ui/ThemedButton";
 import { ThemedText } from "@/components/themed-ui/ThemedText";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
 
-import { spacing } from "@/theme/spacing";
 import { shadows } from "@/theme/shadows";
+import { sizes } from "@/theme/size";
 
 export default function ListingBottomBar() {
   return (
     <ThemedView
-      variant="primary"
+      variant="tertiary"
       //   borderTopLeftRadius="screen"
       //   borderTopRightRadius="screen"
-      padding={spacing.xl}
+      padding="xl"
       style={styles.container}
     >
-      <ThemedView flexDirection="row" alignItems="center" gap="xs">
-        <ThemedText variant="h3">₹24,500</ThemedText>
+      <ThemedView gap="xs" style={{ flexDirection: "column" }}>
+        <ThemedView
+          gap="xs"
+          style={{ flexDirection: "row", alignItems: "baseline" }}
+        >
+          <ThemedText variant="h2">₹24,500</ThemedText>
+          <ThemedText variant="body" color="foreground.secondary">
+            /mo
+          </ThemedText>
+        </ThemedView>
 
-        <ThemedText variant="body" color="text.secondary">
-          /mo
+        <ThemedText variant="caption" color="foreground.secondary">
+          Move in by Aug 12
         </ThemedText>
       </ThemedView>
 
-      <ThemedText
-        variant="caption"
-        color="text.secondary"
-        style={styles.subtitle}
-      >
-        Move in by Aug 12
-      </ThemedText>
-
       <ThemedButton
-        variant="primary"
+        variant="accent-secondary"
         style={styles.button}
-        leftIcon={<Ionicons name="heart-outline" size={18} color="white" />}
-      >
-        I'm interested
-      </ThemedButton>
+        label="I'm interested"
+        labelVariant="title"
+      />
     </ThemedView>
   );
 }
@@ -54,17 +53,15 @@ const styles = StyleSheet.create({
 
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
 
     ...shadows.lg,
   },
 
-  subtitle: {
-    marginTop: spacing.xs,
-    flex: 1,
-  },
-
   button: {
-    marginLeft: spacing.xl,
-    minWidth: 180,
+    // marginLeft: sizes.xl,
+    width: "auto",
+    paddingHorizontal: sizes["3xl"],
+    paddingVertical: sizes["xl"],
   },
 });

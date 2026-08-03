@@ -9,6 +9,8 @@ import SearchFilter from "@/components/home/SearchFilter";
 import ChipSelectionList from "@/components/home/ChipSelection";
 import { Listing } from "@/types/listing/card/card";
 import ListingCard from "@/components/listing/card/ListingCard";
+import { sizes } from "@/theme/size";
+import Spacer from "@/components/themed-ui/Spacer";
 
 export default function HomeScreen() {
   const [search, setSearch] = useState("");
@@ -77,7 +79,7 @@ export default function HomeScreen() {
         padding="lg"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 120,
+          paddingBottom: sizes["6xl"],
         }}
       >
         <HomeHeader name="Ananya" location="Bengaluru · Aug" />
@@ -97,15 +99,90 @@ export default function HomeScreen() {
 
         <ThemedView gap="lg">
           {listings.map((listing) => (
-            <ListingCard
-              key={listing.id}
-              listing={listing}
-              onPress={() => {}}
-              onFavoritePress={() => {}}
-            />
+            <ListingCard key={listing.id} listing={listing} />
           ))}
         </ThemedView>
+        <Spacer size="4xl" />
       </ThemedScrollView>
     </ThemedSafeArea>
   );
+}
+
+interface User {
+  name: string;
+  age: number;
+  gender?: "male" | "female";
+
+  occupation: "student" | "working" | "freelancer" | "business" | "other";
+
+  company?: string;
+  college?: string;
+
+  bio: string;
+
+  lifestyle?: LivingPreferences;
+  traits: Trait[];
+  dealbreakers?: DealBreakers;
+}
+enum Acceptance {
+  Yes,
+  Okay,
+  No,
+}
+
+interface LivingPreferences {
+  smoking: Acceptance;
+  drinking: Acceptance;
+  pets: Acceptance;
+
+  diet: "vegetarian" | "non-vegetarian" | "vegan" | "eggetarian";
+
+  cleanliness: 1 | 2 | 3 | 4 | 5;
+
+  guests: 1 | 2 | 3 | 4 | 5;
+
+  noiseLevel: 1 | 2 | 3 | 4 | 5;
+
+  sleepSchedule: "early-bird" | "night-owl" | "flexible";
+
+  workFromHome: "never" | "sometimes" | "often";
+
+  cooking: "never" | "sometimes" | "daily";
+
+  partying: "never" | "sometimes" | "often";
+}
+
+interface DealBreakers {
+  smoking: boolean;
+  pets: boolean;
+  drinking: boolean;
+  loudMusic: boolean;
+  overnightGuests: boolean;
+}
+
+enum Trait {
+  Gym,
+  Cooking,
+  Gaming,
+  Reading,
+  Movies,
+  Music,
+  Travel,
+  Trekking,
+  Photography,
+  Anime,
+  Cricket,
+  Football,
+  Cycling,
+  Yoga,
+  Coding,
+  Coffee,
+  Tea,
+  Nightlife,
+  EarlyBird,
+  Quiet,
+  Social,
+  Clean,
+  Hosting,
+  Spiritual,
 }

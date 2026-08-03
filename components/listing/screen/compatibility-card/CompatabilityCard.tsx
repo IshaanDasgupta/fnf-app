@@ -10,20 +10,28 @@ export default function CompatibilityCard() {
   return (
     <ThemedView variant="tertiary" borderRadius="card" padding="xl" gap="lg">
       <ThemedView
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
         <ThemedText variant="title">Compatibility</ThemedText>
 
-        <ThemedText variant="title" color="primary">
+        <ThemedText variant="title" color="accent.primary">
           94% match
         </ThemedText>
       </ThemedView>
 
       {/* <ThemedProgressBar value={0.94} variant="primary" /> */}
 
-      <ThemedView flexDirection="row" justifyContent="space-between" gap="md">
+      <ThemedView
+        gap="md"
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
         <CompatibilityItem title="Sleep" value="Aligned" />
 
         <CompatibilityItem title="Cleanliness" value="Aligned" />

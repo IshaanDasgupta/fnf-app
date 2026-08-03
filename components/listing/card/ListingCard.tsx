@@ -13,6 +13,8 @@ import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { ListingCardProps } from "@/types/listing/card/card";
 import { useRouter } from "expo-router";
 import { navigation } from "@/lib/navigation";
+import { radius } from "@/theme/radius";
+import { sizes } from "@/theme/size";
 
 export function ListingCard({ listing }: ListingCardProps) {
   const router = useRouter();
@@ -23,7 +25,10 @@ export function ListingCard({ listing }: ListingCardProps) {
 
   return (
     <Pressable onPress={handleListingRedirect}>
-      <ThemedView variant="tertiary" borderRadius="card" style={styles.card}>
+      <ThemedView
+        variant="tertiary"
+        style={[styles.card, { borderRadius: radius.card }]}
+      >
         <ListingImage
           source={listing.image}
           verified={listing.verified}
@@ -31,13 +36,8 @@ export function ListingCard({ listing }: ListingCardProps) {
           compatibility={listing.compatibility}
         />
 
-        <ThemedView variant="transparent" padding="lg">
-          <ThemedView
-            variant="transparent"
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
+        <ThemedView style={{ padding: sizes.lg }}>
+          <ThemedView style={styles.header}>
             <ThemedText variant="h3" style={{ flex: 1 }} numberOfLines={1}>
               {listing.title}
             </ThemedText>
@@ -51,45 +51,46 @@ export function ListingCard({ listing }: ListingCardProps) {
 
           <Spacer size="xs" />
 
-          <ThemedView
-            variant="transparent"
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
+          <ThemedView style={styles.locationRow}>
             <ThemedIconText
               icon={<Ionicons name="location-outline" size={16} />}
-              text={listing.location}
+              label={listing.location}
               variant="body"
-              color="text.secondary"
+              labelColor="foreground.secondary"
               gap="xs"
             />
 
-            <ThemedText variant="caption" color="text.secondary">
+            <ThemedText variant="caption" color="foreground.secondary">
               / month · your share
             </ThemedText>
           </ThemedView>
 
           <Spacer size="sm" />
 
-          <ThemedView variant="transparent" flexDirection="row" gap="lg">
+          <ThemedView gap="lg" style={styles.detailsRow}>
             <ThemedIconText
               icon={<Feather name="home" size={16} />}
-              text={`${listing.bedrooms} BR`}
+              iconColor="foreground.secondary"
+              label={`${listing.bedrooms} BR`}
+              labelColor="foreground.secondary"
               variant="bodySmall"
               gap="xs"
             />
 
             <ThemedIconText
               icon={<Ionicons name="people-outline" size={16} />}
-              text={`${listing.flatmates} flatmates`}
+              iconColor="foreground.secondary"
+              label={`${listing.flatmates} flatmates`}
+              labelColor="foreground.secondary"
               variant="bodySmall"
               gap="xs"
             />
 
             <ThemedIconText
               icon={<Ionicons name="calendar-outline" size={16} />}
-              text={listing.availableDate}
+              iconColor="foreground.secondary"
+              label={listing.availableDate}
+              labelColor="foreground.secondary"
               variant="bodySmall"
               gap="xs"
             />
@@ -97,18 +98,18 @@ export function ListingCard({ listing }: ListingCardProps) {
 
           <Spacer size="md" />
 
-          <ThemedView
-            variant="transparent"
-            flexDirection="row"
-            gap="sm"
-            style={styles.tags}
-          >
+          <ThemedView gap="sm" style={styles.tags}>
             {listing.tags.map((tag) => (
               <ThemedChip
                 key={tag}
                 label={tag}
-                variant="secondary"
-                textVariant="bodySmall"
+                variant="listing-chip"
+                labelVariant="subTitle"
+                style={{
+                  paddingHorizontal: sizes.lg,
+                  paddingVertical: sizes.sm,
+                }}
+                disabled
               />
             ))}
           </ThemedView>
@@ -123,7 +124,25 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
 
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  locationRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  detailsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
   tags: {
+    flexDirection: "row",
     flexWrap: "wrap",
   },
 });

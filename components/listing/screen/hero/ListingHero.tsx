@@ -1,46 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { ThemedIconButton } from "@/components/themed-ui/ThemedIconButton";
 
-import { spacing } from "@/theme/spacing";
+import { sizes } from "@/theme/size";
 import { ListingHeroProps } from "@/types/listing/screen/hero";
 import ImageCarousel from "@/components/listing/screen/hero/ImageCarousel";
+import { useRouter } from "expo-router";
 
 export default function ListingHero({
   images,
   favorite = false,
 }: ListingHeroProps) {
+  const router = useRouter();
+  const [fav, setFav] = useState(favorite);
+
+  const handleBack = () => {
+    router.back();
+  };
+
+  const handleFavToggle = () => {
+    setFav((prev) => !prev);
+  };
+
   return (
     <ThemedView style={styles.container}>
       <ImageCarousel images={images} />
 
-      <ThemedView
-        variant="transparent"
-        flexDirection="row"
-        justifyContent="space-between"
-        style={styles.topBar}
-      >
+      <ThemedView variant="transparent" style={styles.topBar}>
         <ThemedIconButton
-          variant="fav"
-          size="xl"
+          variant="tertiary"
+          size="lg"
           icon={<Ionicons name="chevron-back" />}
+          onPress={handleBack}
         />
 
-        <ThemedView variant="transparent" flexDirection="row" gap="md">
+        <ThemedView
+          variant="transparent"
+          style={{ flexDirection: "row" }}
+          gap="md"
+        >
           <ThemedIconButton
-            variant="fav"
-            size="xl"
+            variant="tertiary"
+            size="lg"
             icon={<Ionicons name="share-social-outline" />}
           />
 
           <ThemedIconButton
             variant="fav"
-            selected={favorite}
-            size="xl"
-            icon={<Ionicons name={favorite ? "heart" : "heart-outline"} />}
+            size="lg"
+            icon={<Ionicons name={fav ? "heart" : "heart-outline"} />}
+            onPress={handleFavToggle}
           />
         </ThemedView>
       </ThemedView>
@@ -55,11 +67,10 @@ const styles = StyleSheet.create({
 
   topBar: {
     position: "absolute",
-
-    top: spacing.xl,
-
-    left: spacing.lg,
-
-    right: spacing.lg,
+    top: sizes.xl,
+    left: sizes.lg,
+    right: sizes.lg,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });

@@ -5,27 +5,26 @@ import { ThemedIconButton } from "@/components/themed-ui/ThemedIconButton";
 import { ThemedText } from "@/components/themed-ui/ThemedText";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
 
-import { spacing } from "@/theme/spacing";
+import { useAuth } from "@/hooks/useAuth";
 import { radius } from "@/theme/radius";
+import { sizes } from "@/theme/size";
 import { HomeHeaderProps } from "@/types/home/header";
 
-export function HomeHeader({ location, name, avatar }: HomeHeaderProps) {
+export function HomeHeader({ location }: HomeHeaderProps) {
+  const { user } = useAuth();
+
   return (
-    <ThemedView
-      style={styles.container}
-      justifyContent="space-between"
-      alignItems="center"
-    >
-      <ThemedView flex={1}>
-        <ThemedText variant="title" color="text.secondary">
+    <ThemedView style={styles.container}>
+      <ThemedView style={{ flex: 1 }}>
+        <ThemedText variant="title" color="foreground.secondary">
           {location}
         </ThemedText>
 
         <ThemedView style={styles.titleContainer}>
-          <ThemedText variant="display" color="text.primary">
-            {`Hi ${name}, `}
+          <ThemedText variant="display" color="foreground.primary">
+            {`Hi ${user?.name}, `}
           </ThemedText>
-          <ThemedText variant="display" color="primary">
+          <ThemedText variant="display" color="accent.primary">
             welcome home.
           </ThemedText>
         </ThemedView>
@@ -35,7 +34,7 @@ export function HomeHeader({ location, name, avatar }: HomeHeaderProps) {
         variant="secondary"
         size="lg"
         style={styles.avatar}
-        icon={avatar}
+        icon={user?.avatar}
         disabled
       />
     </ThemedView>
@@ -45,14 +44,16 @@ export function HomeHeader({ location, name, avatar }: HomeHeaderProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    marginBottom: spacing.xl,
+    marginBottom: sizes.xl,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   titleContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: spacing.xs,
-    paddingRight: spacing.md,
+    marginTop: sizes.xs,
+    paddingRight: sizes.md,
   },
 
   avatar: {

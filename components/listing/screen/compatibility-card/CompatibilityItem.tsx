@@ -14,19 +14,21 @@ export default function CompatibilityItem({
 }: CompatibilityItemProps) {
   return (
     <ThemedView
-      flex={1}
       variant="secondary"
       borderRadius="button"
-      padding="lg"
-      alignItems="center"
-      justifyContent="center"
+      padding="md"
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
       gap="xs"
     >
-      <ThemedText variant="caption" color="text.secondary">
+      <ThemedText variant="caption" color="foreground.secondary">
         {title}
       </ThemedText>
 
-      <ThemedText variant="label" align="center">
+      <ThemedText variant="label" style={{ textAlign: "center" }}>
         {value}
       </ThemedText>
     </ThemedView>

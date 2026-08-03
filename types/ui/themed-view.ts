@@ -1,41 +1,43 @@
 import { radius } from "@/theme/radius";
-import { spacing } from "@/theme/spacing";
-import { BackgroundColorToken } from "@/types/theme-color";
-import { ViewProps, ViewStyle } from "react-native";
+import { sizes } from "@/theme/size";
+import { ThemedColorToken } from "@/types/theme-color";
+import { ViewProps } from "react-native";
 
 export type ThemedViewVariant =
   | "primary"
   | "secondary"
   | "tertiary"
-  | "elevated"
+  | "inverse"
   | "transparent"
-  | "black";
+  | "accent-primary";
 
-export type BorderColorToken = "border.primary" | "border.secondary";
+export interface ViewVariantConfig {
+  background?: ThemedColorToken;
+  borderColor?: ThemedColorToken;
+}
 
 export interface ThemedViewProps extends ViewProps {
   variant?: ThemedViewVariant;
 
-  backgroundColor?: BackgroundColorToken;
-  borderColor?: BorderColorToken;
+  borderRadius?: keyof typeof radius;
 
-  borderRadius?: keyof typeof radius | number;
+  padding?: keyof typeof sizes;
+  paddingHorizontal?: keyof typeof sizes;
+  paddingVertical?: keyof typeof sizes;
+  paddingTop?: keyof typeof sizes;
+  paddingBottom?: keyof typeof sizes;
+  paddingLeft?: keyof typeof sizes;
+  paddingRight?: keyof typeof sizes;
 
-  padding?: keyof typeof spacing | number;
-  margin?: keyof typeof spacing | number;
-  gap?: keyof typeof spacing | number;
+  margin?: keyof typeof sizes;
+  marginHorizontal?: keyof typeof sizes;
+  marginVertical?: keyof typeof sizes;
+  marginTop?: keyof typeof sizes;
+  marginBottom?: keyof typeof sizes;
+  marginLeft?: keyof typeof sizes;
+  marginRight?: keyof typeof sizes;
 
-  flex?: ViewStyle["flex"];
-  flexGrow?: ViewStyle["flexGrow"];
-  flexShrink?: ViewStyle["flexShrink"];
-
-  flexDirection?: ViewStyle["flexDirection"];
-
-  alignSelf?: ViewStyle["alignSelf"];
-  alignItems?: ViewStyle["alignItems"];
-  justifyContent?: ViewStyle["justifyContent"];
-
-  position?: ViewStyle["position"];
+  gap?: keyof typeof sizes;
 
   children?: React.ReactNode;
 }

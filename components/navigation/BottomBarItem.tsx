@@ -1,98 +1,3 @@
-// import React from "react";
-// import { Pressable, StyleSheet } from "react-native";
-// import { Ionicons } from "@expo/vector-icons";
-// import Animated, {
-//   FadeInRight,
-//   FadeOutLeft,
-//   LinearTransition,
-// } from "react-native-reanimated";
-
-// import { ThemedText } from "@/components/themed-ui/ThemedText";
-// import { useColors } from "@/hooks/useColors";
-// import { spacing } from "@/theme/spacing";
-// import { radius } from "@/theme/radius";
-
-// interface Props {
-//   focused: boolean;
-//   label: string;
-//   activeIcon: keyof typeof Ionicons.glyphMap;
-//   inactiveIcon: keyof typeof Ionicons.glyphMap;
-//   onPress(): void;
-// }
-
-// const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
-// const BUTTON_HEIGHT = 48;
-// const ICON_SIZE = 20;
-
-// export default function BottomTabItem({
-//   focused,
-//   label,
-//   activeIcon,
-//   inactiveIcon,
-//   onPress,
-// }: Props) {
-//   const colors = useColors();
-
-//   return (
-//     <AnimatedPressable
-//       onPress={onPress}
-//       layout={LinearTransition.springify().damping(18).stiffness(220)}
-//       style={[
-//         styles.container,
-//         focused && styles.activeContainer,
-//         {
-//           backgroundColor: focused ? colors.black : "transparent",
-//         },
-//       ]}
-//     >
-//       <Ionicons
-//         name={focused ? activeIcon : inactiveIcon}
-//         size={ICON_SIZE}
-//         color={focused ? colors.white : colors.text.secondary}
-//       />
-
-//       {focused && (
-//         <Animated.View
-//           layout={LinearTransition.springify()}
-//           style={{
-//             overflow: "hidden",
-//             marginLeft: focused ? spacing.sm : 0,
-//             width: focused ? "auto" : 0,
-//             opacity: focused ? 1 : 0,
-//           }}
-//         >
-//           <ThemedText variant="tab" color="white">
-//             {label}
-//           </ThemedText>
-//         </Animated.View>
-//       )}
-//     </AnimatedPressable>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     height: BUTTON_HEIGHT,
-
-//     flexDirection: "row",
-//     alignItems: "center",
-//     justifyContent: "center",
-
-//     borderRadius: radius.phone,
-
-//     paddingHorizontal: spacing.lg,
-//   },
-
-//   activeContainer: {
-//     justifyContent: "flex-start",
-//   },
-
-//   label: {
-//     marginLeft: spacing.sm,
-//   },
-// });
-
 import React, { useEffect } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -108,9 +13,9 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/themed-ui/ThemedText";
-import { useColors } from "@/hooks/useColors";
-import { spacing } from "@/theme/spacing";
+import { sizes } from "@/theme/size";
 import { radius } from "@/theme/radius";
+import { useTheme } from "@/hooks/useTheme";
 
 interface Props {
   focused: boolean;
@@ -132,7 +37,7 @@ export default function BottomTabItem({
   inactiveIcon,
   onPress,
 }: Props) {
-  const colors = useColors();
+  const { colors } = useTheme();
 
   const progress = useSharedValue(focused ? 1 : 0);
 
@@ -152,15 +57,15 @@ export default function BottomTabItem({
     paddingHorizontal: interpolate(
       progress.value,
       [0, 1],
-      [spacing.md, spacing.lg],
+      [sizes.md, sizes.lg],
     ),
 
-    columnGap: interpolate(progress.value, [0, 1], [0, spacing.sm]),
+    columnGap: interpolate(progress.value, [0, 1], [0, sizes.sm]),
 
     backgroundColor: interpolateColor(
       progress.value,
       [0, 1],
-      ["rgba(0,0,0,0)", colors.black],
+      ["rgba(0,0,0,0)", colors.foreground.black],
     ),
   }));
 
@@ -177,7 +82,7 @@ export default function BottomTabItem({
       <Ionicons
         name={focused ? activeIcon : inactiveIcon}
         size={ICON_SIZE}
-        color={focused ? colors.white : colors.text.secondary}
+        color={focused ? colors.foreground.white : colors.foreground.secondary}
       />
 
       {focused && (
@@ -186,7 +91,7 @@ export default function BottomTabItem({
           exiting={FadeOutLeft.duration(120)}
           layout={LinearTransition.springify()}
         >
-          <ThemedText variant="tab" color="white">
+          <ThemedText variant="tab" color="foreground.white">
             {label}
           </ThemedText>
         </Animated.View>

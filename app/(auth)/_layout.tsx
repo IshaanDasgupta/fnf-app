@@ -1,10 +1,10 @@
+import { useAuth } from "@/hooks/useAuth";
+import { navigation } from "@/lib/navigation";
 import { Redirect, Stack } from "expo-router";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { navigation } from "@/lib/navigation";
-import { useAuthStore } from "@/stores/auth";
 
 export default function AuthLayout() {
-  const { isAuthenticated, onboardingCompleted, isHydrated } = useAuthStore();
+  const { isAuthenticated, basicOnboardingCompleted, isHydrated } = useAuth();
 
   if (!isHydrated) {
     return (
@@ -18,7 +18,7 @@ export default function AuthLayout() {
     return (
       <Redirect
         href={
-          onboardingCompleted
+          basicOnboardingCompleted
             ? navigation.tabs.home
             : navigation.onboarding.step1
         }

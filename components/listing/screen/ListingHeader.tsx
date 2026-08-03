@@ -10,27 +10,31 @@ export default function ListingHeader() {
   return (
     <ThemedView gap="lg">
       <ThemedView
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="flex-start"
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
       >
         <ThemedChip
-          variant="primary"
+          variant="tertiary"
           label="Verified home"
+          labelVariant="body"
           leftIcon={<Ionicons name="shield-checkmark" size={14} />}
         />
 
         {/* Can later be replaced with a MatchBadge */}
       </ThemedView>
 
-      <ThemedText variant="display">
-        Sunlit Loft near{"\n"}Indiranagar
+      <ThemedText variant="display" style={{ textOverflow: "warp" }}>
+        Sunlit Loft near Indiranagar
       </ThemedText>
 
       <ThemedIconText
         icon={<Ionicons name="location-outline" size={16} />}
-        text="Indiranagar, Bengaluru · 8 min walk to metro"
-        color="text.secondary"
+        iconColor="foreground.secondary"
+        label="Indiranagar, Bengaluru"
+        labelColor="foreground.secondary"
         variant="body"
       />
     </ThemedView>

@@ -8,9 +8,9 @@ import AmenityCard from "@/components/listing/screen/amenities/AmenityCard";
 export default function AmenitiesSection() {
   return (
     <ThemedView gap="lg">
-      <ThemedText variant="title">Amenities</ThemedText>
+      <ThemedText variant="h2">Amenities</ThemedText>
 
-      <ThemedView flexDirection="row" style={{ flexWrap: "wrap" }} gap="md">
+      <ThemedView style={{ flexDirection: "row", flexWrap: "wrap" }} gap="md">
         <AmenityCard
           icon={<Ionicons name="wifi-outline" size={18} />}
           label="Fast Wi-Fi"

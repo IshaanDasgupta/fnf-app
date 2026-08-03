@@ -6,11 +6,16 @@ import { ThemedView } from "@/components/themed-ui/ThemedView";
 import Spacer from "@/components/themed-ui/Spacer";
 import NearbyChip from "@/components/listing/screen/neighborhood/NeighborhoodChip";
 import MapView, { Marker } from "react-native-maps";
+import { MapMarker } from "@/components/listing/screen/map/MapMarker";
+import { darkMapStyle } from "@/theme/map";
+import { useColorScheme } from "react-native";
 
 export default function NeighborhoodSection() {
+  const colorScheme = useColorScheme();
+
   return (
     <ThemedView>
-      <ThemedText variant="h3">The neighborhood</ThemedText>
+      <ThemedText variant="h2">The neighborhood</ThemedText>
 
       <Spacer size="lg" />
 
@@ -23,6 +28,7 @@ export default function NeighborhoodSection() {
         }}
       >
         <MapView
+          customMapStyle={colorScheme === "dark" ? darkMapStyle : []}
           style={{ flex: 1 }}
           initialRegion={{
             latitude: 12.9716,
@@ -45,13 +51,15 @@ export default function NeighborhoodSection() {
               latitude: 12.9716,
               longitude: 77.5946,
             }}
-          />
+          >
+            <MapMarker />
+          </Marker>
         </MapView>
       </ThemedView>
 
       <Spacer size="lg" />
 
-      <ThemedView flexDirection="row" gap="md">
+      <ThemedView gap="md" style={{ flexDirection: "row" }}>
         <NearbyChip title="Metro" value="8 min" />
 
         <NearbyChip title="Cafés" value="24 nearby" />

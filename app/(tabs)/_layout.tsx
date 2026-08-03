@@ -1,11 +1,11 @@
+import FloatingBottomBar from "@/components/navigation/FloatingBottomBar";
+import { useAuth } from "@/hooks/useAuth";
+import { navigation } from "@/lib/navigation";
 import { Redirect, Tabs } from "expo-router";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { navigation } from "@/lib/navigation";
-import { useAuthStore } from "@/stores/auth";
-import FloatingBottomBar from "@/components/navigation/FloatingBottomBar";
 
 export default function TabsLayout() {
-  const { isAuthenticated, onboardingCompleted, isHydrated } = useAuthStore();
+  const { isAuthenticated, basicOnboardingCompleted, isHydrated } = useAuth();
 
   if (!isHydrated) {
     return (
@@ -19,7 +19,7 @@ export default function TabsLayout() {
     return <Redirect href={navigation.login} />;
   }
 
-  if (!onboardingCompleted) {
+  if (!basicOnboardingCompleted) {
     return <Redirect href={navigation.onboarding.step1} />;
   }
 

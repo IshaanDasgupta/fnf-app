@@ -1,28 +1,19 @@
 import React from "react";
-import { GestureResponderEvent, ViewProps, ViewStyle } from "react-native";
-
-import { spacing } from "@/theme/spacing";
-
-import { ForegroundColorToken } from "@/types/theme-color";
+import { ViewProps } from "react-native";
 
 import { ThemedTextVariant } from "@/types/ui/themed-text";
+import { sizes } from "@/theme/size";
+import { ThemedColorToken } from "@/types/theme-color";
 
 export interface ThemedIconTextProps extends ViewProps {
   icon: React.ReactNode;
+  label: string;
 
-  text: string;
+  iconColor?: ThemedColorToken;
+  iconSize?: number;
 
-  color?: ForegroundColorToken;
-
+  labelColor?: ThemedColorToken;
   variant?: ThemedTextVariant;
 
-  gap?: keyof typeof spacing | number;
-
-  iconPosition?: "left" | "right";
-
-  alignItems?: ViewStyle["alignItems"];
-
-  justifyContent?: ViewStyle["justifyContent"];
-
-  onPress?: (event: GestureResponderEvent) => void;
+  gap?: keyof typeof sizes;
 }

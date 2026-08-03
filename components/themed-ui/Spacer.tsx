@@ -2,14 +2,14 @@ import React from "react";
 import { View } from "react-native";
 
 import { SpacerProps } from "@/types/ui/spacer";
-import { spacing } from "@/theme/spacing";
+import { sizes } from "@/theme/size";
 
-function resolveSpacing(value: keyof typeof spacing | number = "md"): number {
+function resolveSpacing(value: keyof typeof sizes | number = "md"): number {
   if (typeof value === "number") {
     return value;
   }
 
-  return spacing[value];
+  return sizes[value];
 }
 
 export function Spacer({ size = "md", horizontal = false }: SpacerProps) {

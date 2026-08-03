@@ -5,7 +5,7 @@ import { ThemedScrollView } from "@/components/themed-ui/ThemedScrollView";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
 import Spacer from "@/components/themed-ui/Spacer";
 
-import { spacing } from "@/theme/spacing";
+import { sizes } from "@/theme/size";
 
 import ListingHero from "@/components/listing/screen/hero/ListingHero";
 import ListingHeader from "@/components/listing/screen/ListingHeader";
@@ -15,11 +15,12 @@ import AmenitiesSection from "@/components/listing/screen/amenities/AmenitySecti
 import HouseRulesSection from "@/components/listing/screen/house-rules/HouseRulesSection";
 import ListingBottomBar from "@/components/listing/screen/ListingBottomBar";
 import NeighborhoodSection from "@/components/listing/screen/neighborhood/NeighborhoodSection";
+import { radius } from "@/theme/radius";
 
 export default function ListingScreen() {
   return (
     <ThemedSafeArea variant="primary" edges={["top"]}>
-      <ThemedView flex={1}>
+      <ThemedView style={{ flex: 1 }}>
         <ThemedScrollView
           variant="primary"
           showsVerticalScrollIndicator={false}
@@ -40,9 +41,9 @@ export default function ListingScreen() {
             variant="primary"
             padding="xl"
             style={{
-              marginTop: -spacing["5xl"],
-              borderTopLeftRadius: "screen",
-              borderTopRightRadius: "screen",
+              marginTop: -sizes["5xl"],
+              borderTopLeftRadius: radius.screen,
+              borderTopRightRadius: radius.screen,
             }}
           >
             <ListingHeader />

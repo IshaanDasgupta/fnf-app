@@ -2,14 +2,9 @@ import React, { useState } from "react";
 import { Image, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import MatchBadge from "../MatchBadge";
-
 import { ThemedView } from "@/components/themed-ui/ThemedView";
-import { useColors } from "@/hooks/useColors";
 import { radius } from "@/theme/radius";
 import { ListingImageProps } from "@/types/listing/card/image";
-import ThemedIconButton from "@/components/themed-ui/ThemedIconButton";
-import { spacing } from "@/theme/spacing";
 
 import Animated, {
   useAnimatedStyle,
@@ -18,6 +13,8 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { useTheme } from "@/hooks/useTheme";
+import { ThemedIconButton } from "@/components/themed-ui/ThemedIconButton";
 
 export function ListingImage({
   source,
@@ -25,7 +22,7 @@ export function ListingImage({
   favorite,
   verified,
 }: ListingImageProps) {
-  const colors = useColors();
+  const { colors } = useTheme();
 
   const [favState, setFavState] = useState(favorite);
 
@@ -55,19 +52,22 @@ export function ListingImage({
 
       {verified && (
         <ThemedView
-          variant="primary"
+          variant="tertiary"
           borderRadius="button"
           padding="sm"
           style={styles.verified}
         >
-          <Ionicons name="shield-checkmark" size={14} color={colors.primary} />
+          <Ionicons
+            name="shield-checkmark"
+            size={14}
+            color={colors.accent.primary}
+          />
         </ThemedView>
       )}
 
       <ThemedIconButton
         variant="fav"
-        size="xl"
-        selected={favState}
+        size="lg"
         onPress={onPress}
         style={styles.favorite}
         icon={
@@ -107,9 +107,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 16,
     right: 16,
-
-    width: 46,
-    height: 46,
 
     borderRadius: 999,
 

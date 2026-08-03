@@ -1,34 +1,41 @@
-import {
-  BackgroundColorToken,
-  BorderColorToken,
-  ForegroundColorToken,
-} from "@/types/theme-color";
-import { PressableProps } from "react-native";
+import { sizes } from "@/theme/size";
+import { ThemedTextVariant } from "@/types/ui/themed-text";
+import { PressableProps, StyleProp, ViewStyle } from "react-native";
 
-export type ThemedButtonVariant = "primary" | "secondary" | "outline" | "ghost";
+export type ThemedButtonVariant =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "outline"
+  | "ghost"
+  | "accent-primary"
+  | "accent-secondary";
 
-export interface ButtonVariantConfig {
-  background?: BackgroundColorToken | "primary" | "white";
-  pressedBackground?: BackgroundColorToken | "primaryPressed";
+import { ThemedColorToken } from "@/types/theme-color";
+import { shadows } from "@/theme/shadows";
+import { radius } from "@/theme/radius";
 
-  border?: BorderColorToken;
-  borderWidth?: number;
-
-  text: ForegroundColorToken;
-
-  shadow?: boolean;
-  compact?: boolean;
+export interface ThemedButtonVariantConfig {
+  background: ThemedColorToken;
+  borderColor?: ThemedColorToken;
+  foregroundColor: ThemedColorToken;
+  shadow?: keyof typeof shadows;
 }
 
-export interface ThemedButtonProps extends Omit<PressableProps, "children"> {
+export interface ThemedButtonProps extends Omit<PressableProps, "style"> {
   variant?: ThemedButtonVariant;
-
-  loading?: boolean;
-  disabled?: boolean;
-  fullWidth?: boolean;
+  label?: string;
+  labelVariant?: ThemedTextVariant;
 
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
 
-  children: React.ReactNode;
+  loading?: boolean;
+  loadingPlaceholder?: React.ReactNode;
+
+  gap?: keyof typeof sizes;
+
+  radius?: keyof typeof radius;
+
+  style?: StyleProp<ViewStyle>;
 }

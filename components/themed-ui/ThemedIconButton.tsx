@@ -1,144 +1,72 @@
 import React from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  PressableStateCallbackType,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
 
-import { useColors } from "@/hooks/useColors";
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
 import { radius } from "@/theme/radius";
-import { iconButtonVariants } from "@/theme/icon-button-variant";
-import { resolveThemeColor } from "@/utils/resolve-theme-color";
+import { shadows } from "@/theme/shadows";
 import {
   iconButtonSizes,
-  ThemedIconButtonProps,
-} from "@/types/ui/themed-icon-button";
-import { shadows } from "@/theme/shadows";
-
-function cloneIcon(icon: React.ReactNode, color: string, size: number) {
-  if (!React.isValidElement(icon)) {
-    return icon;
-  }
-
-  return React.cloneElement(
-    icon as React.ReactElement<{
-      color?: string;
-      size?: number;
-    }>,
-    {
-      color,
-      size,
-    },
-  );
-}
+  iconButtonVariants,
+} from "@/theme/variants/icon-button";
+import { ThemedIconButtonProps } from "@/types/ui/themed-icon-button";
+import { renderIcon } from "@/utils/iconUtils";
 
 export function ThemedIconButton({
   variant = "primary",
   size = "md",
+
   icon,
+
   loading = false,
-  disabled = false,
-  selected = false,
-  fullWidth = false,
+  loadingPlaceholder,
+
+  radius: borderRadius = "button",
+
   style,
-  accessibilityHint,
-  accessibilityLabel,
-  ...rest
+  disabled,
+
+  ...props
 }: ThemedIconButtonProps) {
-  const colors = useColors();
+  const variantConfig = iconButtonVariants[variant];
+  const sizeConfig = iconButtonSizes[size];
 
-  const config = iconButtonVariants[variant];
-  const sizes = iconButtonSizes[size];
-
-  const iconColor = disabled
-    ? resolveThemeColor(colors, "text.tertiary")
-    : resolveThemeColor(
-        colors,
-        selected ? (config.selectedIcon ?? config.icon) : config.icon,
-      );
-
-  const resolvedStyle = (state: PressableStateCallbackType) => {
-    const backgroundColor = disabled
-      ? resolveThemeColor(colors, "background.tertiary")
-      : resolveThemeColor(
-          colors,
-          state.pressed
-            ? (config.pressedBackground ?? config.background)
-            : selected
-              ? (config.selectedBackground ?? config.background)
-              : config.background,
-        );
-
-    return [
-      styles.base,
-
-      {
-        width: sizes.button,
-        height: sizes.button,
-
-        backgroundColor,
-
-        borderColor: resolveThemeColor(
-          colors,
-          selected ? (config.selectedBorder ?? config.border) : config.border,
-        ),
-
-        borderWidth: config.borderWidth ?? 1,
-
-        opacity: disabled ? 0.7 : 1,
-
-        ...(config.shadow ? shadows[config.shadow] : {}),
-      },
-
-      fullWidth && styles.fullWidth,
-
-      typeof style === "function" ? style(state) : style,
-    ];
-  };
+  const backgroundColor = useResolveThemeColor(variantConfig.background);
+  const borderColor = variantConfig.borderColor
+    ? useResolveThemeColor(variantConfig.borderColor)
+    : undefined;
+  const foregroundColor = useResolveThemeColor(variantConfig.foregroundColor);
 
   return (
     <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel}
-      accessibilityHint={accessibilityHint}
-      accessibilityState={{
-        disabled,
-        busy: loading,
-        selected,
-      }}
+      {...props}
       disabled={disabled || loading}
-      style={resolvedStyle}
-      {...rest}
+      style={[
+        styles.base,
+        {
+          width: sizeConfig.button,
+          height: sizeConfig.button,
+
+          backgroundColor,
+          borderColor,
+          borderWidth: borderColor ? 1 : undefined,
+
+          borderRadius: radius[borderRadius],
+
+          ...(variantConfig.shadow ? shadows[variantConfig.shadow] : {}),
+        },
+        style,
+      ]}
     >
-      {loading ? (
-        <ActivityIndicator color={iconColor} size="small" />
-      ) : (
-        <View style={styles.iconWrapper}>
-          {cloneIcon(icon, iconColor, sizes.icon)}
-        </View>
-      )}
+      {loading
+        ? (loadingPlaceholder ?? <ActivityIndicator color={foregroundColor} />)
+        : renderIcon(icon, foregroundColor, sizeConfig.icon)}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: radius.button,
-    justifyContent: "center",
     alignItems: "center",
-    borderColor: "transparent",
-  },
-
-  fullWidth: {
-    width: "100%",
-  },
-
-  iconWrapper: {
     justifyContent: "center",
-    alignItems: "center",
   },
 });
-
-export default ThemedIconButton;

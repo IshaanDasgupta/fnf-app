@@ -1,77 +1,62 @@
-import React from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView } from "react-native";
 
-import { useColors } from "@/hooks/useColors";
-import { spacing } from "@/theme/spacing";
-import { BackgroundColorToken } from "@/types/theme-color";
-import {
-  ThemedScrollViewProps,
-  ThemedScrollViewVariant,
-} from "@/types/ui/themed-scroll-view";
-import { resolveThemeColor } from "@/utils/resolve-theme-color";
-import { resolveToken } from "@/utils/resolve-token";
-
-const variantBackgroundMap: Record<
-  Exclude<ThemedScrollViewVariant, "transparent">,
-  BackgroundColorToken
-> = {
-  primary: "background.primary",
-  secondary: "background.secondary",
-  tertiary: "background.tertiary",
-  elevated: "background.elevated",
-};
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
+import { radius } from "@/theme/radius";
+import { sizes } from "@/theme/size";
+import { viewVariants } from "@/theme/variants/view";
+import { ThemedScrollViewProps } from "@/types/ui/themed-scroll-view";
 
 export function ThemedScrollView({
-  variant = "primary",
-  backgroundColor,
+  variant = "transparent",
+
+  borderRadius,
+
   padding,
+  paddingHorizontal,
+  paddingVertical,
+  paddingTop,
+  paddingBottom,
+  paddingLeft,
+  paddingRight,
+
   style,
   contentContainerStyle,
-  keyboardShouldPersistTaps = "handled",
-  showsVerticalScrollIndicator = true,
-  showsHorizontalScrollIndicator = false,
-  children,
-  ...rest
+
+  ...props
 }: ThemedScrollViewProps) {
-  const colors = useColors();
+  const config = viewVariants[variant];
 
-  const resolvedBackgroundColor = backgroundColor
-    ? resolveThemeColor(colors, backgroundColor)
-    : variant === "transparent"
-      ? "transparent"
-      : resolveThemeColor(colors, variantBackgroundMap[variant]);
-
-  const resolvedPadding = resolveToken(padding, spacing);
+  const resolvedBackground = useResolveThemeColor(config.background);
+  const resolvedBorder = useResolveThemeColor(config.borderColor);
 
   return (
     <ScrollView
-      keyboardShouldPersistTaps={keyboardShouldPersistTaps}
-      showsVerticalScrollIndicator={showsVerticalScrollIndicator}
-      showsHorizontalScrollIndicator={showsHorizontalScrollIndicator}
+      {...props}
       style={[
-        styles.base,
         {
-          backgroundColor: resolvedBackgroundColor,
+          backgroundColor: resolvedBackground,
+
+          borderColor: resolvedBorder,
+          borderWidth: resolvedBorder ? 1 : undefined,
+
+          borderRadius: borderRadius ? radius[borderRadius] : undefined,
         },
         style,
       ]}
       contentContainerStyle={[
-        resolvedPadding !== undefined && {
-          padding: resolvedPadding,
+        {
+          padding: padding ? sizes[padding] : undefined,
+          paddingHorizontal: paddingHorizontal
+            ? sizes[paddingHorizontal]
+            : undefined,
+          paddingVertical: paddingVertical ? sizes[paddingVertical] : undefined,
+          paddingTop: paddingTop ? sizes[paddingTop] : undefined,
+          paddingBottom: paddingBottom ? sizes[paddingBottom] : undefined,
+          paddingLeft: paddingLeft ? sizes[paddingLeft] : undefined,
+          paddingRight: paddingRight ? sizes[paddingRight] : undefined,
         },
         contentContainerStyle,
       ]}
-      {...rest}
-    >
-      {children}
-    </ScrollView>
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    flex: 1,
-  },
-});
-
-export default ThemedScrollView;
