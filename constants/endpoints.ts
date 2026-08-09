@@ -1,5 +1,7 @@
-export const API_BASE_URL = "http://192.168.1.12:5000";
+// import "dotenv/config";
 
+// export const API_BASE_URL = process.env.API_BASE_URL;
+export const API_BASE_URL = "http://192.168.1.7:5000";
 export const ENDPOINTS = {
   AUTH: {
     SEND_OTP: "/auth/send-otp",
@@ -14,7 +16,8 @@ export const ENDPOINTS = {
 
   LISTING: {
     ALL: "/listing",
+    MAP: "/listing/map",
     DETAILS: (id: string) => `/listing/${id}`,
-    SAVE: (id: string) => `/listing/${id}/save`,
+    FAVOURITE: `/listing/fav`,
   },
 } as const;

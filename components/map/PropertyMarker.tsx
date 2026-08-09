@@ -1,12 +1,12 @@
 import { Marker } from "react-native-maps";
 
-import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
+import { ThemedText } from "@/components/themed-ui/ThemedText";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { radius } from "@/theme/radius";
-import { ThemedText } from "@/components/themed-ui/ThemedText";
 import { ListingMarkerProps } from "@/types/map/listing-marker";
+import { memo, useEffect, useState } from "react";
 
-export function PropertyMarker({
+export const PropertyMarker = memo(function PropertyMarker({
   id,
   latitude,
   longitude,
@@ -14,13 +14,23 @@ export function PropertyMarker({
   selected = false,
   onPress,
 }: ListingMarkerProps) {
+  const [tracksViewChanges, setTracksViewChanges] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTracksViewChanges(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Marker
       coordinate={{
         latitude,
         longitude,
       }}
-      tracksViewChanges={true}
+      tracksViewChanges={tracksViewChanges}
       onPress={() => onPress(id)}
     >
       <ThemedView style={{ alignItems: "center" }}>
@@ -40,4 +50,4 @@ export function PropertyMarker({
       </ThemedView>
     </Marker>
   );
-}
+});

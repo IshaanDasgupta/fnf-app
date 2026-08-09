@@ -4,6 +4,7 @@ import { radius } from "@/theme/radius";
 
 import { ThemedText } from "@/components/themed-ui/ThemedText";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
+import { memo, useEffect, useState } from "react";
 
 interface ClusterMarkerProps {
   latitude: number;
@@ -12,12 +13,22 @@ interface ClusterMarkerProps {
   onPress?(): void;
 }
 
-export function ClusterMarker({
+export const ClusterMarker = memo(function ClusterMarker({
   latitude,
   longitude,
   count,
   onPress,
 }: ClusterMarkerProps) {
+  const [tracksViewChanges, setTracksViewChanges] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTracksViewChanges(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Marker
       coordinate={{
@@ -25,6 +36,7 @@ export function ClusterMarker({
         longitude,
       }}
       onPress={onPress}
+      tracksViewChanges={tracksViewChanges}
     >
       <ThemedView
         variant="inverse"
@@ -43,4 +55,4 @@ export function ClusterMarker({
       </ThemedView>
     </Marker>
   );
-}
+});

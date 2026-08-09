@@ -8,6 +8,8 @@ export interface AuthUser {
   email?: string;
   phone?: string;
   avatar?: string;
+
+  basicOnboardingCompleted: boolean;
 }
 
 interface AuthState {
@@ -15,22 +17,21 @@ interface AuthState {
 
   accessToken: string | null;
   refreshToken: string | null;
-  expiresAt: number | null;
+  refreshExpiresAt: number | null;
 
   basicOnboardingCompleted: boolean;
   isHydrated: boolean;
 
   login: (
     user: AuthUser,
-    basicOnboardingCompleted: boolean,
     accessToken: string,
     refreshToken: string,
-    expiresAt: number,
+    refreshExpiresAt: number,
   ) => void;
   updateTokens: (
     accessToken: string,
     refreshToken: string,
-    expiresAt: number,
+    refreshExpiresAt: number,
   ) => void;
   logout: () => void;
 
@@ -46,40 +47,33 @@ export const useAuthStore = create<AuthState>()(
 
       accessToken: null,
       refreshToken: null,
-      expiresAt: null,
+      refreshExpiresAt: null,
 
       basicOnboardingCompleted: false,
       isHydrated: false,
 
-      login: (
-        user,
-        basicOnboardingCompleted,
-        accessToken,
-        refreshToken,
-        expiresAt,
-      ) =>
+      login: (user, accessToken, refreshToken, refreshExpiresAt) =>
         set({
           user,
-          basicOnboardingCompleted,
+          basicOnboardingCompleted: user.basicOnboardingCompleted,
           accessToken,
           refreshToken,
-          expiresAt,
+          refreshExpiresAt,
         }),
-      updateTokens: (accessToken, refreshToken, expiresAt) =>
+      updateTokens: (accessToken, refreshToken, refreshExpiresAt) =>
         set({
           accessToken,
           refreshToken,
-          expiresAt,
+          refreshExpiresAt,
         }),
       logout: () =>
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
-          expiresAt: null,
+          refreshExpiresAt: null,
           basicOnboardingCompleted: false,
         }),
-
       completeOnboarding: () =>
         set({
           basicOnboardingCompleted: true,
@@ -99,7 +93,7 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
-        expiresAt: state.expiresAt,
+        refreshExpiresAt: state.refreshExpiresAt,
         basicOnboardingCompleted: state.basicOnboardingCompleted,
       }),
 

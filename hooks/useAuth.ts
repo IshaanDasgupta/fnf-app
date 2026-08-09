@@ -5,7 +5,7 @@ import { useAuthStore } from "@/stores/auth";
 export function useAuth() {
   const {
     accessToken,
-    expiresAt,
+    refreshExpiresAt,
     logout,
     basicOnboardingCompleted,
     isHydrated,
@@ -13,13 +13,13 @@ export function useAuth() {
   } = useAuthStore();
 
   const isAuthenticated =
-    !!accessToken && !!expiresAt && Date.now() < expiresAt;
+    !!accessToken && !!refreshExpiresAt && Date.now() < refreshExpiresAt;
 
   useEffect(() => {
-    if (accessToken && expiresAt && Date.now() >= expiresAt) {
+    if (refreshExpiresAt && Date.now() >= refreshExpiresAt) {
       logout();
     }
-  }, [accessToken, expiresAt, logout]);
+  }, [accessToken, refreshExpiresAt, logout]);
 
   return {
     user,

@@ -1,19 +1,19 @@
-import React from "react";
-import { Image, Linking, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import React from "react";
+import { Image, Linking, StyleSheet } from "react-native";
 
 import { navigation } from "@/lib/navigation";
 
+import { ThemedButton } from "@/components/themed-ui/ThemedButton";
 import { ThemedSafeArea } from "@/components/themed-ui/ThemedSafeArea";
 import { ThemedScrollView } from "@/components/themed-ui/ThemedScrollView";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { ThemedText } from "@/components/themed-ui/ThemedText";
-import { ThemedButton } from "@/components/themed-ui/ThemedButton";
+import { ThemedView } from "@/components/themed-ui/ThemedView";
 
+import Spacer from "@/components/themed-ui/Spacer";
 import { useTheme } from "@/hooks/useTheme";
 import { sizes } from "@/theme/size";
-import Spacer from "@/components/themed-ui/Spacer";
 
 const WELCOME_ILLUSTRATION = require("@/assets/images/welcome-illustration.png");
 

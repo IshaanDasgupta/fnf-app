@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, Pressable, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 
 import { ThemedChip } from "@/components/themed-ui/ThemedChip";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
@@ -8,11 +8,11 @@ import { ChipSelectionListProps } from "@/types/home/chip-selection-list";
 
 export function ChipSelectionList({
   items,
-  selectedId,
+  selectedChipsIds,
   onSelect,
 }: ChipSelectionListProps) {
   return (
-    <ThemedView variant="transparent">
+    <ThemedView>
       <FlatList
         horizontal={true}
         data={items}
@@ -21,19 +21,22 @@ export function ChipSelectionList({
         contentContainerStyle={styles.content}
         ItemSeparatorComponent={() => <ThemedView style={styles.separator} />}
         renderItem={({ item }) => (
-          <Pressable onPress={() => onSelect?.(item.id)}>
-            <ThemedChip
-              variant="tertiary"
-              selectedVariant="accent-primary"
-              label={item.label}
-              leftIcon={item.icon}
-              labelVariant="subTitle"
-              style={{
-                paddingVertical: sizes.md,
-                paddingHorizontal: sizes.xl,
-              }}
-            />
-          </Pressable>
+          <ThemedChip
+            variant="tertiary"
+            selectedVariant="accent-primary"
+            label={item.label}
+            leftIcon={item.icon}
+            labelVariant="subTitle"
+            style={{
+              paddingVertical: sizes.md,
+              paddingHorizontal: sizes.xl,
+            }}
+            selected={
+              selectedChipsIds.includes(item.id) ||
+              (item.id === "all" && selectedChipsIds.length === 0)
+            }
+            onPress={() => onSelect(item.id)}
+          />
         )}
       />
     </ThemedView>

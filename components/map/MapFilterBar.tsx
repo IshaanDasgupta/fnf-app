@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, Pressable, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 
 import { ThemedChip } from "@/components/themed-ui/ThemedChip";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
@@ -13,10 +13,15 @@ export type MapFilterItem = {
 
 type MapFilterBarProps = {
   items: MapFilterItem[];
-  onSelect?(id: string): void;
+  selectedChipsIds: string[];
+  onSelect(id: string): void;
 };
 
-export function MapFilterBar({ items, onSelect }: MapFilterBarProps) {
+export function MapFilterBar({
+  items,
+  selectedChipsIds,
+  onSelect,
+}: MapFilterBarProps) {
   return (
     <ThemedView>
       <FlatList
@@ -26,16 +31,19 @@ export function MapFilterBar({ items, onSelect }: MapFilterBarProps) {
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <ThemedView style={styles.separator} />}
         renderItem={({ item }) => (
-          <Pressable onPress={() => onSelect?.(item.id)}>
-            <ThemedChip
-              variant="tertiary"
-              selectedVariant="accent-primary"
-              label={item.label}
-              leftIcon={item.icon}
-              labelVariant="subTitle"
-              style={styles.chip}
-            />
-          </Pressable>
+          <ThemedChip
+            variant="tertiary"
+            selectedVariant="accent-primary"
+            label={item.label}
+            leftIcon={item.icon}
+            labelVariant="subTitle"
+            style={styles.chip}
+            selected={
+              selectedChipsIds.includes(item.id) ||
+              (item.id === "all" && selectedChipsIds.length === 0)
+            }
+            onPress={() => onSelect(item.id)}
+          />
         )}
       />
     </ThemedView>

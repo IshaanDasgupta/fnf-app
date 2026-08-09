@@ -7,7 +7,7 @@ export interface ChipItem {
 export interface ChipSelectionListProps {
   items: ChipItem[];
 
-  selectedId?: string;
+  selectedChipsIds: string[];
 
   onSelect(id: string): void;
 }

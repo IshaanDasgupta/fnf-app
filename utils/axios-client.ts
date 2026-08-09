@@ -11,7 +11,7 @@ interface AuthResponse {
   user: any;
   accessToken: string;
   refreshToken: string;
-  expiresAt: number;
+  refreshExpiresAt: number;
 }
 
 interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -39,7 +39,11 @@ async function refreshTokens(): Promise<AuthResponse> {
     },
   );
 
-  store.updateTokens(data.accessToken, data.refreshToken, data.expiresAt);
+  store.updateTokens(
+    data.accessToken,
+    data.refreshToken,
+    data.refreshExpiresAt,
+  );
 
   return data;
 }

@@ -1,50 +1,29 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView from "react-native-maps";
 
-import { PropertyMarker } from "@/components/map/PropertyMarker";
+import { ClusterMarker } from "@/components/map/ClusteMarker";
 import { MapFilterBar } from "@/components/map/MapFilterBar";
 import { MapTopBar } from "@/components/map/MapTopBar";
-
-import { ThemedView } from "@/components/themed-ui/ThemedView";
+import { PropertyMarker } from "@/components/map/PropertyMarker";
 import { ListingPreviewCard } from "@/components/map/PropertyPreviewCard";
-import Spacer from "@/components/themed-ui/Spacer";
-import { sizes } from "@/theme/size";
-import ThemedSafeArea from "@/components/themed-ui/ThemedSafeArea";
-import { darkMapStyle } from "@/theme/map";
-import { useSupercluster } from "@/hooks/useSupercluster";
-import { ClusterMarker } from "@/components/map/ClusteMarker";
-import { LISTINGS } from "@/constants/listings";
 
-const FILTERS = [
-  {
-    id: "price",
-    label: "Price",
-  },
-  {
-    id: "bedrooms",
-    label: "Bedrooms",
-  },
-  {
-    id: "moveIn",
-    label: "Move-in",
-  },
-  {
-    id: "lifestyle",
-    label: "Lifestyle",
-  },
-  {
-    id: "test",
-    label: "Test",
-  },
-  {
-    id: "test2",
-    label: "Ttest2",
-  },
-];
+import Spacer from "@/components/themed-ui/Spacer";
+import ThemedSafeArea from "@/components/themed-ui/ThemedSafeArea";
+import { ThemedView } from "@/components/themed-ui/ThemedView";
+
+import { QUICK_FILTERS } from "@/constants/quick-filters";
+import { useSupercluster } from "@/hooks/useSupercluster";
+import { useUserLocation } from "@/hooks/useUserLocation";
+
+import { getMapListings, MapListingsResponse } from "@/api/listing";
+import { darkMapStyle } from "@/theme/map";
+import { sizes } from "@/theme/size";
 
 export default function MapScreen() {
   const colorScheme = useColorScheme();
+
+  const location = useUserLocation();
 
   const [region, setRegion] = useState({
     latitude: 12.9716,
@@ -53,44 +32,92 @@ export default function MapScreen() {
     longitudeDelta: 0.01,
   });
 
-  const { markers, getExpansionZoom } = useSupercluster({
-    properties: LISTINGS,
-    region,
-  });
+  const [selectedFiltersIds, setSelectedFiltersIds] = useState<string[]>([]);
 
-  const [search, setSearch] = useState("Indiranagar & nearby");
-
-  const [selectedFilter, setSelectedFilter] = useState<string>();
+  const [listings, setListings] = useState<MapListingsResponse[]>([]);
 
   const [selectedListingId, setSelectedListingId] = useState<string>();
 
-  const selectedProperty = useMemo(
-    () => LISTINGS.find((listing) => listing.id === selectedListingId),
-    [selectedListingId],
-  );
+  const mapRef = useRef<MapView>(null);
+
+  const fetchMapListings = useCallback(async () => {
+    try {
+      const north = region.latitude + region.latitudeDelta / 2;
+      const south = region.latitude - region.latitudeDelta / 2;
+      const east = region.longitude + region.longitudeDelta / 2;
+      const west = region.longitude - region.longitudeDelta / 2;
+
+      const response = await getMapListings({
+        north,
+        south,
+        east,
+        west,
+        limit: 200,
+        quickFilters: selectedFiltersIds,
+      });
+
+      setListings(response.data);
+    } catch (error) {
+      console.error("Failed to fetch map listings:", error);
+    }
+  }, [
+    region.latitude,
+    region.longitude,
+    region.latitudeDelta,
+    region.longitudeDelta,
+    selectedFiltersIds,
+  ]);
 
   useEffect(() => {
-    console.log(selectedProperty);
-  }, [selectedProperty]);
+    if (!location) {
+      return;
+    }
 
-  const visibleProperties = useMemo(() => {
-    const north = region.latitude + region.latitudeDelta / 2;
-    const south = region.latitude - region.latitudeDelta / 2;
+    setRegion((current) => ({
+      ...current,
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    }));
+  }, []);
 
-    const east = region.longitude + region.longitudeDelta / 2;
-    const west = region.longitude - region.longitudeDelta / 2;
+  useEffect(() => {
+    fetchMapListings();
+  }, [fetchMapListings]);
 
-    return LISTINGS.filter((property) => {
-      return (
-        property.latitude >= south &&
-        property.latitude <= north &&
-        property.longitude >= west &&
-        property.longitude <= east
-      );
+  const mapListings = useMemo(
+    () =>
+      listings.map((listing) => ({
+        id: listing.id,
+        latitude: listing.location.latitude,
+        longitude: listing.location.longitude,
+        price: listing.rent,
+      })),
+    [listings],
+  );
+
+  const { markers, getExpansionZoom } = useSupercluster({
+    properties: mapListings,
+    region,
+  });
+
+  const selectedProperty = useMemo(
+    () => listings.find((listing) => listing.id === selectedListingId),
+    [listings, selectedListingId],
+  );
+
+  const toggleFilter = (id: string) => {
+    setSelectedFiltersIds((current) => {
+      if (id === "all") {
+        return [];
+      }
+
+      if (current.includes(id)) {
+        return current.filter((filterId) => filterId !== id);
+      }
+
+      return [...current, id];
     });
-  }, [region]);
-
-  const mapRef = useRef<MapView>(null);
+  };
 
   return (
     <ThemedView variant="primary" style={styles.container}>
@@ -98,7 +125,6 @@ export default function MapScreen() {
         ref={mapRef}
         customMapStyle={colorScheme === "dark" ? darkMapStyle : []}
         provider="google"
-        googleRenderer="LEGACY"
         style={StyleSheet.absoluteFill}
         initialRegion={region}
         toolbarEnabled={false}
@@ -107,7 +133,7 @@ export default function MapScreen() {
         showsTraffic={false}
         showsBuildings
         onPress={() => setSelectedListingId(undefined)}
-        onRegionChange={setRegion}
+        onRegionChangeComplete={setRegion}
       >
         {markers.map((marker) => {
           if (marker.type === "property") {
@@ -120,7 +146,6 @@ export default function MapScreen() {
                 price={marker.property.price}
                 selected={selectedListingId === marker.property.id}
                 onPress={() => {
-                  console.log("pressed on prop", marker.property.id);
                   setSelectedListingId(marker.property.id);
                 }}
               />
@@ -161,20 +186,23 @@ export default function MapScreen() {
       >
         <ThemedView style={styles.topBar}>
           <MapTopBar />
+
           <Spacer size="xl" />
-          <MapFilterBar items={FILTERS} onSelect={setSelectedFilter} />
+
+          <MapFilterBar
+            items={QUICK_FILTERS}
+            selectedChipsIds={selectedFiltersIds}
+            onSelect={toggleFilter}
+          />
         </ThemedView>
 
         {selectedProperty && (
           <ThemedView style={styles.preview}>
             <ListingPreviewCard
-              image={selectedProperty.image}
-              match={selectedProperty.match}
+              image={selectedProperty.coverImage}
               title={selectedProperty.title}
-              location={selectedProperty.location}
-              bedrooms={selectedProperty.bedrooms}
-              flatmates={selectedProperty.flatmates}
-              rent={selectedProperty.price}
+              location={`${selectedProperty.address.locality}, ${selectedProperty.address.city}`}
+              rent={selectedProperty.rent}
               onPress={() => {}}
               onFavourite={() => {}}
               onMessage={() => {}}

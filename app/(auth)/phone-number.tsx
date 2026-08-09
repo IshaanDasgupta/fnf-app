@@ -54,23 +54,12 @@ export default function PhoneLoginScreen() {
         otp,
       });
 
-      const {
-        user,
-        basicOnboardingCompleted,
-        accessToken,
-        refreshToken,
-        expiresAt,
-      } = response.data;
+      const { user, accessToken, refreshToken, refreshExpiresAt } =
+        response.data;
 
-      login(
-        user,
-        basicOnboardingCompleted,
-        accessToken,
-        refreshToken,
-        expiresAt,
-      );
+      login(user, accessToken, refreshToken, refreshExpiresAt);
 
-      basicOnboardingCompleted
+      user.basicOnboardingCompleted
         ? router.replace(navigation.tabs.home)
         : router.replace(navigation.onboarding.step1);
     } catch (err) {

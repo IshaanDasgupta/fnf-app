@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { Image, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { Image, StyleSheet } from "react-native";
 
 import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { radius } from "@/theme/radius";
 import { ListingImageProps } from "@/types/listing/card/image";
 
+import { postFavouriteListing } from "@/api/listing";
+import { ThemedIconButton } from "@/components/themed-ui/ThemedIconButton";
+import { useTheme } from "@/hooks/useTheme";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -13,18 +16,16 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import { useTheme } from "@/hooks/useTheme";
-import { ThemedIconButton } from "@/components/themed-ui/ThemedIconButton";
 
 export function ListingImage({
   source,
-  compatibility,
   favorite,
-  verified,
+  listingId,
 }: ListingImageProps) {
   const { colors } = useTheme();
 
   const [favState, setFavState] = useState(favorite);
+  const [loading, setLoading] = useState(false);
 
   const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons);
 
@@ -34,42 +35,35 @@ export function ListingImage({
     transform: [{ scale: scale.value }],
   }));
 
-  const onPress = () => {
-    setFavState((prev) => !prev);
+  const onPress = async () => {
+    try {
+      setLoading(true);
+      await postFavouriteListing(listingId, favState);
+      setFavState((prev) => !prev);
 
-    scale.value = withSequence(
-      withTiming(1.15),
-      withSpring(1, {
-        damping: 8,
-        stiffness: 150,
-      }),
-    );
+      scale.value = withSequence(
+        withTiming(1.15),
+        withSpring(1, {
+          damping: 8,
+          stiffness: 150,
+        }),
+      );
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <ThemedView style={styles.container}>
       <Image source={{ uri: source }} style={styles.image} />
-
-      {verified && (
-        <ThemedView
-          variant="tertiary"
-          borderRadius="button"
-          padding="sm"
-          style={styles.verified}
-        >
-          <Ionicons
-            name="shield-checkmark"
-            size={14}
-            color={colors.accent.primary}
-          />
-        </ThemedView>
-      )}
-
       <ThemedIconButton
         variant="fav"
         size="lg"
         onPress={onPress}
         style={styles.favorite}
+        loading={loading}
         icon={
           <AnimatedIonicons
             style={iconStyle}
@@ -77,10 +71,6 @@ export function ListingImage({
           />
         }
       />
-
-      {/* <ThemedView variant="transparent" style={styles.match}>
-        <MatchBadge percentage={compatibility} />
-      </ThemedView> */}
     </ThemedView>
   );
 }

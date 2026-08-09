@@ -1,112 +1,224 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 
-import { ThemedSafeArea } from "@/components/themed-ui/ThemedSafeArea";
-import { ThemedScrollView } from "@/components/themed-ui/ThemedScrollView";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
-
+import ChipSelectionList from "@/components/home/ChipSelection";
 import HomeHeader from "@/components/home/Header";
 import SearchFilter from "@/components/home/SearchFilter";
-import ChipSelectionList from "@/components/home/ChipSelection";
-import { Listing } from "@/types/listing/card/card";
 import ListingCard from "@/components/listing/card/ListingCard";
-import { sizes } from "@/theme/size";
 import Spacer from "@/components/themed-ui/Spacer";
+import { ThemedSafeArea } from "@/components/themed-ui/ThemedSafeArea";
+import { ThemedView } from "@/components/themed-ui/ThemedView";
+import { QUICK_FILTERS } from "@/constants/quick-filters";
+import { useListings } from "@/hooks/useListings";
+import { useUserLocation } from "@/hooks/useUserLocation";
+import { sizes } from "@/theme/size";
 
 export default function HomeScreen() {
   const [search, setSearch] = useState("");
-  const [selectedChip, setSelectedChip] = useState("all");
+  const [selectedFiltersIds, setSelectedFiltersIds] = useState<string[]>([]);
 
-  const chips = [
-    { id: "all", label: "All" },
-    { id: "near", label: "Near me" },
-    { id: "20k", label: "Under ₹20k" },
-    { id: "2bhk", label: "2 BHK" },
-    { id: "pet", label: "Pet Friendly" },
-  ];
+  const location = useUserLocation();
 
-  const listings: Listing[] = [
-    {
-      id: "1",
-      image:
-        "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1200",
-      title: "Bright Kitchen Flat, HSR Layout",
-      location: "HSR Layout",
-      price: 21200,
-      compatibility: 82,
-      verified: true,
-      favorite: false,
-      bedrooms: 3,
-      flatmates: 2,
-      availableDate: "Aug 20",
-      tags: ["Vegetarian", "Quiet"],
-    },
-    {
-      id: "2",
-      image:
-        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200",
-      title: "Sunlit Loft near Indiranagar",
-      location: "Indiranagar",
-      price: 24500,
-      compatibility: 94,
-      verified: true,
-      favorite: true,
-      bedrooms: 3,
-      flatmates: 2,
-      availableDate: "Aug 12",
-      tags: ["Pet-friendly", "Non-smoking", "Early bird"],
-    },
-    {
-      id: "3",
-      image:
-        "https://images.unsplash.com/photo-1494526585095-c41746248156?w=1200",
-      title: "Minimal Studio Apartment",
-      location: "Koramangala",
-      price: 18500,
-      compatibility: 76,
-      verified: false,
-      favorite: false,
-      bedrooms: 1,
-      flatmates: 0,
-      availableDate: "Sep 01",
-      tags: ["Furnished", "WiFi"],
-    },
-  ];
+  const {
+    data,
+    isLoading,
+    isRefetching,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useListings({
+    city: "banglore",
+    latitude: location?.coords.latitude,
+    longitude: location?.coords.longitude,
+    quickFilters: selectedFiltersIds,
+  });
+
+  const listings = useMemo(() => {
+    return data?.pages.flatMap((page) => page.data) ?? [];
+  }, [data]);
+
+  const toggleChip = (id: string) => {
+    setSelectedFiltersIds((current) => {
+      if (id === "all") {
+        return [];
+      }
+
+      if (current.includes(id)) {
+        return current.filter((chip) => chip !== id);
+      }
+
+      return [...current, id];
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <ThemedSafeArea>
+        <ThemedView
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator />
+        </ThemedView>
+      </ThemedSafeArea>
+    );
+  }
 
   return (
     <ThemedSafeArea>
-      <ThemedScrollView
-        variant="primary"
-        padding="lg"
-        showsVerticalScrollIndicator={false}
+      <FlatList
+        data={listings}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={{
+          padding: sizes.lg,
           paddingBottom: sizes["6xl"],
+          gap: sizes.lg,
         }}
-      >
-        <HomeHeader name="Ananya" location="Bengaluru · Aug" />
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+        }
+        onEndReachedThreshold={0.5}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }}
+        ListHeaderComponent={
+          <>
+            <HomeHeader location="Bengaluru · Aug" />
 
-        <SearchFilter
-          value={search}
-          onChangeText={setSearch}
-          onFilterPress={() => {}}
-          placeholder='Try "Indiranagar, 3 bhk"'
-        />
+            <SearchFilter
+              value={search}
+              onChangeText={setSearch}
+              onFilterPress={() => {}}
+              placeholder='Try "Indiranagar, 3 bhk"'
+            />
 
-        <ChipSelectionList
-          items={chips}
-          selectedId={selectedChip}
-          onSelect={setSelectedChip}
-        />
+            <ChipSelectionList
+              items={QUICK_FILTERS}
+              selectedChipsIds={selectedFiltersIds}
+              onSelect={toggleChip}
+            />
 
-        <ThemedView gap="lg">
-          {listings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
-          ))}
-        </ThemedView>
-        <Spacer size="4xl" />
-      </ThemedScrollView>
+            <Spacer size="lg" />
+          </>
+        }
+        renderItem={({ item }) => <ListingCard {...item} />}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator style={{ marginVertical: 24 }} />
+          ) : (
+            <Spacer size="2xl" />
+          )
+        }
+      />
     </ThemedSafeArea>
   );
 }
+
+type Listing = {
+  _id: string;
+  external_source?: Source;
+  external_listing_url?: string;
+
+  listing: {
+    title: string;
+    images?: string[];
+    cover_image?: string;
+    carpet_area?: number;
+
+    status: "active" | "rented" | "draft" | "expired";
+
+    city: City;
+    locality: string;
+    address: string;
+
+    location: {
+      latitude: number;
+      longitude: number;
+    };
+
+    gender_preferance: "male" | "female";
+
+    bhk?: "1RK" | "1BHK" | "2BHK" | "3BHK";
+    occupency?: "single" | "double" | "triple";
+    total_occupency?: number;
+
+    furnised_status: "unfurnished" | "semi-furnished" | "fully-furnished";
+
+    attached_bathroom: boolean;
+    balcony: boolean;
+    floor: number;
+
+    wifi?: "included" | "split";
+    cook?: "included" | "split";
+    maid?: "included" | "split";
+
+    parking?: {
+      bike: boolean;
+      car: boolean;
+    };
+
+    ammenites?: [Ammenites];
+    house_rules: [HouseRule];
+
+    pets_present?: boolean;
+
+    rent: number;
+    deposit?: number;
+    brokerage?: number;
+    setup_cost?: number;
+
+    available_from?: Date;
+    available_immediately: boolean;
+
+    neighborhood?: [NeighborhoodItem];
+  };
+
+  external_lister?: {
+    name: string;
+    age?: number;
+    profile_pic?: string;
+    contanct_number?: string;
+    life_style: [string];
+  };
+  lister_id?: string;
+
+  views: number;
+  favorites: number;
+};
+
+type Source = "app" | "facebook" | "reddit";
+type City = "mumbai" | "pune" | "banglore" | "hyderabad";
+
+type Ammenites = {
+  type: AmmenityType;
+  desc: string;
+};
+
+type AmmenityType =
+  | "Kitchen"
+  | "AC"
+  | "Maid"
+  | "Washroom"
+  | "Water"
+  | "Parking"
+  | "Utility";
+
+type HouseRule = {
+  type: HouseRuleType;
+  desc: string;
+};
+
+type HouseRuleType = "Smoking" | "Food" | "Pets";
+
+type NeighborhoodItem = {
+  type: NeighborhoodItemType;
+  distance: number;
+};
+
+type NeighborhoodItemType = "Railway Station" | "Metro";
 
 interface User {
   name: string;
@@ -145,11 +257,11 @@ interface LivingPreferences {
 
   sleepSchedule: "early-bird" | "night-owl" | "flexible";
 
-  workFromHome: "never" | "sometimes" | "often";
+  workFromHome: 1 | 2 | 3 | 4 | 5;
 
-  cooking: "never" | "sometimes" | "daily";
+  cooking: 1 | 2 | 3 | 4 | 5;
 
-  partying: "never" | "sometimes" | "often";
+  partying: 1 | 2 | 3 | 4 | 5;
 }
 
 interface DealBreakers {

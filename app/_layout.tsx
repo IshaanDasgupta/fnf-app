@@ -1,9 +1,9 @@
-import { Stack, useRouter } from "expo-router";
 import * as Linking from "expo-linking";
+import { Stack, useRouter } from "expo-router";
 import { useEffect } from "react";
 
-import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Inter_400Regular, Inter_600SemiBold } from "@expo-google-fonts/inter";
@@ -12,7 +12,11 @@ import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces";
 
 import { navigation } from "@/lib/navigation";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 void SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const router = useRouter();
@@ -48,13 +52,15 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <Stack
-        initialRouteName="index"
-        screenOptions={{
-          headerShown: false,
-          animation: "slide_from_right",
-        }}
-      />
+      <QueryClientProvider client={queryClient}>
+        <Stack
+          initialRouteName="index"
+          screenOptions={{
+            headerShown: false,
+            animation: "slide_from_right",
+          }}
+        />
+      </QueryClientProvider>
     </SafeAreaProvider>
   );
 }
