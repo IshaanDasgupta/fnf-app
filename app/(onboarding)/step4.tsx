@@ -1,8 +1,7 @@
-import { useRouter } from "expo-router";
-import { useEffect } from "react";
-import { Button, Text, View } from "react-native";
 import { navigation } from "@/lib/navigation";
 import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "expo-router";
+import { Button, Text, View } from "react-native";
 
 export default function Step4Screen() {
   const router = useRouter();
@@ -21,7 +20,6 @@ export default function Step4Screen() {
       <Button
         title="Finish Onboarding"
         onPress={() => {
-          completeOnboarding();
           router.replace(navigation.tabs.home);
         }}
       />

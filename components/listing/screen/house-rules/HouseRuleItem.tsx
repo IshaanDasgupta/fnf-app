@@ -2,9 +2,9 @@ import React from "react";
 
 import { ThemedIconText } from "@/components/themed-ui/ThemedIconText";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
-import { sizes } from "@/theme/size";
 import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
-import { renderIcon } from "@/utils/iconUtils";
+import { renderIcon } from "@/lib/utils/iconUtils";
+import { sizes } from "@/theme/size";
 
 interface HouseRuleItemProps {
   icon: React.ReactNode;

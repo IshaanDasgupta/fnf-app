@@ -20,7 +20,7 @@ export default function AuthLayout() {
         href={
           basicOnboardingCompleted
             ? navigation.tabs.home
-            : navigation.onboarding.step1
+            : navigation.onboarding.basic
         }
       />
     );

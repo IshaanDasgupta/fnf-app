@@ -1,14 +1,15 @@
+import { BhkType, City, OccupancyType } from "@/constants/api-constants";
 import { ENDPOINTS } from "@/constants/endpoints";
-import axiosClient from "@/utils/axios-client";
+import axiosClient from "@/lib/axios-client";
 
 export interface ListingCardResponse {
   id: string;
   title: string;
-  coverImage?: string;
+  coverImage: string;
 
   address: {
     locality: string;
-    city: string;
+    city: City;
   };
 
   location: {
@@ -18,8 +19,8 @@ export interface ListingCardResponse {
 
   rent: number;
 
-  bhk: string;
-  occupancy?: string;
+  bhk: BhkType;
+  occupancy: OccupancyType;
 
   availableFrom?: string;
   availableImmediately: boolean;
@@ -39,7 +40,7 @@ export interface GetListingsResponse {
 }
 
 export interface GetListingsParams {
-  city: string;
+  city: City;
   latitude: number;
   longitude: number;
 
@@ -97,15 +98,15 @@ export interface MapListingsResponse {
   rent: number;
 
   title: string;
-  coverImage?: string;
+  coverImage: string;
 
   address: {
     locality: string;
-    city: string;
+    city: City;
   };
 
-  bhk: string;
-  occupancy?: string;
+  bhk: BhkType;
+  occupancy: OccupancyType;
 
   favorite: boolean;
 }
@@ -141,19 +142,21 @@ export async function getMapListings({
   return data;
 }
 
-export interface PostFavouriteListingResponse {
+export interface ToggleFavouriteListingResponse {
   success: boolean;
-  message: string;
+  data: {
+    favorite: boolean;
+  };
 }
 
-export async function postFavouriteListing(
-  listing_id: string,
+export async function putFavouriteListing(
+  listingId: string,
   value: boolean,
-): Promise<PostFavouriteListingResponse> {
-  const { data } = await axiosClient.post<PostFavouriteListingResponse>(
+): Promise<ToggleFavouriteListingResponse> {
+  const { data } = await axiosClient.put<ToggleFavouriteListingResponse>(
     ENDPOINTS.LISTING.FAVOURITE,
     {
-      listing_id,
+      listingId,
       value,
     },
   );

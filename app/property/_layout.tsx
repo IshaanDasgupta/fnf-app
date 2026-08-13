@@ -19,7 +19,7 @@ export default function PropertyLayout() {
   }
 
   if (!basicOnboardingCompleted) {
-    return <Redirect href={navigation.onboarding.step1} />;
+    return <Redirect href={navigation.onboarding.basic} />;
   }
 
   return (

@@ -2,6 +2,7 @@ import React from "react";
 import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
 
 import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
+import { renderIcon } from "@/lib/utils/iconUtils";
 import { radius } from "@/theme/radius";
 import { shadows } from "@/theme/shadows";
 import {
@@ -9,7 +10,6 @@ import {
   iconButtonVariants,
 } from "@/theme/variants/icon-button";
 import { ThemedIconButtonProps } from "@/types/ui/themed-icon-button";
-import { renderIcon } from "@/utils/iconUtils";
 
 export function ThemedIconButton({
   variant = "primary",

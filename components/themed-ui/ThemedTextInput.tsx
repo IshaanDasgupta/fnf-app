@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 
 import { ThemedText } from "@/components/themed-ui/ThemedText";
+import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
+import { renderIcon } from "@/lib/utils/iconUtils";
 import { radius } from "@/theme/radius";
 import { shadows } from "@/theme/shadows";
 import { sizes } from "@/theme/size";
-import { textInputVariants } from "@/theme/variants/text-input";
-import { renderIcon } from "@/utils/iconUtils";
-import { ThemedTextInputProps } from "@/types/ui/themed-text-input";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { typography } from "@/theme/typography";
+import { textInputVariants } from "@/theme/variants/text-input";
+import { ThemedTextInputProps } from "@/types/ui/themed-text-input";
 
 export function ThemedTextInput({
   variant = "primary",
@@ -26,7 +26,7 @@ export function ThemedTextInput({
   paddingHorizontal = "sm",
   paddingVertical = "sm",
 
-  borderRadius = "button",
+  borderRadius = "card",
   shadow,
 
   gap = "xs",
@@ -77,7 +77,6 @@ export function ThemedTextInput({
         style={[
           styles.inputContainer,
           {
-            backgroundColor,
             gap: sizes[gap],
           },
         ]}

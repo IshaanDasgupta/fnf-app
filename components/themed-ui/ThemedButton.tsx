@@ -1,16 +1,14 @@
 import React from "react";
-import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
 
-import { useTheme } from "@/hooks/useTheme";
-
+import { ThemedText } from "@/components/themed-ui/ThemedText";
+import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
+import { renderIcon } from "@/lib/utils/iconUtils";
 import { radius } from "@/theme/radius";
 import { shadows } from "@/theme/shadows";
 import { sizes } from "@/theme/size";
-import { ThemedButtonProps } from "@/types/ui/themed-button";
 import { buttonVariants } from "@/theme/variants";
-import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
-import { ThemedText } from "@/components/themed-ui/ThemedText";
-import { renderIcon } from "@/utils/iconUtils";
+import { ThemedButtonProps } from "@/types/ui/themed-button";
 
 export function ThemedButton({
   variant = "accent-primary",

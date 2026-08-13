@@ -19,7 +19,7 @@ export default function StartupScreen() {
   }
 
   if (!basicOnboardingCompleted) {
-    return <Redirect href={navigation.onboarding.step1} />;
+    return <Redirect href={navigation.onboarding.basic} />;
   }
 
   return <Redirect href={navigation.tabs.home} />;

@@ -1,13 +1,15 @@
+import { UpsertBasicResponse } from "@/api/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface AuthUser {
   id: string;
+  phone: string;
   name?: string;
   email?: string;
-  phone?: string;
-  avatar?: string;
+  age?: number;
+  gender?: "male" | "female";
 
   basicOnboardingCompleted: boolean;
 }
@@ -19,7 +21,6 @@ interface AuthState {
   refreshToken: string | null;
   refreshExpiresAt: number | null;
 
-  basicOnboardingCompleted: boolean;
   isHydrated: boolean;
 
   login: (
@@ -35,7 +36,7 @@ interface AuthState {
   ) => void;
   logout: () => void;
 
-  completeOnboarding: () => void;
+  completeOnboarding: (updatedUser: UpsertBasicResponse) => void;
 
   setHydrated: (value: boolean) => void;
 }
@@ -49,13 +50,11 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       refreshExpiresAt: null,
 
-      basicOnboardingCompleted: false,
       isHydrated: false,
 
       login: (user, accessToken, refreshToken, refreshExpiresAt) =>
         set({
           user,
-          basicOnboardingCompleted: user.basicOnboardingCompleted,
           accessToken,
           refreshToken,
           refreshExpiresAt,
@@ -72,11 +71,10 @@ export const useAuthStore = create<AuthState>()(
           accessToken: null,
           refreshToken: null,
           refreshExpiresAt: null,
-          basicOnboardingCompleted: false,
         }),
-      completeOnboarding: () =>
+      completeOnboarding: (updatedUser) =>
         set({
-          basicOnboardingCompleted: true,
+          user: { ...updatedUser, basicOnboardingCompleted: true },
         }),
 
       setHydrated: (value) =>
@@ -94,7 +92,6 @@ export const useAuthStore = create<AuthState>()(
         accessToken: state.accessToken,
         refreshToken: state.refreshToken,
         refreshExpiresAt: state.refreshExpiresAt,
-        basicOnboardingCompleted: state.basicOnboardingCompleted,
       }),
 
       onRehydrateStorage: () => {

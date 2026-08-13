@@ -1,5 +1,5 @@
 export interface ListingImageProps {
   source?: string;
-  favorite: boolean;
+  favourite: boolean;
   listingId: string;
 }

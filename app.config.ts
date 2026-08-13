@@ -15,13 +15,15 @@ const config: ExpoConfig = {
     bundleIdentifier: "com.aquiem.friendlyfloors",
     buildNumber: "1",
     supportsTablet: true,
+    infoPlist: {
+      NSLocationWhenInUseUsageDescription:
+        "Friendly Floors uses your location to show listings near you.",
+    },
   },
 
   android: {
     package: "com.aquiem.friendlyfloors",
     versionCode: 1,
-
-    permissions: ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
 
     adaptiveIcon: {
       backgroundColor: "#E6F4FE",
@@ -46,6 +48,7 @@ const config: ExpoConfig = {
 
   plugins: [
     "expo-router",
+    "expo-location",
     [
       "expo-splash-screen",
       {

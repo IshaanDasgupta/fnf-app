@@ -3,14 +3,8 @@ import { useEffect } from "react";
 import { useAuthStore } from "@/stores/auth";
 
 export function useAuth() {
-  const {
-    accessToken,
-    refreshExpiresAt,
-    logout,
-    basicOnboardingCompleted,
-    isHydrated,
-    user,
-  } = useAuthStore();
+  const { accessToken, refreshExpiresAt, logout, isHydrated, user } =
+    useAuthStore();
 
   const isAuthenticated =
     !!accessToken && !!refreshExpiresAt && Date.now() < refreshExpiresAt;
@@ -24,7 +18,7 @@ export function useAuth() {
   return {
     user,
     isAuthenticated,
-    basicOnboardingCompleted,
+    basicOnboardingCompleted: user?.basicOnboardingCompleted || false,
     isHydrated,
   };
 }

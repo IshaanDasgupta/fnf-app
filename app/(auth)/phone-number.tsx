@@ -7,13 +7,12 @@ import { ThemedScrollView } from "@/components/themed-ui/ThemedScrollView";
 import { ThemedText } from "@/components/themed-ui/ThemedText";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
 
+import { sendOTP, verifyOTP } from "@/api/auth";
 import { OTPInput } from "@/components/login/OTPInput";
 import { PhoneNumberInput } from "@/components/login/PhoneNumberInput";
-import { ENDPOINTS } from "@/constants/endpoints";
 import { useTheme } from "@/hooks/useTheme";
 import { navigation } from "@/lib/navigation";
 import { useAuthStore } from "@/stores/auth";
-import axiosClient from "@/utils/axios-client";
 import { useRouter } from "expo-router";
 
 type Step = "phone" | "otp";
@@ -30,13 +29,11 @@ export default function PhoneLoginScreen() {
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
 
-  const sendOtp = async () => {
+  const handleSendOtp = async () => {
     setLoading(true);
 
     try {
-      await axiosClient.post(ENDPOINTS.AUTH.SEND_OTP, {
-        phone: `+91${phone}`,
-      });
+      await sendOTP(`+91${phone}`);
       setStep("otp");
     } catch (err) {
       console.log(err);
@@ -49,19 +46,16 @@ export default function PhoneLoginScreen() {
     setLoading(true);
 
     try {
-      const response = await axiosClient.post(ENDPOINTS.AUTH.VERIFY_OTP, {
-        phone: `+91${phone}`,
-        otp,
-      });
-
       const { user, accessToken, refreshToken, refreshExpiresAt } =
-        response.data;
+        await verifyOTP(`+91${phone}`, otp);
+
+      console.log(user);
 
       login(user, accessToken, refreshToken, refreshExpiresAt);
 
       user.basicOnboardingCompleted
         ? router.replace(navigation.tabs.home)
-        : router.replace(navigation.onboarding.step1);
+        : router.replace(navigation.onboarding.basic);
     } catch (err) {
       console.log(err);
     } finally {
@@ -113,7 +107,7 @@ export default function PhoneLoginScreen() {
           disabled={step === "phone" ? phone.length < 10 : otp.length < 6}
           onPress={() => {
             if (step === "phone") {
-              sendOtp();
+              handleSendOtp();
               return;
             }
             handleVerify();

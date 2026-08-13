@@ -1,7 +1,7 @@
 // import "dotenv/config";
 
 // export const API_BASE_URL = process.env.API_BASE_URL;
-export const API_BASE_URL = "http://192.168.1.7:5000";
+export const API_BASE_URL = "http://192.168.1.8:5000";
 export const ENDPOINTS = {
   AUTH: {
     SEND_OTP: "/auth/send-otp",
@@ -12,6 +12,7 @@ export const ENDPOINTS = {
 
   USER: {
     PROFILE: "/user/profile",
+    UPSERT_BASIC: "/user/upsert-basic",
   },
 
   LISTING: {

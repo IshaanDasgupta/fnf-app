@@ -6,9 +6,8 @@ import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { radius } from "@/theme/radius";
 import { ListingImageProps } from "@/types/listing/card/image";
 
-import { postFavouriteListing } from "@/api/listing";
+import { putFavouriteListing } from "@/api/listing";
 import { ThemedIconButton } from "@/components/themed-ui/ThemedIconButton";
-import { useTheme } from "@/hooks/useTheme";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -17,17 +16,15 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons);
+
 export function ListingImage({
   source,
-  favorite,
+  favourite,
   listingId,
 }: ListingImageProps) {
-  const { colors } = useTheme();
-
-  const [favState, setFavState] = useState(favorite);
+  const [favState, setFavState] = useState(favourite);
   const [loading, setLoading] = useState(false);
-
-  const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons);
 
   const scale = useSharedValue(1);
 
@@ -35,10 +32,10 @@ export function ListingImage({
     transform: [{ scale: scale.value }],
   }));
 
-  const onPress = async () => {
+  const toggleFavouriteHandle = async () => {
     try {
       setLoading(true);
-      await postFavouriteListing(listingId, favState);
+      await putFavouriteListing(listingId, favState);
       setFavState((prev) => !prev);
 
       scale.value = withSequence(
@@ -61,7 +58,7 @@ export function ListingImage({
       <ThemedIconButton
         variant="fav"
         size="lg"
-        onPress={onPress}
+        onPress={toggleFavouriteHandle}
         style={styles.favorite}
         loading={loading}
         icon={

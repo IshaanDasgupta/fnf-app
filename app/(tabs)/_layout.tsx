@@ -1,13 +1,17 @@
 import FloatingBottomBar from "@/components/navigation/FloatingBottomBar";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserLocation } from "@/hooks/useUserLocation";
 import { navigation } from "@/lib/navigation";
+import * as Location from "expo-location";
 import { Redirect, Tabs } from "expo-router";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 export default function TabsLayout() {
   const { isAuthenticated, basicOnboardingCompleted, isHydrated } = useAuth();
 
-  if (!isHydrated) {
+  const { permission, isLoading: isLocationLoading } = useUserLocation();
+
+  if (!isHydrated || isLocationLoading) {
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" />
@@ -20,7 +24,11 @@ export default function TabsLayout() {
   }
 
   if (!basicOnboardingCompleted) {
-    return <Redirect href={navigation.onboarding.step1} />;
+    return <Redirect href={navigation.onboarding.basic} />;
+  }
+
+  if (permission !== Location.PermissionStatus.GRANTED) {
+    return <Redirect href={navigation.permissions} />;
   }
 
   return (

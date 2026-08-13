@@ -31,7 +31,7 @@ export function ListingCard(listing: ListingCardResponse) {
       >
         <ListingImage
           source={listing.coverImage}
-          favorite={listing.favorite}
+          favourite={listing.favorite}
           listingId={listing.id}
         />
 

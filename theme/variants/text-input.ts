@@ -23,7 +23,7 @@ export const textInputVariants: Record<
 
   secondary: {
     background: "background.secondary",
-    borderColor: "border.primary",
+    // borderColor: "border.primary",
 
     labelColor: "foreground.secondary",
 

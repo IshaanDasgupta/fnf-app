@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { StyleSheet, useColorScheme } from "react-native";
+import { ActivityIndicator, StyleSheet, useColorScheme } from "react-native";
 import MapView from "react-native-maps";
 
 import { ClusterMarker } from "@/components/map/ClusteMarker";
@@ -23,11 +23,11 @@ import { sizes } from "@/theme/size";
 export default function MapScreen() {
   const colorScheme = useColorScheme();
 
-  const location = useUserLocation();
+  const { location, isLoading } = useUserLocation();
 
   const [region, setRegion] = useState({
-    latitude: 12.9716,
-    longitude: 77.5946,
+    latitude: 0,
+    longitude: 0,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01,
   });
@@ -78,7 +78,7 @@ export default function MapScreen() {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     }));
-  }, []);
+  }, [isLoading]);
 
   useEffect(() => {
     fetchMapListings();
@@ -118,6 +118,18 @@ export default function MapScreen() {
       return [...current, id];
     });
   };
+
+  if (isLoading) {
+    return (
+      <ThemedSafeArea>
+        <ThemedView
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator />
+        </ThemedView>
+      </ThemedSafeArea>
+    );
+  }
 
   return (
     <ThemedView variant="primary" style={styles.container}>
@@ -199,13 +211,14 @@ export default function MapScreen() {
         {selectedProperty && (
           <ThemedView style={styles.preview}>
             <ListingPreviewCard
+              listingId={selectedProperty.id}
               image={selectedProperty.coverImage}
               title={selectedProperty.title}
               location={`${selectedProperty.address.locality}, ${selectedProperty.address.city}`}
+              bhk={selectedProperty.bhk}
               rent={selectedProperty.rent}
-              onPress={() => {}}
-              onFavourite={() => {}}
-              onMessage={() => {}}
+              occupancy={selectedProperty.occupancy}
+              favourite={selectedProperty.favorite}
             />
           </ThemedView>
         )}

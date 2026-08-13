@@ -2,11 +2,11 @@ import React from "react";
 import { StyleSheet } from "react-native";
 
 import { ThemedText } from "@/components/themed-ui/ThemedText";
+import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
+import { renderIcon } from "@/lib/utils/iconUtils";
 import { sizes } from "@/theme/size";
 import { ThemedIconTextProps } from "@/types/ui/themed-icon-text";
-import { renderIcon } from "@/utils/iconUtils";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
 
 export function ThemedIconText({
   icon,

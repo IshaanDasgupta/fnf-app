@@ -17,7 +17,7 @@ export default function HomeScreen() {
   const [search, setSearch] = useState("");
   const [selectedFiltersIds, setSelectedFiltersIds] = useState<string[]>([]);
 
-  const location = useUserLocation();
+  const { location } = useUserLocation();
 
   const {
     data,
@@ -28,7 +28,7 @@ export default function HomeScreen() {
     hasNextPage,
     isFetchingNextPage,
   } = useListings({
-    city: "banglore",
+    city: "mumbai",
     latitude: location?.coords.latitude,
     longitude: location?.coords.longitude,
     quickFilters: selectedFiltersIds,

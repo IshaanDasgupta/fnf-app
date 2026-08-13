@@ -1,21 +1,12 @@
+import { BhkType, OccupancyType } from "@/constants/api-constants";
+
 export interface ListingPreviewCardProps {
+  listingId: string;
   image: string;
-
-  match?: number;
-
   title: string;
   location: string;
-
-  bedrooms: number;
-  flatmates: number;
-
+  bhk: BhkType;
+  occupancy: OccupancyType;
   rent: number;
-
-  liked?: boolean;
-
-  onPress?(): void;
-
-  onMessage?(): void;
-
-  onFavourite?(): void;
+  favourite: boolean;
 }
