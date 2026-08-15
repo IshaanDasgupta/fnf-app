@@ -28,8 +28,8 @@ export default function MapScreen() {
   const [region, setRegion] = useState({
     latitude: 0,
     longitude: 0,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
+    latitudeDelta: 0.03,
+    longitudeDelta: 0.03,
   });
 
   const [selectedFiltersIds, setSelectedFiltersIds] = useState<string[]>([]);

@@ -5,13 +5,13 @@ import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
 import { renderIcon } from "@/lib/utils/iconUtils";
 
-interface AmenityCardProps {
+interface AddOnCardProps {
   icon: React.ReactNode;
   label: string;
   desc?: string;
 }
 
-export default function AmenityCard({ icon, label, desc }: AmenityCardProps) {
+export default function AddOnCard({ icon, label, desc }: AddOnCardProps) {
   const accentPrimary = useResolveThemeColor("accent.primary");
 
   return (

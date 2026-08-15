@@ -1,28 +1,47 @@
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
-import { ThemedView } from "@/components/themed-ui/ThemedView";
+import { putFavouriteListing } from "@/api/listing";
+
 import { ThemedIconButton } from "@/components/themed-ui/ThemedIconButton";
+import { ThemedView } from "@/components/themed-ui/ThemedView";
 
+import ImageCarousel from "@/components/listing/screen/hero/ImageCarousel";
 import { sizes } from "@/theme/size";
 import { ListingHeroProps } from "@/types/listing/screen/hero";
-import ImageCarousel from "@/components/listing/screen/hero/ImageCarousel";
-import { useRouter } from "expo-router";
 
 export default function ListingHero({
+  listingId,
   images,
   favorite = false,
 }: ListingHeroProps) {
   const router = useRouter();
+
   const [fav, setFav] = useState(favorite);
+  const [loading, setLoading] = useState(false);
 
   const handleBack = () => {
     router.back();
   };
 
-  const handleFavToggle = () => {
-    setFav((prev) => !prev);
+  const handleFavToggle = async () => {
+    if (loading) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await putFavouriteListing(listingId, !fav);
+
+      setFav(response.data.favorite);
+    } catch (error) {
+      console.error("Failed to toggle favourite:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,11 +56,7 @@ export default function ListingHero({
           onPress={handleBack}
         />
 
-        <ThemedView
-          variant="transparent"
-          style={{ flexDirection: "row" }}
-          gap="md"
-        >
+        <ThemedView variant="transparent" style={styles.actions} gap="md">
           <ThemedIconButton
             variant="tertiary"
             size="lg"
@@ -51,6 +66,7 @@ export default function ListingHero({
           <ThemedIconButton
             variant="fav"
             size="lg"
+            loading={loading}
             icon={<Ionicons name={fav ? "heart" : "heart-outline"} />}
             onPress={handleFavToggle}
           />
@@ -72,5 +88,9 @@ const styles = StyleSheet.create({
     right: sizes.lg,
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+
+  actions: {
+    flexDirection: "row",
   },
 });

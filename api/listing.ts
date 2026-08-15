@@ -1,4 +1,14 @@
-import { BhkType, City, OccupancyType } from "@/constants/api-constants";
+import {
+  AddOnType,
+  AmenityType,
+  BhkType,
+  City,
+  FurnishedStatus,
+  GenderPreference,
+  HouseRuleType,
+  NeighborhoodType,
+  OccupancyType,
+} from "@/constants/api-constants";
 import { ENDPOINTS } from "@/constants/endpoints";
 import axiosClient from "@/lib/axios-client";
 
@@ -159,6 +169,101 @@ export async function putFavouriteListing(
       listingId,
       value,
     },
+  );
+
+  return data;
+}
+
+export interface ListingResponse {
+  id: string;
+
+  title: string;
+
+  images: string[];
+  coverImage: string;
+
+  carpetArea?: number;
+
+  status: string;
+
+  address: {
+    locality: string;
+    city: City;
+    address: string;
+  };
+
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+
+  genderPreference: GenderPreference;
+
+  bhk: BhkType;
+  occupancy: OccupancyType;
+  totalOccupancy?: number;
+
+  furnishedStatus: FurnishedStatus;
+
+  floor?: number;
+
+  addOns: {
+    type: AddOnType;
+    desc?: string;
+  }[];
+
+  amenities: {
+    type: AmenityType;
+    desc?: string;
+  }[];
+
+  houseRules: {
+    type: HouseRuleType;
+    desc?: string;
+  }[];
+
+  rent: number;
+  deposit?: number;
+  brokerage?: number;
+  setupCost?: number;
+
+  availableFrom?: string;
+  availableImmediately: boolean;
+
+  neighborhood: {
+    type: NeighborhoodType;
+    distance: number;
+  }[];
+
+  views: number;
+  favorites: number;
+
+  favorite: boolean;
+
+  lister?: {
+    name: string;
+    age?: number;
+    profilePic?: string;
+    contactNumber?: string;
+    lifestyle: string[];
+  };
+
+  externalListing?: {
+    source: string;
+    url: string;
+  };
+}
+
+export interface GetListingResponse {
+  success: boolean;
+  data: ListingResponse;
+}
+
+export async function getListing(
+  listingId: string,
+): Promise<GetListingResponse> {
+  const { data } = await axiosClient.get<GetListingResponse>(
+    ENDPOINTS.LISTING.DETAILS(listingId),
   );
 
   return data;

@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 import { ThemedButton } from "@/components/themed-ui/ThemedButton";
 import { ThemedText } from "@/components/themed-ui/ThemedText";
@@ -9,28 +8,39 @@ import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { shadows } from "@/theme/shadows";
 import { sizes } from "@/theme/size";
 
-export default function ListingBottomBar() {
+interface ListingBottomBarProps {
+  rent: number;
+  availableFrom?: string;
+  availableImmediately: boolean;
+}
+
+export default function ListingBottomBar({
+  rent,
+  availableFrom,
+  availableImmediately,
+}: ListingBottomBarProps) {
+  const moveInText = availableImmediately
+    ? "Available immediately"
+    : availableFrom
+      ? `Move in by ${new Date(availableFrom).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+        })}`
+      : "Move-in date not specified";
+
   return (
-    <ThemedView
-      variant="tertiary"
-      //   borderTopLeftRadius="screen"
-      //   borderTopRightRadius="screen"
-      padding="xl"
-      style={styles.container}
-    >
-      <ThemedView gap="xs" style={{ flexDirection: "column" }}>
-        <ThemedView
-          gap="xs"
-          style={{ flexDirection: "row", alignItems: "baseline" }}
-        >
-          <ThemedText variant="h2">₹24,500</ThemedText>
+    <ThemedView variant="tertiary" padding="xl" style={styles.container}>
+      <ThemedView gap="xs">
+        <ThemedView gap="xs" style={styles.priceRow}>
+          <ThemedText variant="h2">₹{rent.toLocaleString("en-IN")}</ThemedText>
+
           <ThemedText variant="body" color="foreground.secondary">
             /mo
           </ThemedText>
         </ThemedView>
 
         <ThemedText variant="caption" color="foreground.secondary">
-          Move in by Aug 12
+          {moveInText}
         </ThemedText>
       </ThemedView>
 
@@ -58,8 +68,12 @@ const styles = StyleSheet.create({
     ...shadows.lg,
   },
 
+  priceRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+
   button: {
-    // marginLeft: sizes.xl,
     width: "auto",
     paddingHorizontal: sizes["3xl"],
     paddingVertical: sizes["xl"],

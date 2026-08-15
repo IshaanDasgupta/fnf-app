@@ -1,6 +1,7 @@
 import React from "react";
 
 import { ThemedIconText } from "@/components/themed-ui/ThemedIconText";
+import { ThemedText } from "@/components/themed-ui/ThemedText";
 import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { useResolveThemeColor } from "@/hooks/useResolveThemeColor";
 import { renderIcon } from "@/lib/utils/iconUtils";
@@ -9,13 +10,24 @@ import { sizes } from "@/theme/size";
 interface HouseRuleItemProps {
   icon: React.ReactNode;
   label: string;
+  desc?: string;
 }
 
-export default function HouseRuleItem({ icon, label }: HouseRuleItemProps) {
+export default function HouseRuleItem({
+  icon,
+  label,
+  desc,
+}: HouseRuleItemProps) {
   const resolvedIconColor = useResolveThemeColor("foreground.primary");
 
   return (
-    <ThemedView style={{ flexDirection: "row", alignItems: "center" }} gap="md">
+    <ThemedView
+      style={{
+        flexDirection: "row",
+        alignItems: "flex-start",
+      }}
+      gap="md"
+    >
       <ThemedView
         variant="tertiary"
         style={{
@@ -29,12 +41,20 @@ export default function HouseRuleItem({ icon, label }: HouseRuleItemProps) {
         {renderIcon(icon, resolvedIconColor)}
       </ThemedView>
 
-      <ThemedIconText
-        icon={null}
-        label={label}
-        variant="body"
-        labelColor="foreground.primary"
-      />
+      <ThemedView gap="xs" style={{ flex: 1 }}>
+        <ThemedIconText
+          icon={null}
+          label={label}
+          variant="body"
+          labelColor="foreground.primary"
+        />
+
+        {desc && (
+          <ThemedText variant="caption" color="foreground.secondary">
+            {desc}
+          </ThemedText>
+        )}
+      </ThemedView>
     </ThemedView>
   );
 }

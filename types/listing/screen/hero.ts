@@ -1,7 +1,5 @@
 export interface ListingHeroProps {
+  listingId: string;
   images: string[];
-
-  verified?: boolean;
-
   favorite?: boolean;
 }

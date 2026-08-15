@@ -7,18 +7,12 @@ import { ThemedView } from "@/components/themed-ui/ThemedView";
 import { sizes } from "@/theme/size";
 
 interface OwnerCardProps {
-  image: string;
   name: string;
-  age: number;
-  subtitle: string;
+  age?: number;
+  image?: string;
 }
 
-export default function OwnerCard({
-  image,
-  name,
-  age,
-  subtitle,
-}: OwnerCardProps) {
+export default function OwnerCard({ name, age, image }: OwnerCardProps) {
   return (
     <ThemedView
       variant="tertiary"
@@ -37,22 +31,25 @@ export default function OwnerCard({
         }}
         gap="md"
       >
-        <Image
-          source={{ uri: image }}
-          style={{
-            width: 52,
-            height: 52,
-            borderRadius: 26,
-          }}
-        />
+        {image && (
+          <Image
+            source={{ uri: image }}
+            style={{
+              width: 52,
+              height: 52,
+              borderRadius: 26,
+            }}
+          />
+        )}
 
         <ThemedView gap="xs">
           <ThemedText variant="label">
-            {name}, {age}
+            {name}
+            {age !== undefined ? `, ${age}` : ""}
           </ThemedText>
 
           <ThemedText variant="caption" color="foreground.secondary">
-            {subtitle}
+            Listing owner
           </ThemedText>
         </ThemedView>
       </ThemedView>
