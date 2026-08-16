@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 
-import { upsertBasic } from "@/api/auth";
-import { ThemedButton } from "@/components/themed-ui/ThemedButton";
-import { ThemedChip } from "@/components/themed-ui/ThemedChip";
-import { ThemedSafeArea } from "@/components/themed-ui/ThemedSafeArea";
-import { ThemedScrollView } from "@/components/themed-ui/ThemedScrollView";
-import { ThemedText } from "@/components/themed-ui/ThemedText";
-import { ThemedTextInput } from "@/components/themed-ui/ThemedTextInput";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
-import { useTheme } from "@/hooks/useTheme";
-import { navigation } from "@/lib/navigation";
-import { useAuthStore } from "@/stores/auth";
-import { sizes } from "@/theme/size";
+import { upsertBasic } from "@/src/api/user";
+import CitySelectionInput from "@/src/components/shared/CitySelectionInput";
+import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
+import { ThemedChip } from "@/src/components/themed-ui/ThemedChip";
+import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
+import { ThemedScrollView } from "@/src/components/themed-ui/ThemedScrollView";
+import { ThemedText } from "@/src/components/themed-ui/ThemedText";
+import { ThemedTextInput } from "@/src/components/themed-ui/ThemedTextInput";
+import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+
+import { navigation } from "@/src/lib/navigation";
+import { useAuthStore } from "@/src/stores/auth";
+import { sizes } from "@/src/theme/size";
+
+import { CITIES } from "@/src/constants/api-constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
@@ -30,6 +33,11 @@ export const BasicOnboardingFormSchema = z.object({
   gender: z.enum(["male", "female"], {
     message: "Please select your gender",
   }),
+
+  city: z.enum(CITIES, {
+    message:
+      "Please select your city to continue, don't worry you can change it anytime later",
+  }),
 });
 
 export type BasicOnboardingFormInput = z.input<
@@ -37,11 +45,12 @@ export type BasicOnboardingFormInput = z.input<
 >;
 
 export default function BasicOnboardingScreen() {
-  const { colors } = useTheme();
   const router = useRouter();
 
-  const user = useAuthStore((state) => state.user);
   const completeOnboarding = useAuthStore((state) => state.completeOnboarding);
+
+  const [loading, setLoading] = useState(false);
+  const [cityError, setCityError] = useState<string | null>(null);
 
   const {
     control,
@@ -54,16 +63,14 @@ export default function BasicOnboardingScreen() {
       name: "",
       age: "",
       gender: undefined,
+      city: undefined,
     },
   });
-
-  const [loading, setLoading] = useState(false);
 
   const handleContinue = async (data: BasicOnboardingFormInput) => {
     setLoading(true);
 
     try {
-      console.log("sending dat");
       const updatedUser = await upsertBasic({
         name: data.name,
         age: Number(data.age),
@@ -76,6 +83,7 @@ export default function BasicOnboardingScreen() {
       setLoading(false);
     }
   };
+
   return (
     <ThemedSafeArea>
       <ThemedScrollView
@@ -83,8 +91,6 @@ export default function BasicOnboardingScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* <OnboardingProgressBar currentStep={1} totalSteps={1} /> */}
-
         <ThemedView marginBottom="xl">
           <ThemedText
             variant="caption"
@@ -103,7 +109,8 @@ export default function BasicOnboardingScreen() {
           </ThemedText>
         </ThemedView>
 
-        <ThemedView style={{ flexDirection: "column", gap: sizes.xl }}>
+        <ThemedView style={styles.form}>
+          {/* Name */}
           <ThemedView>
             <Controller
               control={control}
@@ -135,6 +142,7 @@ export default function BasicOnboardingScreen() {
             )}
           </ThemedView>
 
+          {/* Age */}
           <ThemedView>
             <Controller
               control={control}
@@ -167,7 +175,12 @@ export default function BasicOnboardingScreen() {
             )}
           </ThemedView>
 
+          {/* Gender */}
           <ThemedView>
+            <ThemedText variant="h3" style={styles.sectionLabel}>
+              Gender
+            </ThemedText>
+
             <ThemedView style={styles.genderContainer} gap="lg">
               <ThemedView style={styles.genderOption}>
                 <Controller
@@ -218,7 +231,32 @@ export default function BasicOnboardingScreen() {
               </ThemedText>
             )}
           </ThemedView>
+
+          <ThemedView>
+            <ThemedText variant="h3" style={styles.sectionLabel}>
+              City
+            </ThemedText>
+
+            <Controller
+              control={control}
+              name="city"
+              render={({ field: { onChange, value } }) => (
+                <CitySelectionInput onSelect={onChange} />
+              )}
+            />
+
+            {errors.city && (
+              <ThemedText
+                variant="caption"
+                color="accent.red"
+                style={styles.error}
+              >
+                {errors.city.message}
+              </ThemedText>
+            )}
+          </ThemedView>
         </ThemedView>
+
         <ThemedView style={styles.buttonContainer}>
           <ThemedButton
             label="Continue"
@@ -237,9 +275,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
+  form: {
+    gap: sizes.xl,
+  },
+
   eyebrow: {
     fontWeight: "700",
     letterSpacing: 1.4,
+  },
+
+  sectionLabel: {
+    marginBottom: sizes.md,
   },
 
   genderContainer: {

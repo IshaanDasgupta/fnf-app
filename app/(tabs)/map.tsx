@@ -1,24 +1,24 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, StyleSheet, useColorScheme } from "react-native";
 import MapView from "react-native-maps";
 
-import { ClusterMarker } from "@/components/map/ClusteMarker";
-import { MapFilterBar } from "@/components/map/MapFilterBar";
-import { MapTopBar } from "@/components/map/MapTopBar";
-import { PropertyMarker } from "@/components/map/PropertyMarker";
-import { ListingPreviewCard } from "@/components/map/PropertyPreviewCard";
+import { ClusterMarker } from "@/src/components/map/ClusteMarker";
+import { MapFilterBar } from "@/src/components/map/MapFilterBar";
+import { MapTopBar } from "@/src/components/map/MapTopBar";
+import { PropertyMarker } from "@/src/components/map/PropertyMarker";
+import { ListingPreviewCard } from "@/src/components/map/PropertyPreviewCard";
 
-import Spacer from "@/components/themed-ui/Spacer";
-import ThemedSafeArea from "@/components/themed-ui/ThemedSafeArea";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
+import Spacer from "@/src/components/themed-ui/Spacer";
+import ThemedSafeArea from "@/src/components/themed-ui/ThemedSafeArea";
+import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 
-import { QUICK_FILTERS } from "@/constants/quick-filters";
-import { useSupercluster } from "@/hooks/useSupercluster";
-import { useUserLocation } from "@/hooks/useUserLocation";
+import { QUICK_FILTERS } from "@/src/constants/quick-filters";
+import { useSupercluster } from "@/src/hooks/useSupercluster";
+import { useUserLocation } from "@/src/hooks/useUserLocation";
 
-import { getMapListings, MapListingsResponse } from "@/api/listing";
-import { darkMapStyle } from "@/theme/map";
-import { sizes } from "@/theme/size";
+import { useMapListings } from "@/src/hooks/react-query/useMapListings";
+import { darkMapStyle } from "@/src/theme/map";
+import { sizes } from "@/src/theme/size";
 
 export default function MapScreen() {
   const colorScheme = useColorScheme();
@@ -33,40 +33,26 @@ export default function MapScreen() {
   });
 
   const [selectedFiltersIds, setSelectedFiltersIds] = useState<string[]>([]);
-
-  const [listings, setListings] = useState<MapListingsResponse[]>([]);
-
   const [selectedListingId, setSelectedListingId] = useState<string>();
 
   const mapRef = useRef<MapView>(null);
 
-  const fetchMapListings = useCallback(async () => {
-    try {
-      const north = region.latitude + region.latitudeDelta / 2;
-      const south = region.latitude - region.latitudeDelta / 2;
-      const east = region.longitude + region.longitudeDelta / 2;
-      const west = region.longitude - region.longitudeDelta / 2;
+  const north = region.latitude + region.latitudeDelta / 2;
+  const south = region.latitude - region.latitudeDelta / 2;
+  const east = region.longitude + region.longitudeDelta / 2;
+  const west = region.longitude - region.longitudeDelta / 2;
 
-      const response = await getMapListings({
-        north,
-        south,
-        east,
-        west,
-        limit: 200,
-        quickFilters: selectedFiltersIds,
-      });
-
-      setListings(response.data);
-    } catch (error) {
-      console.error("Failed to fetch map listings:", error);
-    }
-  }, [
-    region.latitude,
-    region.longitude,
-    region.latitudeDelta,
-    region.longitudeDelta,
-    selectedFiltersIds,
-  ]);
+  const { data: listings = [], isLoading: isMapLoading } = useMapListings(
+    {
+      north,
+      south,
+      east,
+      west,
+      limit: 200,
+      quickFilters: selectedFiltersIds,
+    },
+    !isLoading,
+  );
 
   useEffect(() => {
     if (!location) {
@@ -75,14 +61,10 @@ export default function MapScreen() {
 
     setRegion((current) => ({
       ...current,
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
+      latitude: location.latitude,
+      longitude: location.longitude,
     }));
-  }, [isLoading]);
-
-  useEffect(() => {
-    fetchMapListings();
-  }, [fetchMapListings]);
+  }, [isLoading, location]);
 
   const mapListings = useMemo(
     () =>

@@ -1,18 +1,18 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 
-import { ThemedButton } from "@/components/themed-ui/ThemedButton";
-import { ThemedSafeArea } from "@/components/themed-ui/ThemedSafeArea";
-import { ThemedScrollView } from "@/components/themed-ui/ThemedScrollView";
-import { ThemedText } from "@/components/themed-ui/ThemedText";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
+import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
+import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
+import { ThemedScrollView } from "@/src/components/themed-ui/ThemedScrollView";
+import { ThemedText } from "@/src/components/themed-ui/ThemedText";
+import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 
-import { sendOTP, verifyOTP } from "@/api/auth";
-import { OTPInput } from "@/components/login/OTPInput";
-import { PhoneNumberInput } from "@/components/login/PhoneNumberInput";
-import { useTheme } from "@/hooks/useTheme";
-import { navigation } from "@/lib/navigation";
-import { useAuthStore } from "@/stores/auth";
+import { sendOTP, verifyOTP } from "@/src/api/auth";
+import { OTPInput } from "@/src/components/login/OTPInput";
+import { PhoneNumberInput } from "@/src/components/login/PhoneNumberInput";
+import { useTheme } from "@/src/hooks/theme/useTheme";
+import { navigation } from "@/src/lib/navigation";
+import { useAuthStore } from "@/src/stores/auth";
 import { useRouter } from "expo-router";
 
 type Step = "phone" | "otp";

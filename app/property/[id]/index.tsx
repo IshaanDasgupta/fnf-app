@@ -1,63 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
-import Spacer from "@/components/themed-ui/Spacer";
-import { ThemedSafeArea } from "@/components/themed-ui/ThemedSafeArea";
-import { ThemedScrollView } from "@/components/themed-ui/ThemedScrollView";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
+import Spacer from "@/src/components/themed-ui/Spacer";
+import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
+import { ThemedScrollView } from "@/src/components/themed-ui/ThemedScrollView";
+import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 
-import { sizes } from "@/theme/size";
+import { sizes } from "@/src/theme/size";
 
-import { getListing, ListingResponse } from "@/api/listing";
-import AddOnsSection from "@/components/listing/screen/addons/AddOnsSection";
-import AmenitiesSection from "@/components/listing/screen/amenities/AmenitySection";
-import CompatibilityCard from "@/components/listing/screen/compatibility-card/CompatabilityCard";
-import ListingHero from "@/components/listing/screen/hero/ListingHero";
-import HouseRulesSection from "@/components/listing/screen/house-rules/HouseRulesSection";
-import ListingBottomBar from "@/components/listing/screen/ListingBottomBar";
-import ListingHeader from "@/components/listing/screen/ListingHeader";
-import NeighborhoodSection from "@/components/listing/screen/neighborhood/NeighborhoodSection";
-import OwnerCard from "@/components/listing/screen/OwnerCard";
-import { navigation } from "@/lib/navigation";
-import { radius } from "@/theme/radius";
+import { getListing } from "@/src/api/listing";
+import AddOnsSection from "@/src/components/listing/screen/addons/AddOnsSection";
+import AmenitiesSection from "@/src/components/listing/screen/amenities/AmenitySection";
+import CompatibilityCard from "@/src/components/listing/screen/compatibility-card/CompatabilityCard";
+import ListingHero from "@/src/components/listing/screen/hero/ListingHero";
+import HouseRulesSection from "@/src/components/listing/screen/house-rules/HouseRulesSection";
+import ListingBottomBar from "@/src/components/listing/screen/ListingBottomBar";
+import ListingHeader from "@/src/components/listing/screen/ListingHeader";
+import NeighborhoodSection from "@/src/components/listing/screen/neighborhood/NeighborhoodSection";
+import OwnerCard from "@/src/components/listing/screen/OwnerCard";
+import { navigation } from "@/src/lib/navigation";
+import { radius } from "@/src/theme/radius";
+import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, StyleSheet } from "react-native";
 
 export default function ListingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const [listing, setListing] = useState<ListingResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: listing, isLoading } = useQuery({
+    queryKey: ["listing", id],
+    queryFn: () => getListing(id),
+    select: (response) => response.data,
+    enabled: !!id,
+  });
 
   useEffect(() => {
-    if (!id) {
-      return;
-    }
-
-    const fetchListing = async () => {
-      try {
-        setLoading(true);
-
-        const response = await getListing(id);
-
-        setListing(response.data);
-      } catch (error) {
-        console.error("Failed to fetch listing:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchListing();
-  }, [id]);
-
-  useEffect(() => {
-    if (!loading && !listing) {
+    if (!isLoading && !listing) {
       //TODO replace with 404 page
       router.replace(navigation.tabs.home);
     }
-  }, [loading, listing]);
+  }, [isLoading, listing]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <ThemedSafeArea variant="primary">
         <ThemedView style={styles.loading}>

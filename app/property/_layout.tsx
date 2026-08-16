@@ -1,5 +1,5 @@
-import { useAuth } from "@/hooks/useAuth";
-import { navigation } from "@/lib/navigation";
+import { useAuth } from "@/src/hooks/useAuth";
+import { navigation } from "@/src/lib/navigation";
 import { Redirect, Stack } from "expo-router";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 

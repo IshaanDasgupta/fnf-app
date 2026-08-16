@@ -1,7 +1,7 @@
+import { navigation } from "@/src/lib/navigation";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
-import { navigation } from "@/lib/navigation";
 
 export default function NotFoundScreen() {
   const router = useRouter();

@@ -1,6 +1,6 @@
+import { navigation } from "@/src/lib/navigation";
 import { useRouter } from "expo-router";
 import { Button, Text, View } from "react-native";
-import { navigation } from "@/lib/navigation";
 
 export default function Step2Screen() {
   const router = useRouter();

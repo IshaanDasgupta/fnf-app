@@ -1,5 +1,5 @@
-import { navigation } from "@/lib/navigation";
-import { useAuthStore } from "@/stores/auth";
+import { navigation } from "@/src/lib/navigation";
+import { useAuthStore } from "@/src/stores/auth";
 import { useRouter } from "expo-router";
 import { Button, Text, View } from "react-native";
 

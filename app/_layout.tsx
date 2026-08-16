@@ -10,7 +10,7 @@ import { Inter_400Regular, Inter_600SemiBold } from "@expo-google-fonts/inter";
 
 import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces";
 
-import { navigation } from "@/lib/navigation";
+import { navigation } from "@/src/lib/navigation";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 

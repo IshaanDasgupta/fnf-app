@@ -3,17 +3,17 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { Image, Linking, StyleSheet } from "react-native";
 
-import { navigation } from "@/lib/navigation";
+import { navigation } from "@/src/lib/navigation";
 
-import { ThemedButton } from "@/components/themed-ui/ThemedButton";
-import { ThemedSafeArea } from "@/components/themed-ui/ThemedSafeArea";
-import { ThemedScrollView } from "@/components/themed-ui/ThemedScrollView";
-import { ThemedText } from "@/components/themed-ui/ThemedText";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
+import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
+import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
+import { ThemedScrollView } from "@/src/components/themed-ui/ThemedScrollView";
+import { ThemedText } from "@/src/components/themed-ui/ThemedText";
+import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 
-import Spacer from "@/components/themed-ui/Spacer";
-import { useTheme } from "@/hooks/useTheme";
-import { sizes } from "@/theme/size";
+import Spacer from "@/src/components/themed-ui/Spacer";
+import { useTheme } from "@/src/hooks/theme/useTheme";
+import { sizes } from "@/src/theme/size";
 
 const WELCOME_ILLUSTRATION = require("@/assets/images/welcome-illustration.png");
 
@@ -30,7 +30,7 @@ export default function LoginScreen() {
     {
       label: "Continue with Apple",
       icon: <Ionicons name="logo-apple" size={24} />,
-      variant: "accent-secondary" as const,
+      variant: "inverse" as const,
     },
     {
       label: "Continue with Google",

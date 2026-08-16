@@ -4,11 +4,11 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, AppState, Linking, StyleSheet } from "react-native";
 
-import { ThemedButton } from "@/components/themed-ui/ThemedButton";
-import { ThemedSafeArea } from "@/components/themed-ui/ThemedSafeArea";
-import { ThemedText } from "@/components/themed-ui/ThemedText";
-import { ThemedView } from "@/components/themed-ui/ThemedView";
-import { sizes } from "@/theme/size";
+import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
+import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
+import { ThemedText } from "@/src/components/themed-ui/ThemedText";
+import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+import { sizes } from "@/src/theme/size";
 
 export default function PermissionScreen() {
   const [isLoading, setIsLoading] = useState(false);
