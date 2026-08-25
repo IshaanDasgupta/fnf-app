@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Pressable, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 import { ThemedIconButton } from "@/src/components/themed-ui/ThemedIconButton";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
@@ -67,7 +68,7 @@ export function HomeHeader() {
           variant="secondary"
           size="lg"
           style={styles.avatar}
-          icon={user?.avatar}
+          icon={<Ionicons name="person-outline" size={20} />}
           disabled
         />
       </ThemedView>

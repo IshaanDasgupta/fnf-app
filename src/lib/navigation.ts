@@ -14,12 +14,18 @@ export type AppRoute =
   | "/profile"
   | "/settings/edit-profile"
   | "/property/${string}"
-  | "/permissions";
+  | "/permissions"
+  | "/filters"
+  | "/search";
 
 export const navigation = {
   splash: "/splash" as Href,
   login: "/login" as Href,
   phone_number: "/phone-number" as Href,
+  filters: "/filters" as Href,
+  search: "/search" as Href,
+  searchWithQuery: (q: string) =>
+    `/search?q=${encodeURIComponent(q)}` as Href,
   onboarding: {
     basic: "/basic" as Href,
     step2: "/step2" as Href,

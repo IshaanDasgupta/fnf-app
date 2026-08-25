@@ -8,14 +8,22 @@ import ListingCard from "@/src/components/listing/card/ListingCard";
 import Spacer from "@/src/components/themed-ui/Spacer";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { QUICK_FILTERS } from "@/src/constants/quick-filters";
 import { useListings } from "@/src/hooks/react-query/useListings";
 import { useUserLocation } from "@/src/hooks/useUserLocation";
+import { navigation } from "@/src/lib/navigation";
+import { countActiveFilters, useFilterStore } from "@/src/stores/filter";
 import { sizes } from "@/src/theme/size";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [selectedFiltersIds, setSelectedFiltersIds] = useState<string[]>([]);
+
+  const appliedFilters = useFilterStore((state) => state.appliedFilters);
+  const activeFilterCount = countActiveFilters(appliedFilters);
 
   const { location, city } = useUserLocation();
 
@@ -35,8 +43,41 @@ export default function HomeScreen() {
   });
 
   const listings = useMemo(() => {
-    return data?.pages.flatMap((page) => page.data) ?? [];
-  }, [data]);
+    let list = data?.pages.flatMap((page) => page.data) ?? [];
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(
+        (item) =>
+          item.title.toLowerCase().includes(q) ||
+          item.address.locality.toLowerCase().includes(q),
+      );
+    }
+
+    if (appliedFilters.bhk.length > 0) {
+      list = list.filter((item) => appliedFilters.bhk.includes(item.bhk));
+    }
+
+    if (appliedFilters.occupancy.length > 0) {
+      list = list.filter((item) =>
+        appliedFilters.occupancy.includes(item.occupancy),
+      );
+    }
+
+    if (appliedFilters.minRent !== undefined) {
+      list = list.filter((item) => item.rent >= appliedFilters.minRent!);
+    }
+
+    if (appliedFilters.maxRent !== undefined) {
+      list = list.filter((item) => item.rent <= appliedFilters.maxRent!);
+    }
+
+    if (appliedFilters.availableImmediately) {
+      list = list.filter((item) => item.availableImmediately);
+    }
+
+    return list;
+  }, [data, search, appliedFilters]);
 
   const toggleChip = (id: string) => {
     setSelectedFiltersIds((current) => {
@@ -91,7 +132,15 @@ export default function HomeScreen() {
             <SearchFilter
               value={search}
               onChangeText={setSearch}
-              onFilterPress={() => {}}
+              onSearch={() => {
+                if (search.trim()) {
+                  router.push(navigation.searchWithQuery(search.trim()));
+                } else {
+                  router.push(navigation.search);
+                }
+              }}
+              onFilterPress={() => router.push(navigation.filters)}
+              activeFilterCount={activeFilterCount}
               placeholder='Try "Indiranagar, 3 bhk"'
             />
 
@@ -105,6 +154,25 @@ export default function HomeScreen() {
           </>
         }
         renderItem={({ item }) => <ListingCard {...item} />}
+        ListEmptyComponent={
+          !isLoading ? (
+            <ThemedView
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: sizes["4xl"],
+              }}
+            >
+              <ThemedText variant="title" color="foreground.secondary">
+                No listings found
+              </ThemedText>
+              <Spacer size="xs" />
+              <ThemedText variant="bodySmall" color="foreground.tertiary">
+                Try adjusting your filters or search criteria.
+              </ThemedText>
+            </ThemedView>
+          ) : null
+        }
         ListFooterComponent={
           isFetchingNextPage ? (
             <ActivityIndicator style={{ marginVertical: 24 }} />
