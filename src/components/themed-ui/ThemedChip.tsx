@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet } from "react-native";
 
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
@@ -14,7 +14,7 @@ export function ThemedChip({
   variant = "primary",
   selectedVariant = "selected-primary",
 
-  selected: initSelectedVal = false,
+  selected: selectedProp = false,
   loading = false,
 
   leftIcon,
@@ -28,22 +28,24 @@ export function ThemedChip({
   style,
   disabled,
 
-  onPress: handelPress,
+  onPress: handlePress,
+
+  controlled = false,
 
   ...props
 }: ThemedChipProps) {
-  const [selected, setSelected] = useState(initSelectedVal);
+  const [internalSelected, setInternalSelected] = useState(selectedProp);
 
-  useEffect(() => {
-    setSelected(initSelectedVal);
-  }, [initSelectedVal]);
+  const selected = controlled ? selectedProp : internalSelected;
 
   const config = chipVariants[selected ? selectedVariant : variant];
 
   const backgroundColor = useResolveThemeColor(config.background);
+
   const borderColor = config.borderColor
     ? useResolveThemeColor(config.borderColor)
     : undefined;
+
   const foregroundColor = useResolveThemeColor(config.foregroundColor);
 
   return (
@@ -56,16 +58,17 @@ export function ThemedChip({
           backgroundColor,
           borderColor,
           borderWidth: borderColor ? 1 : undefined,
-
           borderRadius: radius[borderRadius],
-
           ...(config.shadow ? shadows[config.shadow] : {}),
         },
         style,
       ]}
       onPress={(event) => {
-        handelPress?.(event);
-        setSelected((prev) => !prev);
+        handlePress?.(event);
+
+        if (!controlled) {
+          setInternalSelected((prev) => !prev);
+        }
       }}
     >
       {loading ? (

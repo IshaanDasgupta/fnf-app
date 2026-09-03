@@ -7,6 +7,7 @@ import SearchFilter from "@/src/components/home/SearchFilter";
 import ListingCard from "@/src/components/listing/card/ListingCard";
 import Spacer from "@/src/components/themed-ui/Spacer";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
+import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { QUICK_FILTERS } from "@/src/constants/quick-filters";
@@ -27,10 +28,32 @@ export default function HomeScreen() {
 
   const { location, city } = useUserLocation();
 
+  if (!city) {
+    return (
+      <ThemedSafeArea padding="lg">
+        <ThemedView style={{ flex: 1 }}>
+          <HomeHeader />
+
+          <ThemedView
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ThemedText variant="h3">
+              Please select a city to browse listings
+            </ThemedText>
+          </ThemedView>
+        </ThemedView>
+      </ThemedSafeArea>
+    );
+  }
+
   const {
     data,
     isLoading,
-    isRefetching,
+    isFetching,
     refetch,
     fetchNextPage,
     hasNextPage,
@@ -93,13 +116,47 @@ export default function HomeScreen() {
     });
   };
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
-      <ThemedSafeArea>
+      <ThemedSafeArea padding="lg">
         <ThemedView
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
           <ActivityIndicator />
+        </ThemedView>
+      </ThemedSafeArea>
+    );
+  }
+
+  if (data && listings.length === 0) {
+    return (
+      <ThemedSafeArea padding="lg">
+        <ThemedView style={{ flex: 1 }}>
+          <HomeHeader />
+
+          <ThemedView
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              padding: sizes.lg,
+            }}
+          >
+            <ThemedText variant="h3">No listings found</ThemedText>
+            <ThemedText
+              variant="caption"
+              style={{
+                textAlign: "center",
+                marginTop: sizes.sm,
+              }}
+            >
+              We couldn't find any listings in {city}.
+            </ThemedText>
+          </ThemedView>
         </ThemedView>
       </ThemedSafeArea>
     );
@@ -117,7 +174,10 @@ export default function HomeScreen() {
         }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          <RefreshControl
+            refreshing={isFetching && !isFetchingNextPage}
+            onRefresh={refetch}
+          />
         }
         onEndReachedThreshold={0.5}
         onEndReached={() => {

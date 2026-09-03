@@ -12,8 +12,8 @@ export type AppRoute =
   | "/home"
   | "/map"
   | "/profile"
-  | "/settings/edit-profile"
-  | "/property/${string}"
+  | "/settings/profile-basic-edit"
+  | `/property/${string}`
   | "/permissions"
   | "/filters"
   | "/search";
@@ -24,8 +24,7 @@ export const navigation = {
   phone_number: "/phone-number" as Href,
   filters: "/filters" as Href,
   search: "/search" as Href,
-  searchWithQuery: (q: string) =>
-    `/search?q=${encodeURIComponent(q)}` as Href,
+  searchWithQuery: (q: string) => `/search?q=${encodeURIComponent(q)}` as Href,
   onboarding: {
     basic: "/basic" as Href,
     step2: "/step2" as Href,
@@ -37,8 +36,10 @@ export const navigation = {
     map: "/map" as Href,
     profile: "/profile" as Href,
   },
+  settings: {
+    profileBasicEdit: "/settings/profile-basic-edit" as Href,
+  },
   property: (id: string) => `/property/${id}` as Href,
-  editProfile: "/settings/edit-profile" as Href,
   permissions: "/permissions" as Href,
 } as const;
 

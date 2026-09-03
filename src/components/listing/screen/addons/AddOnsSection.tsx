@@ -33,6 +33,7 @@ const addOnIcons: Record<AddOnType, keyof typeof Ionicons.glyphMap> = {
   "Fiber Internet": "globe-outline",
 
   "Attached Bathroom": "water-outline",
+  Geyser: "water-outline",
   Balcony: "business-outline",
   "Private Terrace": "sunny-outline",
   "Walk-in Closet": "shirt-outline",

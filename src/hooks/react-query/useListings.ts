@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 
 import { getListings, GetListingsParams } from "@/src/api/listing";
 
@@ -39,5 +39,7 @@ export function useListings({
 
     getNextPageParam: (lastPage) =>
       lastPage.pagination.hasNext ? lastPage.pagination.nextCursor : undefined,
+
+    placeholderData: keepPreviousData,
   });
 }

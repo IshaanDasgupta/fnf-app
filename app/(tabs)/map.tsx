@@ -12,11 +12,13 @@ import Spacer from "@/src/components/themed-ui/Spacer";
 import ThemedSafeArea from "@/src/components/themed-ui/ThemedSafeArea";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 
+import { MAP_REGION_DEBOUNCE_MS } from "@/src/constants/map-constants";
 import { QUICK_FILTERS } from "@/src/constants/quick-filters";
+import { useMapListings } from "@/src/hooks/react-query/useMapListings";
+import { useDebouncedValue } from "@/src/hooks/useDebouncedValue";
 import { useSupercluster } from "@/src/hooks/useSupercluster";
 import { useUserLocation } from "@/src/hooks/useUserLocation";
 
-import { useMapListings } from "@/src/hooks/react-query/useMapListings";
 import { darkMapStyle } from "@/src/theme/map";
 import { sizes } from "@/src/theme/size";
 
@@ -37,17 +39,26 @@ export default function MapScreen() {
 
   const mapRef = useRef<MapView>(null);
 
-  const north = region.latitude + region.latitudeDelta / 2;
-  const south = region.latitude - region.latitudeDelta / 2;
-  const east = region.longitude + region.longitudeDelta / 2;
-  const west = region.longitude - region.longitudeDelta / 2;
+  // Debounce the region so rapid pans don't fire a request per frame.
+  const debouncedRegion = useDebouncedValue(region, MAP_REGION_DEBOUNCE_MS);
 
-  const { data: listings = [], isLoading: isMapLoading } = useMapListings(
+  const bounds = useMemo(
+    () => ({
+      north: debouncedRegion.latitude + debouncedRegion.latitudeDelta / 2,
+      south: debouncedRegion.latitude - debouncedRegion.latitudeDelta / 2,
+      east: debouncedRegion.longitude + debouncedRegion.longitudeDelta / 2,
+      west: debouncedRegion.longitude - debouncedRegion.longitudeDelta / 2,
+    }),
+    [debouncedRegion],
+  );
+
+  const {
+    data: listings = [],
+    isLoading: isMapLoading,
+    isFetching,
+  } = useMapListings(
     {
-      north,
-      south,
-      east,
-      west,
+      ...bounds,
       limit: 200,
       quickFilters: selectedFiltersIds,
     },

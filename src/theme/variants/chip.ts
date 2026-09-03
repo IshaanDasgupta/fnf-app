@@ -42,7 +42,7 @@ export const chipVariants: Record<ThemedChipVariant, ChipVariantConfig> = {
 
   "accent-primary": {
     background: "accent.primary",
-    foregroundColor: "foreground.black",
+    foregroundColor: "foreground.white",
     shadow: "xs",
   },
 
@@ -90,7 +90,7 @@ export const chipVariants: Record<ThemedChipVariant, ChipVariantConfig> = {
 
   "selected-accent-primary": {
     background: "accent.primary",
-    foregroundColor: "foreground.black",
+    foregroundColor: "foreground.white",
     shadow: "md",
   },
 

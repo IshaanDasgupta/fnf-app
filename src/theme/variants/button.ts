@@ -52,7 +52,7 @@ export const buttonVariants: Record<
 
   "accent-secondary": {
     background: "accent.secondary",
-    foregroundColor: "foreground.white",
+    foregroundColor: "foreground.inverse",
     shadow: "md",
   },
 

@@ -52,4 +52,6 @@ export interface ThemedChipProps extends Omit<
   borderRadius?: keyof typeof radius;
 
   style?: StyleProp<ViewStyle>;
+
+  controlled?: boolean;
 }

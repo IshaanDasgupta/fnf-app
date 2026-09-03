@@ -41,6 +41,7 @@ export const ADD_ON_TYPES = [
 
   // Room / Home Features
   "Attached Bathroom",
+  "Geyser",
   "Balcony",
   "Private Terrace",
   "Walk-in Closet",

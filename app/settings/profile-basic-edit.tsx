@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
+import { z } from "zod";
 
 import { upsertBasic } from "@/src/api/user";
-import CitySelectionInput from "@/src/components/shared/CitySelectionInput";
 import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedChip } from "@/src/components/themed-ui/ThemedChip";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
@@ -10,18 +13,14 @@ import { ThemedScrollView } from "@/src/components/themed-ui/ThemedScrollView";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedTextInput } from "@/src/components/themed-ui/ThemedTextInput";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
-
-import { navigation } from "@/src/lib/navigation";
-import { useAuthStore } from "@/src/stores/auth";
+import {
+  PROFILE_QUERY_KEY,
+  useProfile,
+} from "@/src/hooks/react-query/useProfile";
 import { sizes } from "@/src/theme/size";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { CITIES } from "@/src/constants/api-constants";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "expo-router";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-
-export const BasicOnboardingFormSchema = z.object({
+export const ProfileBasicEditSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
 
   age: z
@@ -33,55 +32,89 @@ export const BasicOnboardingFormSchema = z.object({
   gender: z.enum(["male", "female"], {
     message: "Please select your gender",
   }),
-
-  city: z.enum(CITIES, {
-    message:
-      "Please select your city to continue, don't worry you can change it anytime later",
-  }),
 });
 
-export type BasicOnboardingFormInput = z.input<
-  typeof BasicOnboardingFormSchema
->;
+export type ProfileBasicEditFormInput = z.input<typeof ProfileBasicEditSchema>;
 
-export default function BasicOnboardingScreen() {
+export default function ProfileBasicEditScreen() {
   const router = useRouter();
 
-  const completeOnboarding = useAuthStore((state) => state.completeOnboarding);
+  const queryClient = useQueryClient();
+
+  const { data: user, isLoading, isError } = useProfile();
 
   const [loading, setLoading] = useState(false);
 
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<BasicOnboardingFormInput>({
-    resolver: zodResolver(BasicOnboardingFormSchema),
+  } = useForm<ProfileBasicEditFormInput>({
+    resolver: zodResolver(ProfileBasicEditSchema),
     mode: "onChange",
     defaultValues: {
       name: "",
       age: "",
       gender: undefined,
-      city: undefined,
     },
   });
 
-  const handleContinue = async (data: BasicOnboardingFormInput) => {
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    reset({
+      name: user.name,
+      age: user.age.toString(),
+      gender: user.gender,
+    });
+  }, [user, reset]);
+
+  const handleSave = async (data: ProfileBasicEditFormInput) => {
     setLoading(true);
 
     try {
-      const updatedUser = await upsertBasic({
+      await upsertBasic({
         name: data.name,
         age: Number(data.age),
         gender: data.gender,
       });
 
-      completeOnboarding(updatedUser.data);
-      router.replace(navigation.tabs.home);
+      await queryClient.invalidateQueries({
+        queryKey: PROFILE_QUERY_KEY,
+      });
+
+      router.back();
     } finally {
       setLoading(false);
     }
   };
+
+  const handleBack = () => {
+    router.back();
+  };
+
+  if (isLoading) {
+    return (
+      <ThemedSafeArea>
+        <ThemedView style={styles.loading}>
+          <ThemedText variant="body">Loading profile...</ThemedText>
+        </ThemedView>
+      </ThemedSafeArea>
+    );
+  }
+
+  if (isError || !user) {
+    return (
+      <ThemedSafeArea>
+        <ThemedView style={styles.loading}>
+          <ThemedText variant="body">Unable to load profile.</ThemedText>
+        </ThemedView>
+      </ThemedSafeArea>
+    );
+  }
 
   return (
     <ThemedSafeArea>
@@ -100,11 +133,11 @@ export default function BasicOnboardingScreen() {
           </ThemedText>
 
           <ThemedText variant="display" style={{ marginBottom: sizes.sm }}>
-            First, the basics.
+            Edit your basics.
           </ThemedText>
 
           <ThemedText variant="body" color="foreground.secondary">
-            Only your first name and age are shown to others.
+            Update your name, age, or gender.
           </ThemedText>
         </ThemedView>
 
@@ -195,6 +228,7 @@ export default function BasicOnboardingScreen() {
                       onPress={() => onChange("male")}
                       style={styles.genderChip}
                       borderRadius="card"
+                      controlled
                     />
                   )}
                 />
@@ -214,6 +248,7 @@ export default function BasicOnboardingScreen() {
                       onPress={() => onChange("female")}
                       style={styles.genderChip}
                       borderRadius="card"
+                      controlled
                     />
                   )}
                 />
@@ -230,38 +265,23 @@ export default function BasicOnboardingScreen() {
               </ThemedText>
             )}
           </ThemedView>
-
-          <ThemedView>
-            <ThemedText variant="h3" style={styles.sectionLabel}>
-              City
-            </ThemedText>
-
-            <Controller
-              control={control}
-              name="city"
-              render={({ field: { onChange, value } }) => (
-                <CitySelectionInput onSelect={onChange} />
-              )}
-            />
-
-            {errors.city && (
-              <ThemedText
-                variant="caption"
-                color="accent.red"
-                style={styles.error}
-              >
-                {errors.city.message}
-              </ThemedText>
-            )}
-          </ThemedView>
         </ThemedView>
 
         <ThemedView style={styles.buttonContainer}>
           <ThemedButton
-            label="Continue"
+            variant="accent-secondary"
+            label="Back"
+            labelVariant="h2"
+            onPress={handleBack}
+            style={styles.backButton}
+          />
+
+          <ThemedButton
+            label="Save changes"
             labelVariant="h2"
             loading={loading}
-            onPress={handleSubmit(handleContinue)}
+            onPress={handleSubmit(handleSave)}
+            style={styles.saveButton}
           />
         </ThemedView>
       </ThemedScrollView>
@@ -306,5 +326,20 @@ const styles = StyleSheet.create({
 
   buttonContainer: {
     marginTop: "auto",
+    flexDirection: "row",
+    gap: sizes.md,
+  },
+
+  backButton: {
+    flex: 1,
+  },
+
+  saveButton: {
+    flex: 2,
+  },
+  loading: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
