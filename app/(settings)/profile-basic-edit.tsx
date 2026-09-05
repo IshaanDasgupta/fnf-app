@@ -6,6 +6,8 @@ import { StyleSheet } from "react-native";
 import { z } from "zod";
 
 import { upsertBasic } from "@/src/api/user";
+import { LoadingErrorScreen } from "@/src/components/shared/LoadingErrorScreen";
+import { LoadingScreen } from "@/src/components/shared/LoadingScreen";
 import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedChip } from "@/src/components/themed-ui/ThemedChip";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
@@ -19,14 +21,28 @@ import {
 } from "@/src/hooks/react-query/useProfile";
 import { sizes } from "@/src/theme/size";
 import { useQueryClient } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
 
 export const ProfileBasicEditSchema = z.object({
-  name: z.string().trim().min(1, "Name is required"),
+  name: z
+    .string()
+    .trim()
+    .regex(
+      /^[A-Za-z]+(?: [A-Za-z]+)*$/,
+      "Name can only contain letters and single spaces",
+    )
+    .min(1, "Name is required")
+    .max(30, "Name is too long"),
 
   age: z
     .string()
+    .trim()
     .min(1, "Age is required")
-    .refine((value) => /^\d+$/.test(value), "Age must be a number")
+    .regex(/^\d+$/, "Please enter a valid age")
+    .refine((value) => {
+      const age = Number(value);
+      return Number.isSafeInteger(age) && age < 100;
+    }, "Please enter a valid age")
     .refine((value) => Number(value) >= 18, "You must be at least 18"),
 
   gender: z.enum(["male", "female"], {
@@ -41,9 +57,9 @@ export default function ProfileBasicEditScreen() {
 
   const queryClient = useQueryClient();
 
-  const { data: user, isLoading, isError } = useProfile();
+  const { data: user, isLoading, isError, refetch, isFetching } = useProfile();
 
-  const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     control,
@@ -73,7 +89,7 @@ export default function ProfileBasicEditScreen() {
   }, [user, reset]);
 
   const handleSave = async (data: ProfileBasicEditFormInput) => {
-    setLoading(true);
+    setIsSaving(true);
 
     try {
       await upsertBasic({
@@ -87,8 +103,16 @@ export default function ProfileBasicEditScreen() {
       });
 
       router.back();
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: "Couldn't update profile",
+        text2: "Please wait a moment and try again.",
+      });
+
+      console.log(err);
     } finally {
-      setLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -97,22 +121,27 @@ export default function ProfileBasicEditScreen() {
   };
 
   if (isLoading) {
-    return (
-      <ThemedSafeArea>
-        <ThemedView style={styles.loading}>
-          <ThemedText variant="body">Loading profile...</ThemedText>
-        </ThemedView>
-      </ThemedSafeArea>
-    );
+    return <LoadingScreen />;
   }
 
   if (isError || !user) {
     return (
-      <ThemedSafeArea>
-        <ThemedView style={styles.loading}>
-          <ThemedText variant="body">Unable to load profile.</ThemedText>
-        </ThemedView>
-      </ThemedSafeArea>
+      <LoadingErrorScreen
+        title="Couldn't load your profile"
+        message="Something went wrong while loading your profile. Please try again."
+        onRetry={async () => {
+          const result = await refetch();
+
+          if (result.isError || !result.data) {
+            Toast.show({
+              type: "error",
+              text1: "Couldn't load your profile",
+              text2: "Please try again in a moment.",
+            });
+          }
+        }}
+        retryLoading={isFetching}
+      />
     );
   }
 
@@ -272,6 +301,7 @@ export default function ProfileBasicEditScreen() {
             variant="accent-secondary"
             label="Back"
             labelVariant="h2"
+            loading={isSaving}
             onPress={handleBack}
             style={styles.backButton}
           />
@@ -279,7 +309,7 @@ export default function ProfileBasicEditScreen() {
           <ThemedButton
             label="Save changes"
             labelVariant="h2"
-            loading={loading}
+            loading={isSaving}
             onPress={handleSubmit(handleSave)}
             style={styles.saveButton}
           />
@@ -336,10 +366,5 @@ const styles = StyleSheet.create({
 
   saveButton: {
     flex: 2,
-  },
-  loading: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

@@ -1,36 +1,31 @@
-import {
-  AddOnType,
-  AmenityType,
-  BhkType,
-  FurnishedStatus,
-  GenderPreference,
-  HouseRuleType,
-  OccupancyType,
-} from "@/src/constants/api-constants";
-
-export interface FilterValues {
-  bhk: BhkType[];
-  occupancy: OccupancyType[];
-  furnishing: FurnishedStatus[];
-  gender: GenderPreference | "all";
-  minRent?: number;
-  maxRent?: number;
-  availableImmediately: boolean;
-  amenities: AmenityType[];
-  addOns: AddOnType[];
-  houseRules: HouseRuleType[];
-}
+import { FilterValues } from "@/src/api/listing";
 
 export const DEFAULT_FILTER_VALUES: FilterValues = {
+  locality: undefined,
+
   bhk: [],
   occupancy: [],
-  furnishing: [],
-  gender: "all",
-  minRent: undefined,
-  maxRent: undefined,
+  furnishedStatus: [],
+
+  rentMin: undefined,
+  rentMax: undefined,
+
+  totalInitCostMin: undefined,
+  totalInitCostMax: undefined,
+
+  floorMin: undefined,
+  floorMax: undefined,
+
+  totalOccupancyMin: undefined,
+  totalOccupancyMax: undefined,
+
+  gender: undefined,
+
   availableImmediately: false,
-  amenities: [],
+  availableAfter: undefined,
+
   addOns: [],
+  amenities: [],
   houseRules: [],
 };
 

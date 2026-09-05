@@ -2,7 +2,7 @@ import { FilterValues } from "@/src/api/listing";
 import { DEFAULT_FILTER_VALUES } from "@/src/types/filter";
 import { create } from "zustand";
 
-export function countActiveFilters(filters: FilterValues): number {
+export function countActiveMapFilters(filters: FilterValues): number {
   let count = 0;
 
   if (filters.bhk.length > 0) count += filters.bhk.length;
@@ -26,7 +26,7 @@ export interface ActiveFilterPill {
   onRemove: () => void;
 }
 
-export function getActiveFilterPills(
+export function getActiveMapFilterPills(
   filters: FilterValues,
   updateFilters: (updater: (prev: FilterValues) => FilterValues) => void,
 ): ActiveFilterPill[] {
@@ -80,7 +80,7 @@ export function getActiveFilterPills(
     });
   });
 
-  // Furnishing
+  // furnishedStatus
   filters.furnishedStatus.forEach((f) => {
     const label =
       f === "fully-furnished"
@@ -111,6 +111,7 @@ export function getActiveFilterPills(
         })),
     });
   }
+
   // Immediate
   if (filters.availableImmediately) {
     pills.push({
@@ -167,32 +168,34 @@ export function getActiveFilterPills(
 }
 
 interface FilterState {
-  appliedFilters: FilterValues;
-  setAppliedFilters: (filters: FilterValues) => void;
-  updateAppliedFilters: (updater: (prev: FilterValues) => FilterValues) => void;
-  resetFilters: () => void;
-  getActiveCount: () => number;
+  appliedMapFilters: FilterValues;
+  setAppliedMapFilters: (filters: FilterValues) => void;
+  updateAppliedMapFilters: (
+    updater: (prev: FilterValues) => FilterValues,
+  ) => void;
+  resetMapFilters: () => void;
+  getActiveMapFilterCount: () => number;
 }
 
-export const useFilterStore = create<FilterState>((set, get) => ({
-  appliedFilters: { ...DEFAULT_FILTER_VALUES },
+export const useMapFilterStore = create<FilterState>((set, get) => ({
+  appliedMapFilters: { ...DEFAULT_FILTER_VALUES },
 
-  setAppliedFilters: (filters: FilterValues) =>
+  setAppliedMapFilters: (filters: FilterValues) =>
     set({
-      appliedFilters: { ...filters },
+      appliedMapFilters: { ...filters },
     }),
 
-  updateAppliedFilters: (updater: (prev: FilterValues) => FilterValues) =>
+  updateAppliedMapFilters: (updater: (prev: FilterValues) => FilterValues) =>
     set((state) => ({
-      appliedFilters: updater(state.appliedFilters),
+      appliedMapFilters: updater(state.appliedMapFilters),
     })),
 
-  resetFilters: () =>
+  resetMapFilters: () =>
     set({
-      appliedFilters: { ...DEFAULT_FILTER_VALUES },
+      appliedMapFilters: { ...DEFAULT_FILTER_VALUES },
     }),
 
-  getActiveCount: () => {
-    return countActiveFilters(get().appliedFilters);
+  getActiveMapFilterCount: () => {
+    return countActiveMapFilters(get().appliedMapFilters);
   },
 }));

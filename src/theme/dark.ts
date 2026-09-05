@@ -28,10 +28,10 @@ export const darkColors: ThemeColors = {
     secondary: "#F8F8F8",
 
     blue: "#274865",
-    green: "#234833",
+    green: "#369b57",
     orange: "#624531",
     purple: "#343F69",
-    yellow: "#625429",
+    yellow: "#ffd771",
     red: "#EF4444",
   },
 

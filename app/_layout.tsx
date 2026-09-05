@@ -12,11 +12,20 @@ import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces";
 
 import { navigation } from "@/src/lib/navigation";
 
+// import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { useToastConfig } from "@/src/lib/toast-config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
 
 void SplashScreen.preventAutoHideAsync();
 
+// GoogleSignin.configure({
+//   webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+// });
+
 const queryClient = new QueryClient();
+
+const toastConfig = useToastConfig();
 
 export default function RootLayout() {
   const router = useRouter();
@@ -61,6 +70,7 @@ export default function RootLayout() {
           }}
         />
       </QueryClientProvider>
+      <Toast config={toastConfig} />
     </SafeAreaProvider>
   );
 }

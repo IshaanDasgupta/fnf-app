@@ -5,6 +5,7 @@ export type AppRoute =
   | "/splash"
   | "/login"
   | "/phone-number"
+  | "/otp"
   | "/basic"
   | "/step2"
   | "/step3"
@@ -12,35 +13,46 @@ export type AppRoute =
   | "/home"
   | "/map"
   | "/profile"
-  | "/settings/profile-basic-edit"
+  | "/profile-basic-edit"
   | `/property/${string}`
   | "/permissions"
   | "/filters"
   | "/search";
 
 export const navigation = {
-  splash: "/splash" as Href,
-  login: "/login" as Href,
-  phone_number: "/phone-number" as Href,
-  filters: "/filters" as Href,
-  search: "/search" as Href,
-  searchWithQuery: (q: string) => `/search?q=${encodeURIComponent(q)}` as Href,
+  splash: "/splash" as const,
+
+  auth: {
+    login: "/login" as const,
+    phone_number: "/phone-number" as const,
+    otp: "/otp" as const,
+  },
+
+  filters: "/filters" as const,
+  search: "/search" as const,
+
+  searchWithQuery: (q: string) => `/search?q=${encodeURIComponent(q)}` as const,
+
   onboarding: {
-    basic: "/basic" as Href,
-    step2: "/step2" as Href,
-    step3: "/step3" as Href,
-    step4: "/step4" as Href,
+    basic: "/basic" as const,
+    step2: "/step2" as const,
+    step3: "/step3" as const,
+    step4: "/step4" as const,
   },
+
   tabs: {
-    home: "/home" as Href,
-    map: "/map" as Href,
-    profile: "/profile" as Href,
+    home: "/home" as const,
+    map: "/map" as const,
+    profile: "/profile" as const,
   },
+
   settings: {
-    profileBasicEdit: "/settings/profile-basic-edit" as Href,
+    profileBasicEdit: "/profile-basic-edit" as const,
   },
-  property: (id: string) => `/property/${id}` as Href,
-  permissions: "/permissions" as Href,
+
+  property: (id: string) => `/property/${id}` as const,
+
+  permissions: "/permissions" as const,
 } as const;
 
 export function useAppRouter() {

@@ -1,3 +1,4 @@
+import { FilterValues } from "@/src/api/listing";
 import FilterBottomBar from "@/src/components/filter/FilterBottomBar";
 import FilterHeader from "@/src/components/filter/FilterHeader";
 import FilterSection from "@/src/components/filter/FilterSection";
@@ -18,31 +19,54 @@ import {
   POPULAR_AMENITIES,
   POPULAR_HOUSE_RULES,
 } from "@/src/constants/filter-options";
-import { navigation } from "@/src/lib/navigation";
 import { countActiveFilters, useFilterStore } from "@/src/stores/filter";
-import { radius } from "@/src/theme/radius";
+import {
+  countActiveMapFilters,
+  useMapFilterStore,
+} from "@/src/stores/map-filters";
 import { sizes } from "@/src/theme/size";
-import { DEFAULT_FILTER_VALUES, FilterValues } from "@/src/types/filter";
+import { DEFAULT_FILTER_VALUES } from "@/src/types/filter";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, StyleSheet } from "react-native";
 
 export default function FiltersScreen() {
   const router = useRouter();
-  const appliedFilters = useFilterStore((state) => state.appliedFilters);
-  const setAppliedFilters = useFilterStore((state) => state.setAppliedFilters);
+  const { source } = useLocalSearchParams<{
+    source: "home" | "map";
+  }>();
+
+  const homeFilters = useFilterStore((state) => state.appliedFilters);
+  const setHomeFilters = useFilterStore((state) => state.setAppliedFilters);
+
+  const mapFilters = useMapFilterStore((state) => state.appliedMapFilters);
+  const setMapFilters = useMapFilterStore(
+    (state) => state.setAppliedMapFilters,
+  );
+
+  const isMap = source === "map";
+
+  const appliedFilters = isMap ? mapFilters : homeFilters;
+  const setAppliedFilters = isMap ? setMapFilters : setHomeFilters;
 
   const [draftFilters, setDraftFilters] = useState<FilterValues>({
     ...appliedFilters,
   });
 
-  const activeCount = countActiveFilters(draftFilters);
+  const activeCount = isMap
+    ? countActiveMapFilters(draftFilters)
+    : countActiveFilters(draftFilters);
 
   const toggleArrayItem = <T extends string>(
     key: keyof Pick<
       FilterValues,
-      "bhk" | "occupancy" | "furnishing" | "amenities" | "addOns" | "houseRules"
+      | "bhk"
+      | "occupancy"
+      | "furnishedStatus"
+      | "amenities"
+      | "addOns"
+      | "houseRules"
     >,
     item: T,
   ) => {
@@ -58,7 +82,7 @@ export default function FiltersScreen() {
 
   const handleApply = () => {
     setAppliedFilters(draftFilters);
-    router.replace(navigation.search);
+    router.back();
   };
 
   const handleClear = () => {
@@ -66,7 +90,7 @@ export default function FiltersScreen() {
   };
 
   return (
-    <ThemedSafeArea variant="primary" edges={["top"]}>
+    <ThemedSafeArea variant="primary" edges={["top"]} padding="lg">
       <ThemedView style={styles.container}>
         <FilterHeader
           title="Filters"
@@ -81,31 +105,6 @@ export default function FiltersScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* Active Filters Live Status Strip */}
-          {activeCount > 0 && (
-            <ThemedView style={styles.statusStripContainer}>
-              <ThemedView
-                variant="tertiary"
-                borderRadius="card"
-                style={styles.statusStrip}
-              >
-                <ThemedView style={styles.statusStripLeft}>
-                  <ThemedView style={styles.pulseDot} />
-                  <ThemedText variant="subTitle" color="foreground.primary">
-                    {activeCount} {activeCount === 1 ? "Filter" : "Filters"}{" "}
-                    Applied
-                  </ThemedText>
-                </ThemedView>
-
-                <Pressable onPress={handleClear} hitSlop={8}>
-                  <ThemedText variant="caption" color="accent.primary">
-                    Reset all
-                  </ThemedText>
-                </Pressable>
-              </ThemedView>
-            </ThemedView>
-          )}
-
           {/* Budget / Rent */}
           <FilterSection
             iconName="wallet-outline"
@@ -114,20 +113,20 @@ export default function FiltersScreen() {
             title="Monthly Budget"
             subtitle="Set your comfortable price range"
             badge={
-              draftFilters.minRent !== undefined ||
-              draftFilters.maxRent !== undefined
+              draftFilters.rentMin !== undefined ||
+              draftFilters.rentMax !== undefined
                 ? 1
                 : undefined
             }
           >
             <PriceRangeFilter
-              minRent={draftFilters.minRent}
-              maxRent={draftFilters.maxRent}
+              minRent={draftFilters.rentMin}
+              maxRent={draftFilters.rentMax}
               onChange={(min, max) =>
                 setDraftFilters((prev) => ({
                   ...prev,
-                  minRent: min,
-                  maxRent: max,
+                  rentMin: min,
+                  rentMax: max,
                 }))
               }
             />
@@ -174,13 +173,13 @@ export default function FiltersScreen() {
             iconTintColor="#4338CA"
             title="Furnishing Status"
             subtitle="Level of furnishings in the house"
-            badge={draftFilters.furnishing.length}
+            badge={draftFilters.furnishedStatus.length}
           >
             <VisualGridCard
               items={FURNISHING_VISUAL_OPTIONS}
-              selected={draftFilters.furnishing}
+              selected={draftFilters.furnishedStatus}
               columns={3}
-              onToggle={(id) => toggleArrayItem("furnishing", id)}
+              onToggle={(id) => toggleArrayItem("furnishedStatus", id)}
             />
           </FilterSection>
 
@@ -191,14 +190,17 @@ export default function FiltersScreen() {
             iconTintColor="#B45309"
             title="Gender Preference"
             subtitle="Roommate & flatmate preference"
-            badge={draftFilters.gender !== "all" ? 1 : undefined}
+            badge={draftFilters.gender !== undefined ? 1 : undefined}
           >
             <VisualGridCard
               items={GENDER_VISUAL_OPTIONS}
-              selected={[draftFilters.gender]}
-              columns={3}
+              selected={draftFilters.gender ? [draftFilters.gender] : []}
+              columns={2}
               onToggle={(id) =>
-                setDraftFilters((prev) => ({ ...prev, gender: id }))
+                setDraftFilters((prev) => ({
+                  ...prev,
+                  gender: prev.gender === id ? undefined : id,
+                }))
               }
             />
           </FilterSection>
@@ -249,11 +251,6 @@ export default function FiltersScreen() {
                     >
                       Available Immediately
                     </ThemedText>
-                    <ThemedView style={styles.hotBadge}>
-                      <ThemedText style={styles.hotBadgeText}>
-                        ⚡ FAST MOVE-IN
-                      </ThemedText>
-                    </ThemedView>
                   </ThemedView>
                   <ThemedText
                     variant="caption"
@@ -356,10 +353,8 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: sizes.sm,
     gap: sizes.sm,
-    paddingBottom: sizes["6xl"],
   },
   statusStripContainer: {
-    paddingHorizontal: sizes.lg,
     marginBottom: sizes.xs,
   },
   statusStrip: {
@@ -384,7 +379,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#4DA4E8",
   },
   availabilitySection: {
-    paddingHorizontal: sizes.lg,
     marginVertical: sizes.xs,
   },
   availabilityCard: {

@@ -23,25 +23,14 @@ export default function LoginScreen() {
   const router = useRouter();
 
   const handleContinue = () => {
-    router.replace(navigation.phone_number);
+    router.replace(navigation.auth.phone_number);
   };
 
   const authProviders = [
     {
-      label: "Continue with Apple",
-      icon: <Ionicons name="logo-apple" size={24} />,
-      variant: "inverse" as const,
-    },
-    {
       label: "Continue with Google",
-      icon: (
-        <Ionicons
-          name="logo-google"
-          size={22}
-          color={colors.foreground.primary}
-        />
-      ),
-      variant: "tertiary" as const,
+      icon: <Ionicons name="logo-google" size={22} />,
+      variant: "inverse" as const,
     },
     {
       label: "Continue with Phone",

@@ -1,12 +1,8 @@
 import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
-import { radius } from "@/src/theme/radius";
-import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
-import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export interface FilterBottomBarProps {
   onClear: () => void;
@@ -19,66 +15,39 @@ export function FilterBottomBar({
   onApply,
   activeCount,
 }: FilterBottomBarProps) {
-  const insets = useSafeAreaInsets();
-
   return (
-    <ThemedView
-      variant="primary"
-      style={[
-        styles.container,
-        {
-          paddingBottom: Math.max(insets.bottom, sizes.lg),
-        },
-      ]}
-    >
-      <ThemedView style={styles.clearWrapper}>
-        <ThemedButton
-          variant="secondary"
-          label="Clear all"
-          labelVariant="subTitle"
-          radius="button"
-          disabled={activeCount === 0}
-          onPress={onClear}
-          style={styles.clearButton}
-        />
-      </ThemedView>
+    <ThemedView style={styles.buttonContainer} paddingVertical="xl">
+      <ThemedButton
+        variant="accent-secondary"
+        labelVariant="h3"
+        label="Clear all"
+        disabled={activeCount === 0}
+        onPress={onClear}
+        style={styles.backButton}
+      />
 
-      <ThemedView style={styles.applyWrapper}>
-        <ThemedButton
-          variant="accent-primary"
-          label={
-            activeCount > 0
-              ? `Show Results (${activeCount})`
-              : "Show Results"
-          }
-          labelVariant="title"
-          rightIcon={<Ionicons name="arrow-forward" size={18} color="#161B24" />}
-          radius="button"
-          onPress={onApply}
-        />
-      </ThemedView>
+      <ThemedButton
+        label="Show Results"
+        labelVariant="h3"
+        onPress={onApply}
+        style={styles.saveButton}
+      />
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  buttonContainer: {
+    marginTop: "auto",
     flexDirection: "row",
-    alignItems: "center",
     gap: sizes.md,
-    paddingHorizontal: sizes.lg,
-    paddingTop: sizes.md,
-    borderTopLeftRadius: radius.screen,
-    borderTopRightRadius: radius.screen,
-    ...shadows.lg,
   },
-  clearWrapper: {
+
+  backButton: {
     flex: 1,
   },
-  clearButton: {
-    width: "100%",
-  },
-  applyWrapper: {
+
+  saveButton: {
     flex: 2,
   },
 });

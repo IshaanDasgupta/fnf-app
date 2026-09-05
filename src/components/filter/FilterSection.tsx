@@ -30,11 +30,7 @@ export function FilterSection({
   style,
 }: FilterSectionProps) {
   const headerIcon = iconName ? (
-    <Ionicons
-      name={iconName}
-      size={18}
-      color={iconTintColor ?? "#4DA4E8"}
-    />
+    <Ionicons name={iconName} size={18} color={iconTintColor ?? "#4DA4E8"} />
   ) : (
     icon
   );
@@ -98,7 +94,6 @@ export function FilterSection({
 const styles = StyleSheet.create({
   container: {
     padding: sizes.lg,
-    marginHorizontal: sizes.lg,
     marginVertical: sizes.xs,
     borderWidth: 1,
     borderColor: "rgba(0, 0, 0, 0.04)",

@@ -58,8 +58,12 @@ export function PriceRangeFilter({
 
   // Calculate visual percentage range for the bar (0 to 60,000)
   const MAX_LIMIT = 60000;
-  const leftPercent = minRent ? Math.min(100, Math.max(0, (minRent / MAX_LIMIT) * 100)) : 0;
-  const rightPercent = maxRent ? Math.min(100, Math.max(0, (maxRent / MAX_LIMIT) * 100)) : 100;
+  const leftPercent = minRent
+    ? Math.min(100, Math.max(0, (minRent / MAX_LIMIT) * 100))
+    : 0;
+  const rightPercent = maxRent
+    ? Math.min(100, Math.max(0, (maxRent / MAX_LIMIT) * 100))
+    : 100;
   const widthPercent = Math.max(8, rightPercent - leftPercent);
 
   return (
@@ -71,9 +75,6 @@ export function PriceRangeFilter({
         style={styles.summaryBar}
       >
         <ThemedView style={styles.summaryLeft}>
-          <ThemedView style={styles.summaryIconCircle}>
-            <Ionicons name="wallet-outline" size={18} color="#4DA4E8" />
-          </ThemedView>
           <ThemedView>
             <ThemedText variant="caption" color="foreground.secondary">
               Selected Budget
@@ -81,7 +82,8 @@ export function PriceRangeFilter({
             <ThemedText variant="title" style={styles.formattedText}>
               {formattedRange}
               <ThemedText variant="caption" color="foreground.secondary">
-                {" "}/ month
+                {" "}
+                / month
               </ThemedText>
             </ThemedText>
           </ThemedView>
@@ -132,10 +134,7 @@ export function PriceRangeFilter({
             <Pressable
               key={preset.id}
               onPress={() => handlePresetSelect(preset)}
-              style={[
-                styles.presetChipPressable,
-                { width: "23%" },
-              ]}
+              style={[styles.presetChipPressable, { width: "23%" }]}
             >
               <ThemedView
                 variant={selected ? "accent-primary" : "secondary"}

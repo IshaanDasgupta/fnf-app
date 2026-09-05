@@ -3,13 +3,12 @@ import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 
 import ChipSelectionList from "@/src/components/home/ChipSelection";
 import HomeHeader from "@/src/components/home/Header";
-import SearchFilter from "@/src/components/home/SearchFilter";
 import ListingCard from "@/src/components/listing/card/ListingCard";
+import SearchFilter from "@/src/components/shared/SearchFilter";
 import Spacer from "@/src/components/themed-ui/Spacer";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
-import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { QUICK_FILTERS } from "@/src/constants/quick-filters";
 import { useListings } from "@/src/hooks/react-query/useListings";
 import { useUserLocation } from "@/src/hooks/useUserLocation";

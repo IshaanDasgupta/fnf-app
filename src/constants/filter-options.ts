@@ -1,3 +1,5 @@
+import { FilterTileItem } from "@/src/components/filter/FilterTileGrid";
+import { VisualOptionItem } from "@/src/components/filter/VisualGridCard";
 import {
   ADD_ON_TYPES,
   AMENITY_TYPES,
@@ -10,8 +12,6 @@ import {
   HouseRuleType,
   OccupancyType,
 } from "@/src/constants/api-constants";
-import { FilterTileItem } from "@/src/components/filter/FilterTileGrid";
-import { VisualOptionItem } from "@/src/components/filter/VisualGridCard";
 import { Ionicons } from "@expo/vector-icons";
 
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -105,15 +105,7 @@ export const FURNISHING_VISUAL_OPTIONS: VisualOptionItem<FurnishedStatus>[] = [
   },
 ];
 
-export const GENDER_VISUAL_OPTIONS: VisualOptionItem<GenderPreference | "all">[] = [
-  {
-    id: "all",
-    title: "Any Gender",
-    subtitle: "All welcome",
-    iconName: "male-female-outline",
-    tintBg: "rgba(77, 164, 232, 0.12)",
-    tintColor: "#4DA4E8",
-  },
+export const GENDER_VISUAL_OPTIONS: VisualOptionItem<GenderPreference>[] = [
   {
     id: "male",
     title: "Male only",
@@ -277,7 +269,10 @@ export const POPULAR_ADDONS: FilterTileItem<AddOnType>[] = [
   });
 
 const HOUSE_RULE_METAS: Partial<
-  Record<HouseRuleType, { iconName: IconName; tintBg: string; tintColor: string }>
+  Record<
+    HouseRuleType,
+    { iconName: IconName; tintBg: string; tintColor: string }
+  >
 > = {
   "No Smoking": {
     iconName: "ban-outline",

@@ -1,73 +1,54 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 
+import { sendOTP } from "@/src/api/auth";
+import { PhoneNumberInput } from "@/src/components/login/PhoneNumberInput";
 import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
 import { ThemedScrollView } from "@/src/components/themed-ui/ThemedScrollView";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
-
-import { sendOTP, verifyOTP } from "@/src/api/auth";
-import { OTPInput } from "@/src/components/login/OTPInput";
-import { PhoneNumberInput } from "@/src/components/login/PhoneNumberInput";
 import { useTheme } from "@/src/hooks/theme/useTheme";
 import { navigation } from "@/src/lib/navigation";
-import { useAuthStore } from "@/src/stores/auth";
-import { useRouter } from "expo-router";
+import Toast from "react-native-toast-message";
 
-type Step = "phone" | "otp";
-
-export default function PhoneLoginScreen() {
+export default function PhoneNumberScreen() {
   const { colors } = useTheme();
-  const [step, setStep] = useState<Step>("phone");
+  const router = useRouter();
 
   const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
+  const [isSendingOTP, setIsSendingOTP] = useState(false);
 
-  const [loading, setLoading] = useState(false);
-
-  const router = useRouter();
-  const login = useAuthStore((state) => state.login);
-
-  const handleSendOtp = async () => {
-    setLoading(true);
+  const handleContinue = async () => {
+    setIsSendingOTP(true);
 
     try {
       await sendOTP(`+91${phone}`);
-      setStep("otp");
+      router.push({
+        pathname: navigation.auth.otp,
+        params: { phone },
+      });
     } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: "Couldn't send OTP",
+        text2: "Please check your phone number and try again.",
+      });
       console.log(err);
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerify = async () => {
-    setLoading(true);
-
-    try {
-      const { user, accessToken, refreshToken, refreshExpiresAt } =
-        await verifyOTP(`+91${phone}`, otp);
-
-      console.log(user);
-
-      login(user, accessToken, refreshToken, refreshExpiresAt);
-
-      user.basicOnboardingCompleted
-        ? router.replace(navigation.tabs.home)
-        : router.replace(navigation.onboarding.basic);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+      setIsSendingOTP(false);
     }
   };
 
   return (
     <ThemedSafeArea>
-      <ThemedScrollView padding="lg">
+      <ThemedScrollView padding="lg" contentContainerStyle={{ flexGrow: 1 }}>
         <ThemedView
-          style={{ flexDirection: "row", alignItems: "center" }}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
           gap="sm"
         >
           <ThemedView variant="accent-primary" borderRadius="md" padding="sm">
@@ -77,11 +58,9 @@ export default function PhoneLoginScreen() {
           <ThemedText variant="h3">FlatMate</ThemedText>
         </ThemedView>
 
-        <ThemedView margin="2xl" gap="sm">
+        <ThemedView margin="2xl" gap="sm" style={{ alignItems: "center" }}>
           <ThemedText variant="display" style={{ textAlign: "center" }}>
-            {step === "phone"
-              ? "What's your\nphone number?"
-              : "Enter the\nverification code"}
+            What's your{"\n"}phone number?
           </ThemedText>
 
           <ThemedText
@@ -89,33 +68,23 @@ export default function PhoneLoginScreen() {
             color="foreground.secondary"
             style={{ textAlign: "center" }}
           >
-            {step === "phone"
-              ? "We'll send you a one-time verification code."
-              : `We've sent a 6 digit code to ${phone}`}
+            We'll send you a one-time verification code.
           </ThemedText>
         </ThemedView>
 
         <ThemedView marginVertical="xl">
-          {step === "phone" ? (
-            <PhoneNumberInput value={phone} onChangeText={setPhone} />
-          ) : (
-            <OTPInput value={otp} onChange={setOtp} />
-          )}
+          <PhoneNumberInput value={phone} onChangeText={setPhone} />
         </ThemedView>
 
-        <ThemedButton
-          disabled={step === "phone" ? phone.length < 10 : otp.length < 6}
-          onPress={() => {
-            if (step === "phone") {
-              handleSendOtp();
-              return;
-            }
-            handleVerify();
-          }}
-          label={step === "phone" ? "Continue" : "Verify"}
-          labelVariant="h2"
-          loading={loading}
-        />
+        <ThemedView style={{ marginTop: "auto" }}>
+          <ThemedButton
+            disabled={phone.length < 10}
+            onPress={handleContinue}
+            label="Continue"
+            labelVariant="h2"
+            loading={isSendingOTP}
+          />
+        </ThemedView>
       </ThemedScrollView>
     </ThemedSafeArea>
   );

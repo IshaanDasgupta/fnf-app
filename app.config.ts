@@ -62,6 +62,7 @@ const config: ExpoConfig = {
       },
     ],
     "expo-font",
+    "@react-native-google-signin/google-signin",
   ],
 
   experiments: {

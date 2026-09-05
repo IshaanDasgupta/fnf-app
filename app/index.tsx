@@ -15,7 +15,7 @@ export default function StartupScreen() {
   }
 
   if (!isAuthenticated) {
-    return <Redirect href={navigation.login} />;
+    return <Redirect href={navigation.auth.login} />;
   }
 
   if (!basicOnboardingCompleted) {

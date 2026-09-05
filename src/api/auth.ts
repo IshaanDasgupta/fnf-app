@@ -5,7 +5,7 @@ export interface SendOTPResponse {
   success: boolean;
 }
 
-export interface VerifyOTPResponse {
+export interface AuthResponse {
   user: {
     id: string;
     phone: string;
@@ -34,8 +34,8 @@ export const sendOTP = async (phone: string): Promise<SendOTPResponse> => {
 export const verifyOTP = async (
   phone: string,
   otp: string,
-): Promise<VerifyOTPResponse> => {
-  const { data } = await axiosClient.post<VerifyOTPResponse>(
+): Promise<AuthResponse> => {
+  const { data } = await axiosClient.post<AuthResponse>(
     ENDPOINTS.AUTH.VERIFY_OTP,
     {
       phone,
@@ -46,10 +46,19 @@ export const verifyOTP = async (
   return data;
 };
 
-export const refresh = async (
-  refreshToken: string,
-): Promise<VerifyOTPResponse> => {
-  const { data } = await axiosClient.post<VerifyOTPResponse>(
+export const googleLogin = async (idToken: string): Promise<AuthResponse> => {
+  const { data } = await axiosClient.post<AuthResponse>(
+    ENDPOINTS.AUTH.GOOGLE_LOGIN,
+    {
+      idToken,
+    },
+  );
+
+  return data;
+};
+
+export const refresh = async (refreshToken: string): Promise<AuthResponse> => {
+  const { data } = await axiosClient.post<AuthResponse>(
     ENDPOINTS.AUTH.REFRESH,
     {
       refreshToken,

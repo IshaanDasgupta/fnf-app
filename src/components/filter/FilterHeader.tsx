@@ -77,8 +77,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: sizes.lg,
-    paddingVertical: sizes.sm,
   },
   titleContainer: {
     flex: 1,

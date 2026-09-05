@@ -1,21 +1,17 @@
+import { LoadingScreen } from "@/src/components/shared/LoadingScreen";
 import { useAuth } from "@/src/hooks/useAuth";
 import { navigation } from "@/src/lib/navigation";
 import { Redirect, Stack } from "expo-router";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 export default function PropertyLayout() {
   const { isAuthenticated, basicOnboardingCompleted, isHydrated } = useAuth();
 
   if (!isHydrated) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
-    return <Redirect href={navigation.login} />;
+    return <Redirect href={navigation.auth.login} />;
   }
 
   if (!basicOnboardingCompleted) {
@@ -28,11 +24,3 @@ export default function PropertyLayout() {
     />
   );
 }
-
-const styles = StyleSheet.create({
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

@@ -12,6 +12,35 @@ import {
 import { ENDPOINTS } from "@/src/constants/endpoints";
 import axiosClient from "@/src/lib/axios-client";
 
+export interface FilterValues {
+  locality?: string;
+
+  bhk: BhkType[];
+  occupancy: OccupancyType[];
+  furnishedStatus: FurnishedStatus[];
+
+  rentMin?: number;
+  rentMax?: number;
+
+  totalInitCostMin?: number;
+  totalInitCostMax?: number;
+
+  floorMin?: number;
+  floorMax?: number;
+
+  totalOccupancyMin?: number;
+  totalOccupancyMax?: number;
+
+  gender?: GenderPreference;
+
+  availableImmediately?: boolean;
+  availableAfter?: Date;
+
+  addOns: AddOnType[];
+  amenities: AmenityType[];
+  houseRules: HouseRuleType[];
+}
+
 export interface ListingCardResponse {
   id: string;
   title: string;
@@ -86,15 +115,12 @@ export async function getListings({
   return data;
 }
 
-export interface GetMapListingsParams {
+export interface GetMapListingsParams extends FilterValues {
   north: number;
   south: number;
   east: number;
   west: number;
-
   limit?: number;
-
-  quickFilters?: string[];
 }
 
 export interface MapListingsResponse {
@@ -132,7 +158,7 @@ export async function getMapListings({
   east,
   west,
   limit = 200,
-  quickFilters = [],
+  ...filters
 }: GetMapListingsParams): Promise<GetMapListingsResponse> {
   const { data } = await axiosClient.get<GetMapListingsResponse>(
     ENDPOINTS.LISTING.MAP,
@@ -143,8 +169,40 @@ export async function getMapListings({
         east,
         west,
         limit,
-        quickFilters:
-          quickFilters.length > 0 ? quickFilters.join(",") : undefined,
+
+        ...filters,
+
+        bhk: filters.bhk.length > 0 ? filters.bhk.join(",") : undefined,
+
+        occupancy:
+          filters.occupancy.length > 0
+            ? filters.occupancy.join(",")
+            : undefined,
+
+        furnishedStatus:
+          filters.furnishedStatus.length > 0
+            ? filters.furnishedStatus.join(",")
+            : undefined,
+
+        addOns:
+          filters.addOns.length > 0 ? filters.addOns.join(",") : undefined,
+
+        amenities:
+          filters.amenities.length > 0
+            ? filters.amenities.join(",")
+            : undefined,
+
+        houseRules:
+          filters.houseRules.length > 0
+            ? filters.houseRules.join(",")
+            : undefined,
+
+        availableImmediately:
+          filters.availableImmediately !== undefined
+            ? String(filters.availableImmediately)
+            : undefined,
+
+        availableAfter: filters.availableAfter?.toISOString(),
       },
     },
   );
@@ -264,6 +322,28 @@ export async function getListing(
 ): Promise<GetListingResponse> {
   const { data } = await axiosClient.get<GetListingResponse>(
     ENDPOINTS.LISTING.DETAILS(listingId),
+  );
+
+  return data;
+}
+
+export interface GetLocalitiesResponse {
+  success: boolean;
+  data: string[];
+}
+
+export async function getLocalities({
+  city,
+}: {
+  city: string;
+}): Promise<GetLocalitiesResponse> {
+  const { data } = await axiosClient.get<GetLocalitiesResponse>(
+    ENDPOINTS.LISTING.LOCALITIES,
+    {
+      params: {
+        city,
+      },
+    },
   );
 
   return data;

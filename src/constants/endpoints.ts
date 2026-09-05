@@ -1,11 +1,12 @@
 // import "dotenv/config";
 
 // export const API_BASE_URL = process.env.API_BASE_URL;
-export const API_BASE_URL = "http://192.168.1.6:5000";
+export const API_BASE_URL = "http://192.168.1.5:5000";
 export const ENDPOINTS = {
   AUTH: {
     SEND_OTP: "/auth/send-otp",
     VERIFY_OTP: "/auth/verify-otp",
+    GOOGLE_LOGIN: "/auth/google-login",
     REFRESH: "/auth/refresh",
     LOGOUT: "/auth/logout",
   },
@@ -20,5 +21,6 @@ export const ENDPOINTS = {
     MAP: "/listing/map",
     DETAILS: (id: string) => `/listing/${id}`,
     FAVOURITE: `/listing/fav`,
+    LOCALITIES: "/listing/localities",
   },
 } as const;

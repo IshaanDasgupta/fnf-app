@@ -1,17 +1,14 @@
+import { LoadingScreen } from "@/src/components/shared/LoadingScreen";
 import { useAuth } from "@/src/hooks/useAuth";
 import { navigation } from "@/src/lib/navigation";
 import { Redirect, Stack } from "expo-router";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 export default function AuthLayout() {
   const { isAuthenticated, basicOnboardingCompleted, isHydrated } = useAuth();
 
   if (!isHydrated) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   if (isAuthenticated) {

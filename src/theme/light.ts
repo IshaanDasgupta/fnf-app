@@ -28,10 +28,10 @@ export const lightColors: ThemeColors = {
     secondary: "#161B24",
 
     blue: "#DCEEFF",
-    green: "#DDF5E5",
+    green: "#369b57",
     orange: "#FFE5D6",
     purple: "#E8ECFF",
-    yellow: "#FFF3D5",
+    yellow: "#ffd771",
     red: "#EF4444",
   },
 

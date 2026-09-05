@@ -19,15 +19,29 @@ import { CITIES } from "@/src/constants/api-constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
+import Toast from "react-native-toast-message";
 import { z } from "zod";
 
 export const BasicOnboardingFormSchema = z.object({
-  name: z.string().trim().min(1, "Name is required"),
+  name: z
+    .string()
+    .trim()
+    .regex(
+      /^[A-Za-z]+(?: [A-Za-z]+)*$/,
+      "Name can only contain letters and single spaces",
+    )
+    .min(1, "Name is required")
+    .max(30, "Name is too long"),
 
   age: z
     .string()
+    .trim()
     .min(1, "Age is required")
-    .refine((value) => /^\d+$/.test(value), "Age must be a number")
+    .regex(/^\d+$/, "Please enter a valid age")
+    .refine((value) => {
+      const age = Number(value);
+      return Number.isSafeInteger(age) && age < 100;
+    }, "Please enter a valid age")
     .refine((value) => Number(value) >= 18, "You must be at least 18"),
 
   gender: z.enum(["male", "female"], {
@@ -49,7 +63,7 @@ export default function BasicOnboardingScreen() {
 
   const completeOnboarding = useAuthStore((state) => state.completeOnboarding);
 
-  const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     control,
@@ -67,7 +81,7 @@ export default function BasicOnboardingScreen() {
   });
 
   const handleContinue = async (data: BasicOnboardingFormInput) => {
-    setLoading(true);
+    setIsSaving(true);
 
     try {
       const updatedUser = await upsertBasic({
@@ -78,8 +92,16 @@ export default function BasicOnboardingScreen() {
 
       completeOnboarding(updatedUser.data);
       router.replace(navigation.tabs.home);
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: "Couldn't update profile",
+        text2: "Please wait a moment and try again.",
+      });
+
+      console.log(err);
     } finally {
-      setLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -260,7 +282,7 @@ export default function BasicOnboardingScreen() {
           <ThemedButton
             label="Continue"
             labelVariant="h2"
-            loading={loading}
+            loading={isSaving}
             onPress={handleSubmit(handleContinue)}
           />
         </ThemedView>

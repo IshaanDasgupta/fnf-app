@@ -3,7 +3,7 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { navigation } from "@/src/lib/navigation";
 import { Redirect, Stack } from "expo-router";
 
-export default function PropertyDetailLayout() {
+export default function SettingsLayout() {
   const { isAuthenticated, basicOnboardingCompleted, isHydrated } = useAuth();
 
   if (!isHydrated) {
@@ -20,7 +20,10 @@ export default function PropertyDetailLayout() {
 
   return (
     <Stack
-      screenOptions={{ headerShown: false, animation: "slide_from_right" }}
+      screenOptions={{
+        headerShown: false,
+        animation: "slide_from_right",
+      }}
     />
   );
 }

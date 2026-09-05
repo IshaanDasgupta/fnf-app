@@ -20,7 +20,7 @@ interface RetryAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 const axiosClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 15000,
+  timeout: 5000,
 });
 
 let refreshPromise: Promise<AuthResponse> | null = null;
