@@ -2,15 +2,18 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, AppState, Linking, StyleSheet } from "react-native";
+import { AppState, Linking, StyleSheet } from "react-native";
 
+import Spacer from "@/src/components/themed-ui/Spacer";
 import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+import { useTheme } from "@/src/hooks/theme/useTheme";
 import { sizes } from "@/src/theme/size";
 
 export default function PermissionScreen() {
+  const { colors } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
 
@@ -58,7 +61,6 @@ export default function PermissionScreen() {
     const subscription = AppState.addEventListener(
       "change",
       async (nextState) => {
-        console.log(nextState);
         if (nextState === "active") {
           await checkLocationPermission();
         }
@@ -72,36 +74,37 @@ export default function PermissionScreen() {
     <ThemedSafeArea>
       <ThemedView style={styles.container}>
         <ThemedView style={styles.content}>
-          <ThemedView style={styles.iconContainer}>
-            <Ionicons name="location" size={36} color="#2563eb" />
+          <ThemedView variant="secondary" style={styles.iconContainer}>
+            <Ionicons
+              name="location"
+              size={36}
+              color={colors.foreground.secondary}
+            />
           </ThemedView>
 
-          <ThemedText variant="title" style={styles.title}>
+          <Spacer size="lg" />
+
+          <ThemedText variant="h3" style={styles.title}>
             Location is required
           </ThemedText>
 
-          <ThemedText
-            variant="body"
-            color="foreground.secondary"
-            style={styles.description}
-          >
-            Friendly Floors uses your location to show nearby flat listings and
-            power map-based listing search.
-          </ThemedText>
+          <Spacer size="xs" />
 
           <ThemedText
-            variant="body"
+            variant="bodySmall"
             color="foreground.secondary"
             style={styles.description}
           >
-            Location access is required to use the app.
+            Location permission is required to show nearby flat listings and
+            power map-based listing search.
           </ThemedText>
         </ThemedView>
 
-        <ThemedView style={styles.footer}>
+        <ThemedView>
           {permissionDenied ? (
             <>
               <ThemedButton
+                labelVariant="h3"
                 label="Open Settings"
                 onPress={openSettings}
                 disabled={isLoading}
@@ -113,19 +116,17 @@ export default function PermissionScreen() {
                 style={styles.settingsHint}
               >
                 Location permission has been disabled. Please enable it in your
-                device settings to continue using Friendly Floors.
+                device settings to continues.
               </ThemedText>
             </>
           ) : (
             <ThemedButton
-              label={isLoading ? "Requesting permission..." : "Continue"}
+              labelVariant="h3"
+              label="Request permission"
               onPress={requestLocationPermission}
               disabled={isLoading}
+              loading={isLoading}
             />
-          )}
-
-          {isLoading && (
-            <ActivityIndicator size="small" style={styles.loader} />
           )}
         </ThemedView>
       </ThemedView>
@@ -147,35 +148,27 @@ const styles = StyleSheet.create({
   },
 
   iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: sizes["2xl"],
-    backgroundColor: "#eff6ff",
   },
 
   title: {
     textAlign: "center",
-    marginBottom: sizes.md,
   },
 
   description: {
     textAlign: "center",
     maxWidth: 340,
-    marginBottom: sizes.md,
-    lineHeight: 22,
-  },
-
-  footer: {
-    paddingBottom: sizes.lg,
+    lineHeight: 17.7,
   },
 
   settingsHint: {
     textAlign: "center",
     marginTop: sizes.md,
-    lineHeight: 20,
+    lineHeight: 16,
   },
 
   loader: {

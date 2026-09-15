@@ -1,17 +1,17 @@
-import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet } from "react-native";
 
-import SavedListingCard, {
-  SavedListing,
-} from "@/src/components/profile/SavedListingCard";
+import { ProfileListingResponse } from "@/src/api/user";
+import SavedListingCard from "@/src/components/profile/SavedListingCard";
+import Spacer from "@/src/components/themed-ui/Spacer";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 import { useTheme } from "@/src/hooks/theme/useTheme";
 import { sizes } from "@/src/theme/size";
+import { Ionicons } from "@expo/vector-icons";
 
 type SavedListingsSectionProps = {
-  listings: SavedListing[];
+  listings: ProfileListingResponse[];
 };
 
 export default function SavedListingsSection({
@@ -20,47 +20,51 @@ export default function SavedListingsSection({
   const { colors } = useTheme();
 
   return (
-    <ThemedView>
-      {listings.length > 0 ? (
-        <>
-          <ThemedView marginBottom="md" style={styles.header}>
-            <ThemedText variant="h2">Saved listings</ThemedText>
-            {!!listings.length && (
-              <ThemedText variant="body" color="foreground.secondary">
-                {listings.length}
-              </ThemedText>
-            )}
-          </ThemedView>
+    <ThemedView variant="primary" borderRadius="card" style={styles.container}>
+      <ThemedView style={styles.header}>
+        <ThemedText variant="h2">Saved Listings</ThemedText>
 
-          <ThemedView gap="md">
-            {listings.map((listing) => (
-              <SavedListingCard key={listing.id} listing={listing} />
-            ))}
-          </ThemedView>
-        </>
+        <ThemedView borderRadius="button" style={styles.countBadge}>
+          <ThemedText variant="body" color="foreground.secondary">
+            {listings.length}
+          </ThemedText>
+        </ThemedView>
+      </ThemedView>
+
+      <Spacer size="lg" />
+
+      {listings.length > 0 ? (
+        <ThemedView gap="md">
+          {listings.map((listing) => (
+            <SavedListingCard key={listing.id} {...listing} />
+          ))}
+        </ThemedView>
       ) : (
         <ThemedView
-          variant="secondary"
-          padding="xl"
+          variant="primary"
           borderRadius="card"
           style={styles.emptyState}
         >
-          <Ionicons
-            name="heart-outline"
-            size={sizes.xl}
-            color={colors.foreground.tertiary}
-          />
+          <ThemedView variant="secondary" style={styles.iconCircle}>
+            <Ionicons name="heart-outline" size={34} color="#666" />
+          </ThemedView>
 
-          <ThemedText variant="h3" style={styles.emptyTitle}>
-            No saved listings
+          <Spacer size="lg" />
+
+          <ThemedText variant="title" color="foreground.primary">
+            No saved listings yet
           </ThemedText>
 
+          <Spacer size="xs" />
+
           <ThemedText
-            variant="body"
+            variant="bodySmall"
             color="foreground.secondary"
             style={styles.emptyDescription}
           >
-            Listings you save will appear here.
+            Explore homes in your favorite localities and
+            {"\n"}
+            tap the heart icon to save them here.
           </ThemedText>
         </ThemedView>
       )}
@@ -69,22 +73,42 @@ export default function SavedListingsSection({
 }
 
 const styles = StyleSheet.create({
+  container: {
+    // Keeps the section visually separated from the profile background.
+  },
+
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
 
-  emptyState: {
+  countBadge: {
+    minWidth: 30,
+    height: 30,
+    paddingHorizontal: sizes.sm,
     alignItems: "center",
+    justifyContent: "center",
   },
 
-  emptyTitle: {
-    marginTop: sizes.md,
+  emptyState: {
+    minHeight: 276,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: sizes.lg,
+    paddingVertical: sizes["2xl"],
+  },
+
+  iconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   emptyDescription: {
-    marginTop: sizes.xs,
     textAlign: "center",
+    lineHeight: 17.6,
   },
 });

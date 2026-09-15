@@ -1,133 +1,90 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 
 import ListingImage from "./ListingImage";
 
+import { ListingCardResponse } from "@/src/api/listing";
+import SeparatedText from "@/src/components/shared/SeperatedText";
 import { Spacer } from "@/src/components/themed-ui/Spacer";
-import { ThemedChip } from "@/src/components/themed-ui/ThemedChip";
-import { ThemedIconText } from "@/src/components/themed-ui/ThemedIconText";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
-
-import { ListingCardResponse } from "@/src/api/listing";
+import { useTheme } from "@/src/hooks/theme/useTheme";
 import { navigation } from "@/src/lib/navigation";
 import { radius } from "@/src/theme/radius";
 import { sizes } from "@/src/theme/size";
-import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+
+const capitalize = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
 
 export function ListingCard(listing: ListingCardResponse) {
+  const { colors } = useTheme();
   const router = useRouter();
 
   const handleListingRedirect = () => {
     router.push(navigation.property(listing.id));
   };
 
+  const details = [
+    capitalize(listing.genderPreference),
+    listing.totalOccupancy ? `${listing.totalOccupancy} Roomates` : undefined,
+    listing.furnishedStatus ? capitalize(listing.furnishedStatus) : undefined,
+  ].filter((item): item is string => Boolean(item));
+
   return (
     <Pressable onPress={handleListingRedirect}>
-      <ThemedView
-        variant="tertiary"
-        style={[styles.card, { borderRadius: radius.card }]}
-      >
+      <ThemedView variant="secondary" shadow="lg" style={styles.card}>
         <ListingImage
           source={listing.coverImage}
           favourite={listing.favorite}
           listingId={listing.id}
+          occupancy={listing.occupancy}
         />
 
-        <ThemedView style={{ padding: sizes.lg }}>
-          <ThemedView style={styles.header}>
-            <ThemedText variant="h3" style={{ flex: 1 }} numberOfLines={1}>
-              {listing.title}
-            </ThemedText>
-
-            <Spacer horizontal size="5xl" />
-
-            <ThemedText variant="h2">
-              ₹{listing.rent.toLocaleString()}
-            </ThemedText>
-          </ThemedView>
-
-          <Spacer size="xs" />
-
-          <ThemedView style={styles.locationRow}>
-            <ThemedIconText
-              icon={<Ionicons name="location-outline" size={16} />}
-              label={listing.address.locality}
-              variant="body"
-              labelColor="foreground.secondary"
-              gap="xs"
-            />
-
-            <ThemedText variant="caption" color="foreground.secondary">
-              / month · your share
+        <ThemedView style={styles.content}>
+          <ThemedView
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <ThemedText variant="h3">{`${listing.bhk[0]} ${listing.bhk.slice(1)} in ${listing.address.locality}`}</ThemedText>
+            <ThemedText variant="bodySmall">
+              {listing.availableFrom
+                ? `${new Date(listing.availableFrom!).toLocaleDateString(
+                    "en-IN",
+                    {
+                      day: "numeric",
+                      month: "short",
+                      year: "2-digit",
+                    },
+                  )}`
+                : listing.availableImmediately && "Immediate"}
             </ThemedText>
           </ThemedView>
+          <SeparatedText
+            items={details}
+            variant="bodySmall"
+            color="foreground.secondary"
+          />
 
           <Spacer size="sm" />
+          <ThemedView variant="tertiary" style={{ width: "100%", height: 2 }} />
+          <Spacer size="sm" />
 
-          <ThemedView gap="lg" style={styles.detailsRow}>
-            <ThemedIconText
-              icon={<Feather name="home" size={16} />}
-              iconColor="foreground.secondary"
-              label={listing.bhk}
-              labelColor="foreground.secondary"
-              variant="bodySmall"
-              gap="xs"
+          <ThemedView style={styles.rentRow}>
+            <ThemedView style={styles.rent}>
+              <ThemedText variant="h2">
+                ₹ {listing.rent?.toLocaleString() ?? 0}
+              </ThemedText>
+
+              <ThemedText variant="body" color="foreground.secondary">
+                / month
+              </ThemedText>
+            </ThemedView>
+            <Ionicons
+              name="chevron-forward"
+              size={sizes.xl}
+              color={colors.foreground.primary}
             />
-
-            {listing.occupancy && (
-              <ThemedIconText
-                icon={<Ionicons name="people-outline" size={16} />}
-                iconColor="foreground.secondary"
-                label={`${listing.occupancy} occupancy`}
-                labelColor="foreground.secondary"
-                variant="bodySmall"
-                gap="xs"
-              />
-            )}
-
-            {(listing.availableFrom || listing.availableImmediately) && (
-              <ThemedIconText
-                icon={<Ionicons name="calendar-outline" size={16} />}
-                iconColor="foreground.secondary"
-                label={
-                  listing.availableImmediately
-                    ? "Immediate"
-                    : listing.availableFrom
-                      ? new Date(listing.availableFrom).toLocaleDateString(
-                          "en-IN",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "2-digit",
-                          },
-                        )
-                      : ""
-                }
-                labelColor="foreground.secondary"
-                variant="bodySmall"
-                gap="xs"
-              />
-            )}
-          </ThemedView>
-
-          <Spacer size="md" />
-
-          <ThemedView gap="sm" style={styles.tags}>
-            {listing.tags.map((tag) => (
-              <ThemedChip
-                key={tag}
-                label={tag}
-                variant="listing-chip"
-                labelVariant="subTitle"
-                style={{
-                  paddingHorizontal: sizes.lg,
-                  paddingVertical: sizes.sm,
-                }}
-                disabled
-              />
-            ))}
           </ThemedView>
         </ThemedView>
       </ThemedView>
@@ -138,28 +95,23 @@ export function ListingCard(listing: ListingCardResponse) {
 const styles = StyleSheet.create({
   card: {
     overflow: "hidden",
+    borderRadius: radius.card,
   },
 
-  header: {
+  content: {
+    padding: sizes.lg,
+  },
+
+  rentRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
 
-  locationRow: {
+  rent: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
-  detailsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  tags: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    alignItems: "flex-end",
+    gap: sizes.sm,
   },
 });
 

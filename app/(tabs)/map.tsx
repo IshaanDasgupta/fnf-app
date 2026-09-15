@@ -20,7 +20,7 @@ export default function MapScreen() {
     return (
       <LoadingErrorScreen
         title="Location unavailable"
-        message="We couldn't get your current location. Please try again."
+        message={`We couldn’t connect to our servers.\n Please check your internet connection and try again.`}
         retryLabel="Try Again"
         onRetry={refreshLocation}
         retryLoading={isRefreshing}

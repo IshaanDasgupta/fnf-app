@@ -2,6 +2,7 @@ import { View } from "react-native";
 
 import { useResolveThemeColor } from "@/src/hooks/theme/useResolveThemeColor";
 import { radius } from "@/src/theme/radius";
+import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
 import { viewVariants } from "@/src/theme/variants/view";
 import { ThemedViewProps } from "@/src/types/ui/themed-view";
@@ -28,6 +29,8 @@ export function ThemedView({
   marginRight,
 
   gap,
+
+  shadow,
 
   style,
 
@@ -72,7 +75,9 @@ export function ThemedView({
           marginRight: marginRight ? sizes[marginRight] : undefined,
 
           gap: gap ? sizes[gap] : undefined,
+          ...(shadow ? shadows[shadow] : {}),
         },
+
         style,
       ]}
     />

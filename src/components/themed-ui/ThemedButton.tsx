@@ -26,6 +26,8 @@ export function ThemedButton({
   style,
   disabled,
 
+  fullWidth,
+
   ...props
 }: ThemedButtonProps) {
   const config = buttonVariants[variant];
@@ -50,7 +52,9 @@ export function ThemedButton({
         {
           backgroundColor,
           borderColor,
-          borderWidth: config.borderColor ? 1 : undefined,
+          borderWidth: config.borderColor
+            ? StyleSheet.hairlineWidth
+            : undefined,
 
           borderRadius: radius[borderRadius],
           gap: sizes[gap],
@@ -67,6 +71,7 @@ export function ThemedButton({
             height: contentHeight,
             gap: sizes[gap],
           },
+          fullWidth && styles.fullWidth,
         ]}
       >
         {loading ? (
@@ -96,8 +101,6 @@ export function ThemedButton({
 
 const styles = StyleSheet.create({
   base: {
-    width: "100%",
-
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -110,5 +113,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+  },
+  fullWidth: {
+    width: "100%",
   },
 });

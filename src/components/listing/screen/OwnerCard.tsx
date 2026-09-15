@@ -1,10 +1,8 @@
 import React from "react";
 import { Image } from "react-native";
 
-import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
-import { sizes } from "@/src/theme/size";
 
 interface OwnerCardProps {
   name: string;
@@ -53,16 +51,6 @@ export default function OwnerCard({ name, age, image }: OwnerCardProps) {
           </ThemedText>
         </ThemedView>
       </ThemedView>
-
-      <ThemedButton
-        variant="secondary"
-        style={{
-          width: "auto",
-          paddingHorizontal: sizes.md,
-          paddingVertical: sizes.sm,
-        }}
-        label="Say Hi!"
-      />
     </ThemedView>
   );
 }

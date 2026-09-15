@@ -1,10 +1,18 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 
+import SeparatedText from "@/src/components/shared/SeperatedText";
+import Spacer from "@/src/components/themed-ui/Spacer";
+import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+import { navigation } from "@/src/lib/navigation";
+import { useAuthStore } from "@/src/stores/auth";
+import { useLocationStore } from "@/src/stores/location";
 import { radius } from "@/src/theme/radius";
 import { sizes } from "@/src/theme/size";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 type ProfileHeroProps = {
   name: string;
@@ -12,12 +20,35 @@ type ProfileHeroProps = {
   gender?: "male" | "female";
 };
 
+const capitalize = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
+
 export default function ProfileHero({ name, age, gender }: ProfileHeroProps) {
+  const router = useRouter();
+
+  const logout = useAuthStore((state) => state.logout);
+  const clearLocation = useLocationStore((state) => state.clearLocation);
+
   const firstName = name.split(" ")[0];
+
+  const details = [
+    age ? `${age} yrs` : undefined,
+    gender ? capitalize(gender) : undefined,
+  ].filter((item): item is string => Boolean(item));
+
+  const handleEditProfile = () => {
+    router.push(navigation.settings.profileBasicEdit);
+  };
+
+  const handleLogout = () => {
+    logout();
+    clearLocation();
+    router.replace(navigation.auth.login);
+  };
 
   return (
     <ThemedView
-      variant="primary"
+      variant="tertiary"
       padding="lg"
       paddingVertical="4xl"
       style={styles.hero}
@@ -34,17 +65,42 @@ export default function ProfileHero({ name, age, gender }: ProfileHeroProps) {
           </ThemedText>
         </ThemedView>
       </ThemedView>
+      <Spacer size="xl" />
 
       <ThemedText variant="display" style={styles.profileName}>
         {name}
-        {age ? `, ${age}` : ""}
       </ThemedText>
 
-      {gender && (
-        <ThemedText variant="body" color="foreground.secondary">
-          {gender === "male" ? "Male" : "Female"}
-        </ThemedText>
-      )}
+      <Spacer size="xs" />
+
+      <SeparatedText
+        items={details}
+        color="foreground.secondary"
+        variant="body"
+      />
+
+      <Spacer size="xl" />
+      <ThemedView style={{ flexDirection: "row" }} gap="lg">
+        <ThemedButton
+          variant="secondary"
+          leftIcon={<Feather name="edit-2" size={16} />}
+          label="Edit Profile"
+          labelVariant="title"
+          gap="md"
+          style={{ paddingHorizontal: sizes["2xl"] }}
+          onPress={handleEditProfile}
+        />
+
+        <ThemedButton
+          variant="secondary"
+          leftIcon={<MaterialIcons name="logout" size={16} />}
+          label="Log out"
+          labelVariant="title"
+          gap="md"
+          style={{ paddingHorizontal: sizes["2xl"] }}
+          onPress={handleLogout}
+        />
+      </ThemedView>
     </ThemedView>
   );
 }
@@ -76,11 +132,6 @@ const styles = StyleSheet.create({
   },
 
   profileName: {
-    marginTop: sizes.md,
     textAlign: "center",
-  },
-
-  editButton: {
-    marginTop: sizes.lg,
   },
 });

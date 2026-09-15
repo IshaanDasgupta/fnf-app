@@ -45,6 +45,26 @@ export function useToggleFavourite() {
         };
       });
 
+      // Search listings
+      queryClient.setQueriesData(
+        { queryKey: ["search-listings"] },
+        (old: any) => {
+          if (!old) return old;
+
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              data: page.data.map((listing: any) =>
+                listing.id === listingId
+                  ? { ...listing, favorite: value }
+                  : listing,
+              ),
+            })),
+          };
+        },
+      );
+
       // Map listings
       queryClient.setQueriesData({ queryKey: ["map-listings"] }, (old: any) => {
         if (!old) return old;

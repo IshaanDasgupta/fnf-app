@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { Linking, StyleSheet } from "react-native";
 
 import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
@@ -12,12 +12,14 @@ interface ListingBottomBarProps {
   rent: number;
   availableFrom?: string;
   availableImmediately: boolean;
+  url?: string;
 }
 
 export default function ListingBottomBar({
   rent,
   availableFrom,
   availableImmediately,
+  url,
 }: ListingBottomBarProps) {
   const moveInText = availableImmediately
     ? "Available immediately"
@@ -28,8 +30,23 @@ export default function ListingBottomBar({
         })}`
       : "Move-in date not specified";
 
+  const handleInterested = async () => {
+    try {
+      if (url) {
+        await Linking.openURL(url);
+      }
+    } catch (error) {
+      console.error("Failed to open listing URL:", error);
+    }
+  };
+
   return (
-    <ThemedView variant="tertiary" padding="xl" style={styles.container}>
+    <ThemedView
+      variant="tertiary"
+      paddingHorizontal="xl"
+      paddingVertical="lg"
+      style={styles.container}
+    >
       <ThemedView gap="xs">
         <ThemedView gap="xs" style={styles.priceRow}>
           <ThemedText variant="h2">₹{rent.toLocaleString("en-IN")}</ThemedText>
@@ -45,10 +62,11 @@ export default function ListingBottomBar({
       </ThemedView>
 
       <ThemedButton
+        onPress={handleInterested}
         variant="accent-secondary"
         style={styles.button}
-        label="I'm interested"
-        labelVariant="title"
+        label="Contact Lister"
+        labelVariant="h3"
       />
     </ThemedView>
   );
@@ -76,6 +94,5 @@ const styles = StyleSheet.create({
   button: {
     width: "auto",
     paddingHorizontal: sizes["3xl"],
-    paddingVertical: sizes["xl"],
   },
 });

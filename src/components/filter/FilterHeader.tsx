@@ -1,6 +1,7 @@
 import { ThemedIconButton } from "@/src/components/themed-ui/ThemedIconButton";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
@@ -22,13 +23,14 @@ export function FilterHeader({
   activeCount = 0,
 }: FilterHeaderProps) {
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container} paddingBottom="sm">
       <ThemedIconButton
         variant="secondary"
         size="md"
         icon={<Ionicons name="close" size={20} />}
         onPress={onBack}
         accessibilityLabel="Close filters"
+        style={{ ...shadows.md }}
       />
 
       <ThemedView style={styles.titleContainer}>
@@ -44,7 +46,7 @@ export function FilterHeader({
           >
             <ThemedText
               variant="caption"
-              color="foreground.black"
+              color="foreground.white"
               style={styles.badgeText}
             >
               {activeCount} active
@@ -86,8 +88,8 @@ const styles = StyleSheet.create({
     gap: sizes.sm,
   },
   title: {
-    fontSize: 22,
-    lineHeight: 28,
+    fontSize: 17.6,
+    lineHeight: 22.4,
   },
   activeBadge: {
     paddingHorizontal: sizes.sm,
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   badgeText: {
-    fontSize: 11,
+    fontSize: 8.8,
     fontWeight: "700",
   },
   resetWrapper: {

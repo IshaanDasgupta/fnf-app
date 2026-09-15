@@ -146,7 +146,7 @@ export function PriceRangeFilter({
               >
                 <ThemedText
                   variant="caption"
-                  color={selected ? "foreground.black" : "foreground.primary"}
+                  color={selected ? "foreground.white" : "foreground.primary"}
                   style={styles.presetText}
                   numberOfLines={1}
                 >
@@ -181,12 +181,6 @@ export function PriceRangeFilter({
             paddingHorizontal="md"
             paddingVertical="sm"
           />
-        </ThemedView>
-
-        <ThemedView style={styles.dashContainer}>
-          <ThemedText variant="title" color="foreground.tertiary">
-            –
-          </ThemedText>
         </ThemedView>
 
         <ThemedView style={styles.inputWrapper}>
@@ -287,8 +281,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 0, 0, 0.04)",
   },
   presetChipSelected: {
-    borderWidth: 1.5,
-    borderColor: "#161B24",
+    borderWidth: StyleSheet.hairlineWidth,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

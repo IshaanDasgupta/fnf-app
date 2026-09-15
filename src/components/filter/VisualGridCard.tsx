@@ -1,5 +1,6 @@
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+import { useTheme } from "@/src/hooks/theme/useTheme";
 import { radius } from "@/src/theme/radius";
 import { sizes } from "@/src/theme/size";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,8 +12,6 @@ export interface VisualOptionItem<T extends string = string> {
   title: string;
   subtitle?: string;
   iconName: keyof typeof Ionicons.glyphMap;
-  tintBg?: string;
-  tintColor?: string;
 }
 
 export interface VisualGridCardProps<T extends string = string> {
@@ -30,6 +29,8 @@ export function VisualGridCard<T extends string = string>({
   columns = 3,
   style,
 }: VisualGridCardProps<T>) {
+  const { colors } = useTheme();
+
   return (
     <ThemedView style={[styles.container, style]}>
       {items.map((item) => {
@@ -42,12 +43,7 @@ export function VisualGridCard<T extends string = string>({
             style={[
               styles.cardPressable,
               {
-                width:
-                  columns === 4
-                    ? "23%"
-                    : columns === 2
-                      ? "48%"
-                      : "31%",
+                width: columns === 4 ? "22%" : columns === 2 ? "48%" : "31%",
               },
             ]}
           >
@@ -62,7 +58,11 @@ export function VisualGridCard<T extends string = string>({
               {/* Top checkmark badge if selected */}
               {isSelected && (
                 <ThemedView style={styles.checkBadge}>
-                  <Ionicons name="checkmark-circle" size={16} color="#161B24" />
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={16}
+                    color={colors.foreground.white}
+                  />
                 </ThemedView>
               )}
 
@@ -73,7 +73,7 @@ export function VisualGridCard<T extends string = string>({
                   {
                     backgroundColor: isSelected
                       ? "rgba(22, 27, 36, 0.12)"
-                      : item.tintBg ?? "rgba(77, 164, 232, 0.12)",
+                      : "rgba(77, 164, 232, 0.12)",
                   },
                 ]}
               >
@@ -82,8 +82,8 @@ export function VisualGridCard<T extends string = string>({
                   size={20}
                   color={
                     isSelected
-                      ? "#161B24"
-                      : item.tintColor ?? "#4DA4E8"
+                      ? colors.foreground.white
+                      : colors.foreground.primary
                   }
                 />
               </ThemedView>
@@ -91,7 +91,7 @@ export function VisualGridCard<T extends string = string>({
               {/* Title & Subtitle */}
               <ThemedText
                 variant="subTitle"
-                color={isSelected ? "foreground.black" : "foreground.primary"}
+                color={isSelected ? "foreground.white" : "foreground.primary"}
                 style={styles.title}
                 numberOfLines={1}
               >
@@ -102,9 +102,7 @@ export function VisualGridCard<T extends string = string>({
                 <ThemedText
                   variant="caption"
                   color={
-                    isSelected
-                      ? "foreground.black"
-                      : "foreground.secondary"
+                    isSelected ? "foreground.white" : "foreground.secondary"
                   }
                   style={styles.subtitle}
                   numberOfLines={1}
@@ -137,13 +135,9 @@ const styles = StyleSheet.create({
     position: "relative",
     minHeight: 90,
   },
-  cardUnselected: {
-    borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.04)",
-  },
+  cardUnselected: {},
   cardSelected: {
-    borderWidth: 1.5,
-    borderColor: "#161B24",
+    borderWidth: StyleSheet.hairlineWidth,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12,
@@ -170,7 +164,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 10,
+    fontSize: 8,
     marginTop: 2,
     textAlign: "center",
     opacity: 0.85,

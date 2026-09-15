@@ -1,5 +1,6 @@
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+import { useTheme } from "@/src/hooks/theme/useTheme";
 import { radius } from "@/src/theme/radius";
 import { sizes } from "@/src/theme/size";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,6 +30,7 @@ export function FilterTileGrid<T extends string = string>({
   columns = 2,
   style,
 }: FilterTileGridProps<T>) {
+  const { colors } = useTheme();
   return (
     <ThemedView style={[styles.container, style]}>
       {items.map((item) => {
@@ -57,7 +59,7 @@ export function FilterTileGrid<T extends string = string>({
                   {
                     backgroundColor: isSelected
                       ? "rgba(22, 27, 36, 0.15)"
-                      : item.categoryTint ?? "rgba(77, 164, 232, 0.12)",
+                      : "rgba(77, 164, 232, 0.12)",
                   },
                 ]}
               >
@@ -66,31 +68,20 @@ export function FilterTileGrid<T extends string = string>({
                   size={16}
                   color={
                     isSelected
-                      ? "#161B24"
-                      : item.categoryIconColor ?? "#4DA4E8"
+                      ? colors.foreground.white
+                      : colors.foreground.primary
                   }
                 />
               </ThemedView>
 
               <ThemedText
                 variant="subTitle"
-                color={isSelected ? "foreground.black" : "foreground.primary"}
+                color={isSelected ? "foreground.white" : "foreground.primary"}
                 style={styles.label}
                 numberOfLines={1}
               >
                 {item.label}
               </ThemedText>
-
-              <ThemedView
-                style={[
-                  styles.checkbox,
-                  isSelected ? styles.checkboxSelected : styles.checkboxUnselected,
-                ]}
-              >
-                {isSelected ? (
-                  <Ionicons name="checkmark" size={12} color="#FFFFFF" />
-                ) : null}
-              </ThemedView>
             </ThemedView>
           </Pressable>
         );
@@ -122,8 +113,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(0, 0, 0, 0.04)",
   },
   tileSelected: {
-    borderWidth: 1.5,
-    borderColor: "#161B24",
+    borderWidth: StyleSheet.hairlineWidth,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -139,22 +129,8 @@ const styles = StyleSheet.create({
   },
   label: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 10.4,
     fontWeight: "600",
-  },
-  checkbox: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkboxUnselected: {
-    borderWidth: 1.5,
-    borderColor: "rgba(0, 0, 0, 0.15)",
-  },
-  checkboxSelected: {
-    backgroundColor: "#161B24",
   },
 });
 

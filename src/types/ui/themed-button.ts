@@ -40,4 +40,6 @@ export interface ThemedButtonProps extends Omit<PressableProps, "style"> {
   radius?: keyof typeof radius;
 
   style?: StyleProp<ViewStyle>;
+
+  fullWidth?: boolean;
 }

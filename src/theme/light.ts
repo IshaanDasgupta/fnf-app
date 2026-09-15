@@ -2,9 +2,9 @@ import { ThemeColors } from "@/src/types/theme-color";
 
 export const lightColors: ThemeColors = {
   background: {
-    primary: "#fff5e6",
-    secondary: "#F6F2EA",
-    tertiary: "#FFFDFA",
+    primary: "#FFFFFF",
+    secondary: "#FFFFFF",
+    tertiary: "#F8F8F8",
     inverse: "#161A23",
   },
 
@@ -19,7 +19,7 @@ export const lightColors: ThemeColors = {
   },
 
   border: {
-    primary: "#E7E3DD",
+    primary: "#20242B",
     secondary: "#F1EEE8",
   },
 

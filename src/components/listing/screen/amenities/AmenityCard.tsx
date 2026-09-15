@@ -12,13 +12,11 @@ interface AmenityCardProps {
 }
 
 export default function AmenityCard({ icon, label, desc }: AmenityCardProps) {
-  const accentPrimary = useResolveThemeColor("accent.primary");
+  const foregroundSecondary = useResolveThemeColor("foreground.secondary");
 
   return (
     <ThemedView
-      variant="tertiary"
       borderRadius="card"
-      padding="2xl"
       style={{
         width: "48%",
         justifyContent: "center",
@@ -28,7 +26,9 @@ export default function AmenityCard({ icon, label, desc }: AmenityCardProps) {
         style={{ flexDirection: "row", alignItems: "center" }}
         gap="sm"
       >
-        {renderIcon(icon, accentPrimary)}
+        <ThemedView variant="tertiary" padding="md" borderRadius="button">
+          {renderIcon(icon, foregroundSecondary)}
+        </ThemedView>
         <ThemedView
           style={{
             flex: 1,

@@ -11,7 +11,7 @@ interface Props {
 
 export function PhoneNumberInput({ value, onChangeText }: Props) {
   return (
-    <ThemedView variant="secondary" borderRadius="card" padding="lg">
+    <ThemedView variant="tertiary" borderRadius="card" padding="lg">
       <ThemedText variant="h3" color="foreground.secondary">
         Phone Number
       </ThemedText>

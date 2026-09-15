@@ -19,7 +19,7 @@ export const darkColors: ThemeColors = {
   },
 
   border: {
-    primary: "#343A43",
+    primary: "#F8F8F8",
     secondary: "#454C57",
   },
 

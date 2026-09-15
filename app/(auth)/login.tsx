@@ -1,29 +1,92 @@
 import { Ionicons } from "@expo/vector-icons";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
-import React from "react";
-import { Image, Linking, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import {
+  Dimensions,
+  Image,
+  Linking,
+  PixelRatio,
+  StyleSheet,
+} from "react-native";
+import Toast from "react-native-toast-message";
 
-import { navigation } from "@/src/lib/navigation";
-
+import { googleLogin } from "@/src/api/auth";
+import Spacer from "@/src/components/themed-ui/Spacer";
 import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
 import { ThemedScrollView } from "@/src/components/themed-ui/ThemedScrollView";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 
-import Spacer from "@/src/components/themed-ui/Spacer";
-import { useTheme } from "@/src/hooks/theme/useTheme";
+import { API_BASE_URL, ENDPOINTS } from "@/src/constants/endpoints";
+import { navigation } from "@/src/lib/navigation";
+import { useAuthStore } from "@/src/stores/auth";
+import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
 
 const WELCOME_ILLUSTRATION = require("@/assets/images/welcome-illustration.png");
 
 export default function LoginScreen() {
-  const { colors } = useTheme();
-
   const router = useRouter();
 
-  const handleContinue = () => {
-    router.replace(navigation.auth.phone_number);
+  console.log({
+    fontScale: PixelRatio.getFontScale(),
+    width: Dimensions.get("window").width,
+  });
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  const login = useAuthStore((state) => state.login);
+
+  const handleContinueWithGoogle = async () => {
+    if (isGoogleLoading) return;
+
+    setIsGoogleLoading(true);
+
+    try {
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+
+      const response = await GoogleSignin.signIn();
+
+      if (response.type !== "success") {
+        throw new Error("Google sigin did not work");
+      }
+
+      const { idToken } = response.data;
+
+      if (!idToken) {
+        throw new Error("Google did not return an ID token");
+      }
+
+      const { user, accessToken, refreshToken, refreshExpiresAt } =
+        await googleLogin(idToken);
+
+      const res = await googleLogin(idToken);
+
+      console.log(res);
+
+      login(user, accessToken, refreshToken, refreshExpiresAt);
+
+      if (user.basicOnboardingCompleted) {
+        router.replace(navigation.tabs.home);
+      } else {
+        router.replace(navigation.onboarding.basic);
+      }
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: "Couldn't sign in with Google",
+        text2: "Please try again.",
+      });
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleContinueWithPhone = () => {
+    router.push(navigation.auth.phone_number);
   };
 
   const authProviders = [
@@ -31,25 +94,27 @@ export default function LoginScreen() {
       label: "Continue with Google",
       icon: <Ionicons name="logo-google" size={22} />,
       variant: "inverse" as const,
+      onPress: handleContinueWithGoogle,
+      loading: isGoogleLoading,
     },
     {
       label: "Continue with Phone",
       icon: <Ionicons name="call" size={22} />,
-      variant: "tertiary" as const,
+      variant: "secondary" as const,
+      onPress: handleContinueWithPhone,
+      loading: false,
     },
   ];
 
   return (
     <ThemedSafeArea>
-      <ThemedScrollView padding="lg">
-        <ThemedView style={styles.logoRow}>
-          <ThemedView variant="accent-primary" borderRadius="md" padding="sm">
-            <Ionicons name="home" size={20} color={colors.foreground.white} />
-          </ThemedView>
-
-          <ThemedText variant="h3">FlatMate</ThemedText>
-        </ThemedView>
-
+      <ThemedScrollView
+        padding="lg"
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+        }}
+      >
         <ThemedView
           variant="secondary"
           borderRadius="card"
@@ -92,7 +157,10 @@ export default function LoginScreen() {
               label={provider.label}
               labelVariant="title"
               leftIcon={provider.icon}
-              onPress={handleContinue}
+              onPress={provider.onPress}
+              loading={provider.loading}
+              disabled={isGoogleLoading}
+              style={{ ...shadows.lg }}
             />
           ))}
         </ThemedView>
@@ -107,7 +175,9 @@ export default function LoginScreen() {
             <ThemedText
               variant="caption"
               color="accent.primary"
-              onPress={() => Linking.openURL("https://google.com")}
+              onPress={() =>
+                Linking.openURL(`${API_BASE_URL}${ENDPOINTS.TERMS}`)
+              }
             >
               Terms
             </ThemedText>
@@ -115,7 +185,9 @@ export default function LoginScreen() {
             <ThemedText
               variant="caption"
               color="accent.primary"
-              onPress={() => Linking.openURL("https://google.com")}
+              onPress={() =>
+                Linking.openURL(`${API_BASE_URL}${ENDPOINTS.PRIVACY}`)
+              }
             >
               Privacy Policy
             </ThemedText>

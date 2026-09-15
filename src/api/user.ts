@@ -1,4 +1,10 @@
-import { GenderPreference } from "@/src/constants/api-constants";
+import {
+  BhkType,
+  City,
+  FurnishedStatus,
+  GenderPreference,
+  OccupancyType,
+} from "@/src/constants/api-constants";
 import { ENDPOINTS } from "@/src/constants/endpoints";
 import axiosClient from "@/src/lib/axios-client";
 
@@ -24,11 +30,27 @@ export interface PutUpsertBasicResponse {
 
 export interface ProfileListingResponse {
   id: string;
-  title: string;
+
   coverImage: string;
-  city: string;
-  locality: string;
+
+  address: {
+    locality: string;
+    city: City;
+  };
+
   rent: number;
+
+  bhk: BhkType;
+  occupancy: OccupancyType;
+
+  totalOccupancy?: number;
+
+  furnishedStatus: FurnishedStatus;
+
+  genderPreference: GenderPreference;
+
+  availableFrom?: string;
+  availableImmediately: boolean;
 }
 
 export interface ProfileResponse {

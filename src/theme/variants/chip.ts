@@ -18,8 +18,7 @@ export const chipVariants: Record<ThemedChipVariant, ChipVariantConfig> = {
 
   tertiary: {
     background: "background.tertiary",
-    foregroundColor: "foreground.primary",
-    shadow: "xs",
+    foregroundColor: "foreground.secondary",
   },
 
   inverse: {

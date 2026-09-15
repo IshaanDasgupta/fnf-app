@@ -65,6 +65,10 @@ export function useUserLocation() {
           return;
         }
 
+        if (location) {
+          return;
+        }
+
         const currentLocation = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.Balanced,
         });

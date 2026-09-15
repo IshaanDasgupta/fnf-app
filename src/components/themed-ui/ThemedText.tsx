@@ -13,6 +13,7 @@ export function ThemedText({
   return (
     <Text
       {...props}
+      allowFontScaling={false}
       style={[
         typography[variant],
         { color: useResolveThemeColor(color) },

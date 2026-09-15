@@ -53,5 +53,7 @@ export interface ThemedChipProps extends Omit<
 
   style?: StyleProp<ViewStyle>;
 
+  shadow?: keyof typeof shadows;
+
   controlled?: boolean;
 }

@@ -9,7 +9,7 @@ export const textInputVariants: Record<
 > = {
   primary: {
     background: "background.primary",
-    borderColor: "border.primary",
+    borderColor: "border.secondary",
 
     labelColor: "foreground.secondary",
 
@@ -18,7 +18,7 @@ export const textInputVariants: Record<
 
     iconColor: "foreground.secondary",
 
-    focusedBorder: "accent.primary",
+    focusedBorder: "border.primary",
   },
 
   secondary: {
@@ -37,7 +37,6 @@ export const textInputVariants: Record<
 
   tertiary: {
     background: "background.tertiary",
-    borderColor: "border.primary",
 
     labelColor: "foreground.secondary",
 

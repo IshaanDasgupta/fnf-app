@@ -19,7 +19,10 @@ import {
   PROFILE_QUERY_KEY,
   useProfile,
 } from "@/src/hooks/react-query/useProfile";
+import { useTheme } from "@/src/hooks/theme/useTheme";
+import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
+import { Entypo } from "@expo/vector-icons";
 import { useQueryClient } from "@tanstack/react-query";
 import Toast from "react-native-toast-message";
 
@@ -53,6 +56,8 @@ export const ProfileBasicEditSchema = z.object({
 export type ProfileBasicEditFormInput = z.input<typeof ProfileBasicEditSchema>;
 
 export default function ProfileBasicEditScreen() {
+  const { colors } = useTheme();
+
   const router = useRouter();
 
   const queryClient = useQueryClient();
@@ -92,14 +97,22 @@ export default function ProfileBasicEditScreen() {
     setIsSaving(true);
 
     try {
-      await upsertBasic({
+      const res = await upsertBasic({
         name: data.name,
         age: Number(data.age),
         gender: data.gender,
       });
 
-      await queryClient.invalidateQueries({
-        queryKey: PROFILE_QUERY_KEY,
+      queryClient.setQueryData(PROFILE_QUERY_KEY, (old: any) => {
+        if (!old) return old;
+
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            ...res.data,
+          },
+        };
       });
 
       router.back();
@@ -128,7 +141,7 @@ export default function ProfileBasicEditScreen() {
     return (
       <LoadingErrorScreen
         title="Couldn't load your profile"
-        message="Something went wrong while loading your profile. Please try again."
+        message={`We couldn’t connect to our servers.\n Please check your internet connection and try again.`}
         onRetry={async () => {
           const result = await refetch();
 
@@ -153,14 +166,6 @@ export default function ProfileBasicEditScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ThemedView marginBottom="xl">
-          <ThemedText
-            variant="caption"
-            color="accent.primary"
-            style={styles.eyebrow}
-          >
-            ABOUT YOU
-          </ThemedText>
-
           <ThemedText variant="display" style={{ marginBottom: sizes.sm }}>
             Edit your basics.
           </ThemedText>
@@ -179,15 +184,16 @@ export default function ProfileBasicEditScreen() {
               render={({ field: { onChange, value } }) => (
                 <ThemedTextInput
                   variant="secondary"
-                  label="Name"
-                  labelVariant="h3"
+                  label="NAME"
+                  labelVariant="caption"
                   value={value}
                   onChangeText={onChange}
                   placeholder="Your name"
-                  textVariant="h1"
+                  textVariant="title"
                   autoCapitalize="words"
                   paddingHorizontal="md"
                   paddingVertical="md"
+                  containerStyle={{ ...shadows.lg }}
                 />
               )}
             />
@@ -211,16 +217,17 @@ export default function ProfileBasicEditScreen() {
               render={({ field: { onChange, value } }) => (
                 <ThemedTextInput
                   variant="secondary"
-                  label="Age"
-                  labelVariant="h3"
+                  label="AGE"
+                  labelVariant="caption"
                   value={value}
                   onChangeText={onChange}
                   placeholder="XX"
-                  textVariant="h1"
+                  textVariant="title"
                   keyboardType="number-pad"
                   maxLength={2}
                   paddingHorizontal="md"
                   paddingVertical="md"
+                  containerStyle={{ ...shadows.lg }}
                 />
               )}
             />
@@ -237,27 +244,52 @@ export default function ProfileBasicEditScreen() {
           </ThemedView>
 
           {/* Gender */}
-          <ThemedView>
-            <ThemedText variant="h3" style={styles.sectionLabel}>
-              Gender
+          <ThemedView
+            variant="secondary"
+            padding="md"
+            shadow="lg"
+            borderRadius="card"
+          >
+            <ThemedText
+              variant="caption"
+              color="foreground.secondary"
+              style={styles.sectionLabel}
+            >
+              GENDER
             </ThemedText>
 
-            <ThemedView style={styles.genderContainer} gap="lg">
+            <ThemedView
+              variant="tertiary"
+              style={styles.genderContainer}
+              gap="md"
+              padding="sm"
+              borderRadius="card"
+            >
               <ThemedView style={styles.genderOption}>
                 <Controller
                   control={control}
                   name="gender"
                   render={({ field: { onChange, value } }) => (
                     <ThemedChip
-                      variant="secondary"
-                      selectedVariant="accent-primary"
+                      variant="tertiary"
+                      selectedVariant="primary"
                       selected={value === "male"}
                       label="Male"
-                      labelVariant="h1"
+                      labelVariant="title"
                       onPress={() => onChange("male")}
                       style={styles.genderChip}
                       borderRadius="card"
                       controlled
+                      shadow={value === "male" ? "lg" : undefined}
+                      rightIcon={
+                        value === "male" ? (
+                          <Entypo
+                            name="dot-single"
+                            color={colors.accent.primary}
+                            size={14}
+                          />
+                        ) : undefined
+                      }
                     />
                   )}
                 />
@@ -269,15 +301,25 @@ export default function ProfileBasicEditScreen() {
                   name="gender"
                   render={({ field: { onChange, value } }) => (
                     <ThemedChip
-                      variant="secondary"
-                      selectedVariant="accent-primary"
+                      variant="tertiary"
+                      selectedVariant="primary"
                       selected={value === "female"}
                       label="Female"
-                      labelVariant="h1"
+                      labelVariant="title"
                       onPress={() => onChange("female")}
                       style={styles.genderChip}
                       borderRadius="card"
                       controlled
+                      shadow={value === "female" ? "lg" : undefined}
+                      rightIcon={
+                        value === "female" ? (
+                          <Entypo
+                            name="dot-single"
+                            color={colors.accent.primary}
+                            size={14}
+                          />
+                        ) : undefined
+                      }
                     />
                   )}
                 />
@@ -300,7 +342,7 @@ export default function ProfileBasicEditScreen() {
           <ThemedButton
             variant="accent-secondary"
             label="Back"
-            labelVariant="h2"
+            labelVariant="h3"
             loading={isSaving}
             onPress={handleBack}
             style={styles.backButton}
@@ -308,7 +350,7 @@ export default function ProfileBasicEditScreen() {
 
           <ThemedButton
             label="Save changes"
-            labelVariant="h2"
+            labelVariant="h3"
             loading={isSaving}
             onPress={handleSubmit(handleSave)}
             style={styles.saveButton}

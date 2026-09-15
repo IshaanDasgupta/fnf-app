@@ -1,5 +1,6 @@
 import { ThemedButton } from "@/src/components/themed-ui/ThemedButton";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
 import React from "react";
 import { StyleSheet } from "react-native";
@@ -16,21 +17,21 @@ export function FilterBottomBar({
   activeCount,
 }: FilterBottomBarProps) {
   return (
-    <ThemedView style={styles.buttonContainer} paddingVertical="xl">
+    <ThemedView style={styles.buttonContainer} paddingTop="lg">
       <ThemedButton
         variant="accent-secondary"
         labelVariant="h3"
         label="Clear all"
         disabled={activeCount === 0}
         onPress={onClear}
-        style={styles.backButton}
+        style={[styles.backButton, shadows.lg]}
       />
 
       <ThemedButton
         label="Show Results"
         labelVariant="h3"
         onPress={onApply}
-        style={styles.saveButton}
+        style={[styles.saveButton, shadows.lg]}
       />
     </ThemedView>
   );

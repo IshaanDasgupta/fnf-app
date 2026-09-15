@@ -7,7 +7,9 @@ import { radius } from "@/src/theme/radius";
 import { ListingImageProps } from "@/src/types/listing/card/image";
 
 import { ThemedIconButton } from "@/src/components/themed-ui/ThemedIconButton";
+import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { useToggleFavourite } from "@/src/hooks/react-query/useToggleFavourite";
+import { sizes } from "@/src/theme/size";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -18,10 +20,14 @@ import Animated, {
 
 const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons);
 
+const capitalize = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
+
 export function ListingImage({
   source,
   favourite,
   listingId,
+  occupancy,
 }: ListingImageProps) {
   const { mutateAsync: toggleFavourite, isPending } = useToggleFavourite();
 
@@ -56,7 +62,7 @@ export function ListingImage({
 
       <ThemedIconButton
         variant="fav"
-        size="lg"
+        size="md"
         onPress={toggleFavouriteHandle}
         style={styles.favorite}
         loading={isPending}
@@ -64,9 +70,24 @@ export function ListingImage({
           <AnimatedIonicons
             style={iconStyle}
             name={favourite ? "heart" : "heart-outline"}
+            size={20}
           />
         }
       />
+
+      {occupancy && (
+        <ThemedView
+          variant="secondary"
+          borderRadius="button"
+          style={styles.occupancyBadge}
+          paddingHorizontal="md"
+          paddingVertical="sm"
+        >
+          <ThemedText variant="caption">
+            {capitalize(occupancy)} Occupancy
+          </ThemedText>
+        </ThemedView>
+      )}
     </ThemedView>
   );
 }
@@ -78,32 +99,23 @@ const styles = StyleSheet.create({
 
   image: {
     width: "100%",
-    height: 270,
-    borderTopLeftRadius: radius.card,
-    borderTopRightRadius: radius.card,
-  },
-
-  verified: {
-    position: "absolute",
-    top: 16,
-    left: 16,
+    aspectRatio: 16 / 9,
+    borderRadius: radius.card,
   },
 
   favorite: {
     position: "absolute",
-    top: 16,
-    right: 16,
-
-    borderRadius: 999,
+    top: sizes.md,
+    right: sizes.md,
 
     alignItems: "center",
     justifyContent: "center",
   },
 
-  match: {
+  occupancyBadge: {
     position: "absolute",
-    left: 18,
-    bottom: 18,
+    left: sizes.md,
+    bottom: sizes.md,
   },
 });
 

@@ -30,6 +30,8 @@ export function ThemedChip({
 
   onPress: handlePress,
 
+  shadow,
+
   controlled = false,
 
   ...props
@@ -60,6 +62,7 @@ export function ThemedChip({
           borderWidth: borderColor ? 1 : undefined,
           borderRadius: radius[borderRadius],
           ...(config.shadow ? shadows[config.shadow] : {}),
+          ...(shadow ? shadows[shadow] : {}),
         },
         style,
       ]}

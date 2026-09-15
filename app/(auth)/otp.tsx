@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 
@@ -12,6 +11,8 @@ import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 import { useTheme } from "@/src/hooks/theme/useTheme";
 import { navigation } from "@/src/lib/navigation";
 import { useAuthStore } from "@/src/stores/auth";
+import { shadows } from "@/src/theme/shadows";
+import { StyleSheet } from "react-native";
 import Toast from "react-native-toast-message";
 
 const RESEND_COOLDOWN = 30;
@@ -96,20 +97,6 @@ export default function OTPScreen() {
   return (
     <ThemedSafeArea>
       <ThemedScrollView padding="lg" contentContainerStyle={{ flexGrow: 1 }}>
-        <ThemedView
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-          gap="sm"
-        >
-          <ThemedView variant="accent-primary" borderRadius="md" padding="sm">
-            <Ionicons name="home" size={20} color={colors.foreground.white} />
-          </ThemedView>
-
-          <ThemedText variant="h3">FlatMate</ThemedText>
-        </ThemedView>
-
         <ThemedView margin="2xl" gap="sm" style={{ alignItems: "center" }}>
           <ThemedText variant="display" style={{ textAlign: "center" }}>
             Enter the{"\n"}verification code
@@ -162,16 +149,45 @@ export default function OTPScreen() {
           )}
         </ThemedView>
 
-        <ThemedView style={{ marginTop: "auto" }}>
+        <ThemedView
+          style={{ marginTop: "auto", flexDirection: "row" }}
+          gap="md"
+        >
+          <ThemedButton
+            variant="accent-secondary"
+            labelVariant="h3"
+            label="Back"
+            onPress={() => {
+              router.back();
+            }}
+            style={[styles.backButton, shadows.lg]}
+          />
+
           <ThemedButton
             disabled={otp.length < 6}
             onPress={handleVerify}
             label="Verify"
-            labelVariant="h2"
+            labelVariant="h3"
             loading={isVerifying}
+            style={[styles.verifyButton, shadows.lg]}
           />
         </ThemedView>
       </ThemedScrollView>
     </ThemedSafeArea>
   );
 }
+
+const styles = StyleSheet.create({
+  buttonContainer: {
+    marginTop: "auto",
+    flexDirection: "row",
+  },
+
+  backButton: {
+    flex: 1,
+  },
+
+  verifyButton: {
+    flex: 2,
+  },
+});

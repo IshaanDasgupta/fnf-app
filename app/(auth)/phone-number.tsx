@@ -1,4 +1,3 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 
@@ -12,6 +11,13 @@ import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 import { useTheme } from "@/src/hooks/theme/useTheme";
 import { navigation } from "@/src/lib/navigation";
 import Toast from "react-native-toast-message";
+import { z } from "zod";
+
+const phoneSchema = z.object({
+  phone: z
+    .string()
+    .regex(/^\d{10}$/, "Please enter a valid 10-digit phone number."),
+});
 
 export default function PhoneNumberScreen() {
   const { colors } = useTheme();
@@ -19,12 +25,21 @@ export default function PhoneNumberScreen() {
 
   const [phone, setPhone] = useState("");
   const [isSendingOTP, setIsSendingOTP] = useState(false);
+  const [phoneError, setPhoneError] = useState<string>();
 
   const handleContinue = async () => {
+    const result = phoneSchema.safeParse({ phone });
+    if (!result.success) {
+      setPhoneError(result.error.issues[0].message);
+      return;
+    }
+
+    setPhoneError(undefined);
     setIsSendingOTP(true);
 
     try {
       await sendOTP(`+91${phone}`);
+
       router.push({
         pathname: navigation.auth.otp,
         params: { phone },
@@ -44,44 +59,41 @@ export default function PhoneNumberScreen() {
   return (
     <ThemedSafeArea>
       <ThemedScrollView padding="lg" contentContainerStyle={{ flexGrow: 1 }}>
-        <ThemedView
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-          gap="sm"
-        >
-          <ThemedView variant="accent-primary" borderRadius="md" padding="sm">
-            <Ionicons name="home" size={20} color={colors.foreground.white} />
-          </ThemedView>
-
-          <ThemedText variant="h3">FlatMate</ThemedText>
-        </ThemedView>
-
         <ThemedView margin="2xl" gap="sm" style={{ alignItems: "center" }}>
           <ThemedText variant="display" style={{ textAlign: "center" }}>
             What's your{"\n"}phone number?
           </ThemedText>
 
-          <ThemedText
-            variant="body"
-            color="foreground.secondary"
-            style={{ textAlign: "center" }}
-          >
+          <ThemedText variant="body" color="foreground.secondary">
             We'll send you a one-time verification code.
           </ThemedText>
         </ThemedView>
 
         <ThemedView marginVertical="xl">
-          <PhoneNumberInput value={phone} onChangeText={setPhone} />
+          <PhoneNumberInput
+            value={phone}
+            onChangeText={(value) => {
+              setPhone(value);
+              setPhoneError(undefined);
+            }}
+          />
+
+          {phoneError && (
+            <ThemedText
+              variant="caption"
+              color="accent.red"
+              style={{ marginTop: 4 }}
+            >
+              {phoneError}
+            </ThemedText>
+          )}
         </ThemedView>
 
         <ThemedView style={{ marginTop: "auto" }}>
           <ThemedButton
-            disabled={phone.length < 10}
             onPress={handleContinue}
             label="Continue"
-            labelVariant="h2"
+            labelVariant="h3"
             loading={isSendingOTP}
           />
         </ThemedView>

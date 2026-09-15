@@ -1,28 +1,21 @@
+import { ProfileListingResponse } from "@/src/api/user";
+import SeparatedText from "@/src/components/shared/SeperatedText";
 import Spacer from "@/src/components/themed-ui/Spacer";
 import { ThemedIconButton } from "@/src/components/themed-ui/ThemedIconButton";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 import { useToggleFavourite } from "@/src/hooks/react-query/useToggleFavourite";
 import { navigation } from "@/src/lib/navigation";
+import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Image, Pressable, StyleSheet } from "react-native";
 
-export interface SavedListing {
-  id: string;
-  title: string;
-  locality: string;
-  city: string;
-  rent: number;
-  coverImage: string;
-}
+const capitalize = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
 
-interface SavedListingCardProps {
-  listing: SavedListing;
-}
-
-export default function SavedListingCard({ listing }: SavedListingCardProps) {
+export default function SavedListingCard(listing: ProfileListingResponse) {
   const { mutateAsync: toggleFavourite, isPending } = useToggleFavourite();
 
   const handleListingRedirect = () => {
@@ -40,59 +33,86 @@ export default function SavedListingCard({ listing }: SavedListingCardProps) {
     }
   };
 
+  const details = [
+    capitalize(listing.genderPreference),
+    listing.furnishedStatus ? capitalize(listing.furnishedStatus) : undefined,
+    listing.availableImmediately
+      ? "Immediate"
+      : new Date(listing.availableFrom!).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "2-digit",
+        }),
+  ].filter((item): item is string => Boolean(item));
+
   return (
     <Pressable onPress={handleListingRedirect}>
       <ThemedView
-        variant="primary"
+        variant="secondary"
         borderRadius="card"
-        style={styles.listingCard}
+        shadow="lg"
+        style={styles.card}
       >
-        <Image
-          source={{ uri: listing.coverImage }}
-          style={styles.listingImage}
-          resizeMode="cover"
-        />
+        <ThemedView style={styles.imageContainer}>
+          <Image
+            source={{ uri: listing.coverImage }}
+            style={styles.image}
+            resizeMode="cover"
+          />
 
-        <ThemedView
-          variant="primary"
-          padding="md"
-          style={styles.listingContent}
-        >
-          <ThemedView style={styles.headerRow}>
-            <ThemedView style={styles.titleLocation}>
-              <ThemedText variant="h3" numberOfLines={1} ellipsizeMode="tail">
-                {listing.title}
-              </ThemedText>
-
-              <ThemedText
-                variant="caption"
-                color="foreground.secondary"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.listingLocation}
-              >
-                {listing.locality}, {listing.city}
-              </ThemedText>
-            </ThemedView>
-
+          <ThemedView style={styles.favouriteContainer}>
             <ThemedIconButton
               variant="fav"
               loading={isPending}
               onPress={handleFavouritePress}
-              size="sm"
+              size="md"
               icon={<Ionicons name="heart" />}
             />
           </ThemedView>
 
-          <Spacer />
+          {listing.occupancy && (
+            <ThemedView
+              variant="secondary"
+              borderRadius="button"
+              style={styles.occupancyBadge}
+              paddingHorizontal="md"
+              paddingVertical="sm"
+            >
+              <ThemedText variant="caption">
+                {capitalize(listing.occupancy)} Occupancy
+              </ThemedText>
+            </ThemedView>
+          )}
+        </ThemedView>
 
-          <ThemedText variant="h3" color="accent.primary" numberOfLines={1}>
-            ₹{listing.rent.toLocaleString("en-IN")}
-            <ThemedText variant="caption" color="foreground.secondary">
-              {" "}
-              / month
+        <ThemedView padding="lg">
+          <ThemedView style={styles.titleRow}>
+            <ThemedText
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              variant="h3"
+            >{`${listing.bhk} in ${listing.address.locality}`}</ThemedText>
+
+            <ThemedText
+              variant="h3"
+              color="foreground.primary"
+              numberOfLines={1}
+              style={styles.rent}
+            >
+              ₹{listing.rent.toLocaleString("en-IN")}
+              <ThemedText variant="caption" color="foreground.secondary">
+                /mo
+              </ThemedText>
             </ThemedText>
-          </ThemedText>
+          </ThemedView>
+
+          <Spacer size="xs" />
+
+          <SeparatedText
+            items={details}
+            variant="body"
+            color="foreground.secondary"
+          />
         </ThemedView>
       </ThemedView>
     </Pressable>
@@ -100,35 +120,69 @@ export default function SavedListingCard({ listing }: SavedListingCardProps) {
 }
 
 const styles = StyleSheet.create({
-  listingCard: {
-    flexDirection: "row",
+  card: {
     overflow: "hidden",
-    borderWidth: StyleSheet.hairlineWidth,
+    ...shadows.lg,
   },
 
-  listingImage: {
-    aspectRatio: 1,
-    alignItems: "center",
-    justifyContent: "center",
+  imageContainer: {
+    width: "100%",
+    aspectRatio: 1.85,
+    position: "relative",
   },
 
-  listingContent: {
+  image: {
+    ...StyleSheet.absoluteFillObject,
+  },
+
+  favouriteContainer: {
+    position: "absolute",
+    top: sizes.md,
+    right: sizes.md,
+  },
+
+  occupancyBadge: {
+    position: "absolute",
+    left: sizes.md,
+    bottom: sizes.md,
+  },
+
+  titleRow: {
     flex: 1,
-    minWidth: 0,
-  },
-
-  headerRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: sizes.sm,
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: sizes.md,
   },
 
-  titleLocation: {
+  title: {
     flex: 1,
     minWidth: 0,
   },
 
-  listingLocation: {
+  rent: {
+    flexShrink: 0,
+  },
+
+  subtitle: {
     marginTop: sizes.xs,
+  },
+
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    width: "100%",
+  },
+
+  footer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: sizes.md,
+  },
+
+  messageButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
   },
 });

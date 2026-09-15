@@ -10,23 +10,30 @@ import { sizes } from "@/src/theme/size";
 import { getListing } from "@/src/api/listing";
 import AddOnsSection from "@/src/components/listing/screen/addons/AddOnsSection";
 import AmenitiesSection from "@/src/components/listing/screen/amenities/AmenitySection";
-import CompatibilityCard from "@/src/components/listing/screen/compatibility-card/CompatabilityCard";
+import ListingCostBreakdown from "@/src/components/listing/screen/cost/CostBreakdown";
 import ListingHero from "@/src/components/listing/screen/hero/ListingHero";
 import HouseRulesSection from "@/src/components/listing/screen/house-rules/HouseRulesSection";
 import ListingBottomBar from "@/src/components/listing/screen/ListingBottomBar";
 import ListingHeader from "@/src/components/listing/screen/ListingHeader";
 import NeighborhoodSection from "@/src/components/listing/screen/neighborhood/NeighborhoodSection";
 import OwnerCard from "@/src/components/listing/screen/OwnerCard";
+import { LoadingErrorScreen } from "@/src/components/shared/LoadingErrorScreen";
+import { LoadingScreen } from "@/src/components/shared/LoadingScreen";
 import { navigation } from "@/src/lib/navigation";
 import { radius } from "@/src/theme/radius";
 import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 export default function ListingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const { data: listing, isLoading } = useQuery({
+  const {
+    data: listing,
+    isLoading: isListingLoading,
+    refetch: refetchListing,
+    isRefetching: isListingRefetching,
+  } = useQuery({
     queryKey: ["listing", id],
     queryFn: () => getListing(id),
     select: (response) => response.data,
@@ -34,24 +41,25 @@ export default function ListingScreen() {
   });
 
   useEffect(() => {
-    if (!isLoading && !listing) {
-      //TODO replace with 404 page
-      router.replace(navigation.tabs.home);
+    if (!isListingLoading && !listing) {
+      router.replace(navigation.standalone.notFound);
     }
-  }, [isLoading, listing]);
+  }, [isListingLoading, listing]);
 
-  if (isLoading) {
-    return (
-      <ThemedSafeArea variant="primary">
-        <ThemedView style={styles.loading}>
-          <ActivityIndicator />
-        </ThemedView>
-      </ThemedSafeArea>
-    );
+  if (isListingLoading) {
+    return <LoadingScreen />;
   }
 
   if (!listing) {
-    return;
+    return (
+      <LoadingErrorScreen
+        title="Could not load listing"
+        message={`We couldn’t connect to our servers.\n Please check your internet connection and try again.`}
+        retryLabel="Try Again"
+        onRetry={refetchListing}
+        retryLoading={isListingRefetching}
+      />
+    );
   }
 
   return (
@@ -70,45 +78,61 @@ export default function ListingScreen() {
 
           <ThemedView variant="primary" padding="xl" style={styles.content}>
             <ListingHeader
-              title={listing.title}
               locality={listing.address.locality}
+              address={listing.address.address}
               city={listing.address.city}
+              bhk={listing.bhk}
+              occupancy={listing.occupancy}
+              genderPreference={listing.genderPreference}
+              floor={listing.floor}
+              furnishedStatus={listing.furnishedStatus}
+              carpetArea={listing.carpetArea}
+              totalOccupancy={listing.totalOccupancy}
+              availableImmediately={listing.availableImmediately}
+              availableFrom={listing.availableFrom}
             />
 
-            <Spacer size="xl" />
+            <Spacer size="4xl" />
 
-            <CompatibilityCard />
+            <ListingCostBreakdown
+              rent={listing.rent}
+              deposit={listing.deposit}
+              brokerage={listing.brokerage}
+              setupCost={listing.setupCost}
+            />
 
-            <Spacer size="2xl" />
+            <Spacer size="4xl" />
 
-            {listing.lister && (
-              <OwnerCard
-                name={listing.lister.name}
-                age={listing.lister.age}
-                image={listing.lister.profilePic}
-              />
+            {!listing.externalListing && listing.lister && (
+              <>
+                <OwnerCard
+                  name={listing.lister.name}
+                  age={listing.lister.age}
+                  image={listing.lister.profilePic}
+                />
+                <Spacer size="4xl" />
+              </>
             )}
-            <Spacer size="2xl" />
 
             {listing.addOns.length > 0 && (
-              <ThemedView>
+              <>
                 <AddOnsSection addOns={listing.addOns} />
-                <Spacer size="2xl" />
-              </ThemedView>
+                <Spacer size="4xl" />
+              </>
             )}
 
             {listing.amenities.length > 0 && (
-              <ThemedView>
+              <>
                 <AmenitiesSection amenities={listing.amenities} />
-                <Spacer size="2xl" />
-              </ThemedView>
+                <Spacer size="4xl" />
+              </>
             )}
 
             {listing.houseRules.length > 0 && (
-              <ThemedView>
+              <>
                 <HouseRulesSection houseRules={listing.houseRules} />
-                <Spacer size="2xl" />
-              </ThemedView>
+                <Spacer size="4xl" />
+              </>
             )}
 
             <NeighborhoodSection
@@ -123,6 +147,7 @@ export default function ListingScreen() {
           rent={listing.rent}
           availableFrom={listing.availableFrom}
           availableImmediately={listing.availableImmediately}
+          url={listing.externalListing?.url}
         />
       </ThemedView>
     </ThemedSafeArea>

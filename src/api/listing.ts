@@ -41,9 +41,53 @@ export interface FilterValues {
   houseRules: HouseRuleType[];
 }
 
+function serializeFilters(filters: FilterValues) {
+  return {
+    locality: filters.locality,
+
+    bhk: filters.bhk.length > 0 ? filters.bhk.join(",") : undefined,
+
+    occupancy:
+      filters.occupancy.length > 0 ? filters.occupancy.join(",") : undefined,
+
+    furnishedStatus:
+      filters.furnishedStatus.length > 0
+        ? filters.furnishedStatus.join(",")
+        : undefined,
+
+    rentMin: filters.rentMin,
+    rentMax: filters.rentMax,
+
+    totalInitCostMin: filters.totalInitCostMin,
+    totalInitCostMax: filters.totalInitCostMax,
+
+    floorMin: filters.floorMin,
+    floorMax: filters.floorMax,
+
+    totalOccupancyMin: filters.totalOccupancyMin,
+    totalOccupancyMax: filters.totalOccupancyMax,
+
+    gender: filters.gender,
+
+    availableImmediately:
+      filters.availableImmediately !== undefined
+        ? String(filters.availableImmediately)
+        : undefined,
+
+    availableAfter: filters.availableAfter?.toISOString(),
+
+    addOns: filters.addOns.length > 0 ? filters.addOns.join(",") : undefined,
+
+    amenities:
+      filters.amenities.length > 0 ? filters.amenities.join(",") : undefined,
+
+    houseRules:
+      filters.houseRules.length > 0 ? filters.houseRules.join(",") : undefined,
+  };
+}
+
 export interface ListingCardResponse {
   id: string;
-  title: string;
   coverImage: string;
 
   address: {
@@ -51,10 +95,10 @@ export interface ListingCardResponse {
     city: City;
   };
 
-  location: {
-    latitude: number;
-    longitude: number;
-  };
+  totalOccupancy?: number;
+  furnishedStatus: FurnishedStatus;
+
+  genderPreference: GenderPreference;
 
   rent: number;
 
@@ -63,8 +107,6 @@ export interface ListingCardResponse {
 
   availableFrom?: string;
   availableImmediately: boolean;
-
-  tags: string[];
 
   favorite: boolean;
 }
@@ -133,7 +175,10 @@ export interface MapListingsResponse {
 
   rent: number;
 
-  title: string;
+  totalOccupancy?: number;
+  furnishedStatus: FurnishedStatus;
+
+  genderPreference: GenderPreference;
   coverImage: string;
 
   address: {
@@ -169,40 +214,7 @@ export async function getMapListings({
         east,
         west,
         limit,
-
-        ...filters,
-
-        bhk: filters.bhk.length > 0 ? filters.bhk.join(",") : undefined,
-
-        occupancy:
-          filters.occupancy.length > 0
-            ? filters.occupancy.join(",")
-            : undefined,
-
-        furnishedStatus:
-          filters.furnishedStatus.length > 0
-            ? filters.furnishedStatus.join(",")
-            : undefined,
-
-        addOns:
-          filters.addOns.length > 0 ? filters.addOns.join(",") : undefined,
-
-        amenities:
-          filters.amenities.length > 0
-            ? filters.amenities.join(",")
-            : undefined,
-
-        houseRules:
-          filters.houseRules.length > 0
-            ? filters.houseRules.join(",")
-            : undefined,
-
-        availableImmediately:
-          filters.availableImmediately !== undefined
-            ? String(filters.availableImmediately)
-            : undefined,
-
-        availableAfter: filters.availableAfter?.toISOString(),
+        ...serializeFilters(filters),
       },
     },
   );
@@ -234,8 +246,6 @@ export async function putFavouriteListing(
 
 export interface ListingResponse {
   id: string;
-
-  title: string;
 
   images: string[];
   coverImage: string;
@@ -327,21 +337,49 @@ export async function getListing(
   return data;
 }
 
-export interface GetLocalitiesResponse {
-  success: boolean;
-  data: string[];
+export interface GetSearchListingsParams extends FilterValues {
+  city: City;
+  latitude: number;
+  longitude: number;
+
+  cursor?: string;
+  limit?: number;
+
+  sortBy: "distance" | "rent" | "creation_date" | "favorites" | "views";
+  sortOrder: "asc" | "desc";
 }
 
-export async function getLocalities({
+export interface SearchListingsResponse {
+  data: ListingCardResponse[];
+
+  pagination: {
+    nextCursor: string | null;
+    hasNext: boolean;
+  };
+}
+
+export async function getSearchListings({
   city,
-}: {
-  city: string;
-}): Promise<GetLocalitiesResponse> {
-  const { data } = await axiosClient.get<GetLocalitiesResponse>(
-    ENDPOINTS.LISTING.LOCALITIES,
+  latitude,
+  longitude,
+  cursor,
+  limit = 20,
+  sortBy,
+  sortOrder,
+  ...filters
+}: GetSearchListingsParams): Promise<SearchListingsResponse> {
+  const { data } = await axiosClient.get<SearchListingsResponse>(
+    ENDPOINTS.LISTING.SEARCH,
     {
       params: {
         city,
+        latitude,
+        longitude,
+        cursor,
+        limit,
+        sortBy,
+        sortOrder,
+        ...serializeFilters(filters),
       },
     },
   );

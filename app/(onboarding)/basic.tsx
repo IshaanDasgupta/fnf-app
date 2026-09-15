@@ -16,6 +16,9 @@ import { useAuthStore } from "@/src/stores/auth";
 import { sizes } from "@/src/theme/size";
 
 import { CITIES } from "@/src/constants/api-constants";
+import { useTheme } from "@/src/hooks/theme/useTheme";
+import { shadows } from "@/src/theme/shadows";
+import { Entypo } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
@@ -59,6 +62,8 @@ export type BasicOnboardingFormInput = z.input<
 >;
 
 export default function BasicOnboardingScreen() {
+  const { colors } = useTheme();
+
   const router = useRouter();
 
   const completeOnboarding = useAuthStore((state) => state.completeOnboarding);
@@ -139,15 +144,16 @@ export default function BasicOnboardingScreen() {
               render={({ field: { onChange, value } }) => (
                 <ThemedTextInput
                   variant="secondary"
-                  label="Name"
-                  labelVariant="h3"
+                  label="NAME"
+                  labelVariant="caption"
                   value={value}
                   onChangeText={onChange}
                   placeholder="Your name"
-                  textVariant="h1"
+                  textVariant="title"
                   autoCapitalize="words"
                   paddingHorizontal="md"
                   paddingVertical="md"
+                  containerStyle={{ ...shadows.lg }}
                 />
               )}
             />
@@ -171,16 +177,17 @@ export default function BasicOnboardingScreen() {
               render={({ field: { onChange, value } }) => (
                 <ThemedTextInput
                   variant="secondary"
-                  label="Age"
-                  labelVariant="h3"
+                  label="AGE"
+                  labelVariant="caption"
                   value={value}
                   onChangeText={onChange}
                   placeholder="XX"
-                  textVariant="h1"
+                  textVariant="title"
                   keyboardType="number-pad"
                   maxLength={2}
                   paddingHorizontal="md"
                   paddingVertical="md"
+                  containerStyle={{ ...shadows.lg }}
                 />
               )}
             />
@@ -197,26 +204,52 @@ export default function BasicOnboardingScreen() {
           </ThemedView>
 
           {/* Gender */}
-          <ThemedView>
-            <ThemedText variant="h3" style={styles.sectionLabel}>
-              Gender
+          <ThemedView
+            variant="secondary"
+            padding="md"
+            shadow="lg"
+            borderRadius="card"
+          >
+            <ThemedText
+              variant="caption"
+              color="foreground.secondary"
+              style={styles.sectionLabel}
+            >
+              GENDER
             </ThemedText>
 
-            <ThemedView style={styles.genderContainer} gap="lg">
+            <ThemedView
+              variant="tertiary"
+              style={styles.genderContainer}
+              gap="md"
+              padding="sm"
+              borderRadius="card"
+            >
               <ThemedView style={styles.genderOption}>
                 <Controller
                   control={control}
                   name="gender"
                   render={({ field: { onChange, value } }) => (
                     <ThemedChip
-                      variant="secondary"
-                      selectedVariant="accent-primary"
+                      variant="tertiary"
+                      selectedVariant="primary"
                       selected={value === "male"}
                       label="Male"
-                      labelVariant="h1"
+                      labelVariant="title"
                       onPress={() => onChange("male")}
                       style={styles.genderChip}
                       borderRadius="card"
+                      controlled
+                      shadow={value === "male" ? "lg" : undefined}
+                      rightIcon={
+                        value === "male" ? (
+                          <Entypo
+                            name="dot-single"
+                            color={colors.accent.primary}
+                            size={14}
+                          />
+                        ) : undefined
+                      }
                     />
                   )}
                 />
@@ -228,14 +261,25 @@ export default function BasicOnboardingScreen() {
                   name="gender"
                   render={({ field: { onChange, value } }) => (
                     <ThemedChip
-                      variant="secondary"
-                      selectedVariant="accent-primary"
+                      variant="tertiary"
+                      selectedVariant="primary"
                       selected={value === "female"}
                       label="Female"
-                      labelVariant="h1"
+                      labelVariant="title"
                       onPress={() => onChange("female")}
                       style={styles.genderChip}
                       borderRadius="card"
+                      controlled
+                      shadow={value === "female" ? "lg" : undefined}
+                      rightIcon={
+                        value === "female" ? (
+                          <Entypo
+                            name="dot-single"
+                            color={colors.accent.primary}
+                            size={14}
+                          />
+                        ) : undefined
+                      }
                     />
                   )}
                 />
@@ -253,11 +297,19 @@ export default function BasicOnboardingScreen() {
             )}
           </ThemedView>
 
-          <ThemedView>
-            <ThemedText variant="h3" style={styles.sectionLabel}>
-              City
+          <ThemedView
+            variant="secondary"
+            padding="md"
+            shadow="lg"
+            borderRadius="card"
+          >
+            <ThemedText
+              variant="caption"
+              color="foreground.secondary"
+              style={styles.sectionLabel}
+            >
+              CITY
             </ThemedText>
-
             <Controller
               control={control}
               name="city"
@@ -281,7 +333,7 @@ export default function BasicOnboardingScreen() {
         <ThemedView style={styles.buttonContainer}>
           <ThemedButton
             label="Continue"
-            labelVariant="h2"
+            labelVariant="h3"
             loading={isSaving}
             onPress={handleSubmit(handleContinue)}
           />

@@ -1,11 +1,13 @@
+import { Locality } from "@/src/api/locality";
+
 export function normalizeLocality(value: string): string {
   return value.toLowerCase().replace(/\s+/g, "").trim();
 }
 
 export function getLocalitySuggestions(
-  localities: string[],
+  localities: Locality[],
   query: string,
-): string[] {
+): Locality[] {
   const normalizedQuery = normalizeLocality(query);
 
   if (!normalizedQuery) {
@@ -13,10 +15,12 @@ export function getLocalitySuggestions(
   }
 
   return localities
-    .filter((locality) => normalizeLocality(locality).includes(normalizedQuery))
+    .filter((locality) =>
+      normalizeLocality(locality.name).includes(normalizedQuery),
+    )
     .sort((a, b) => {
-      const aNormalized = normalizeLocality(a);
-      const bNormalized = normalizeLocality(b);
+      const aNormalized = normalizeLocality(a.name);
+      const bNormalized = normalizeLocality(b.name);
 
       const aStartsWith = aNormalized.startsWith(normalizedQuery);
       const bStartsWith = bNormalized.startsWith(normalizedQuery);

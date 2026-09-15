@@ -11,18 +11,20 @@ export const PropertyMarker = memo(function PropertyMarker({
   latitude,
   longitude,
   price,
-  selected = false,
+  selected,
   onPress,
 }: ListingMarkerProps) {
   const [tracksViewChanges, setTracksViewChanges] = useState(true);
 
   useEffect(() => {
+    setTracksViewChanges(true);
+
     const timer = setTimeout(() => {
       setTracksViewChanges(false);
     }, 500);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [selected]);
 
   return (
     <Marker
@@ -33,17 +35,16 @@ export const PropertyMarker = memo(function PropertyMarker({
       tracksViewChanges={tracksViewChanges}
       onPress={() => onPress(id)}
     >
-      <ThemedView style={{ alignItems: "center" }}>
+      <ThemedView style={styles.marker}>
         <ThemedView
-          variant="inverse"
+          variant={selected ? "accent-primary" : "inverse"}
           padding="xs"
-          style={{
-            borderRadius: radius.button,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          style={styles.price}
         >
-          <ThemedText variant="body" color="foreground.inverse">
+          <ThemedText
+            variant="body"
+            color={selected ? "foreground.white" : "foreground.inverse"}
+          >
             ₹{Math.round(price / 1000)}k
           </ThemedText>
         </ThemedView>
@@ -51,3 +52,15 @@ export const PropertyMarker = memo(function PropertyMarker({
     </Marker>
   );
 });
+
+const styles = {
+  marker: {
+    alignItems: "center" as const,
+  },
+
+  price: {
+    borderRadius: radius.button,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
+  },
+};

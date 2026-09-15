@@ -1,15 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { Share, StyleSheet } from "react-native";
 
 import { ThemedIconButton } from "@/src/components/themed-ui/ThemedIconButton";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 
 import ImageCarousel from "@/src/components/listing/screen/hero/ImageCarousel";
+import { API_BASE_URL, ENDPOINTS } from "@/src/constants/endpoints";
 import { useToggleFavourite } from "@/src/hooks/react-query/useToggleFavourite";
 import { sizes } from "@/src/theme/size";
 import { ListingHeroProps } from "@/src/types/listing/screen/hero";
+import Toast from "react-native-toast-message";
 
 export default function ListingHero({
   listingId,
@@ -22,6 +24,24 @@ export default function ListingHero({
 
   const handleBack = () => {
     router.back();
+  };
+
+  const handleShare = async () => {
+    try {
+      const url = `${API_BASE_URL}${ENDPOINTS.REDIRECT}/${listingId}`;
+
+      await Share.share({
+        message: `Check out this listing on Friendly Floors:\n${url}`,
+      });
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Couldn't share listing",
+        text2: "Please try again.",
+      });
+
+      console.error("Failed to share listing:", error);
+    }
   };
 
   const handleFavToggle = async () => {
@@ -38,7 +58,7 @@ export default function ListingHero({
     <ThemedView style={styles.container}>
       <ImageCarousel images={images} />
 
-      <ThemedView variant="transparent" style={styles.topBar}>
+      <ThemedView style={styles.topBar}>
         <ThemedIconButton
           variant="tertiary"
           size="lg"
@@ -46,11 +66,12 @@ export default function ListingHero({
           onPress={handleBack}
         />
 
-        <ThemedView variant="transparent" style={styles.actions} gap="md">
+        <ThemedView style={styles.actions} gap="md">
           <ThemedIconButton
             variant="tertiary"
             size="lg"
             icon={<Ionicons name="share-social-outline" />}
+            onPress={handleShare}
           />
 
           <ThemedIconButton

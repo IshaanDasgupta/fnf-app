@@ -1,3 +1,3 @@
-export const INIT_MAP_REGION_DELTA = 0.03;
+export const INIT_MAP_REGION_DELTA = 0.02;
 export const MAP_REGION_DEBOUNCE_MS = 500;
 export const SUPERCLUSTER_MAX_ZOOM = 17;

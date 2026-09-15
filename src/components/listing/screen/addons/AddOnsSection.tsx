@@ -37,7 +37,7 @@ const addOnIcons: Record<AddOnType, keyof typeof Ionicons.glyphMap> = {
   Balcony: "business-outline",
   "Private Terrace": "sunny-outline",
   "Walk-in Closet": "shirt-outline",
-  Furniture: "home",
+  Furniture: "home-outline",
 
   Cook: "restaurant-outline",
   Maid: "person-outline",

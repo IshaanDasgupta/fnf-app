@@ -4,7 +4,7 @@ export const shadows = {
     shadowOpacity: 0.04,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    elevation: 0.5,
   },
 
   sm: {
@@ -24,10 +24,10 @@ export const shadows = {
   },
 
   lg: {
-    shadowColor: "#000",
+    shadowColor: "#00000093",
     shadowOpacity: 0.12,
     shadowRadius: 22,
     shadowOffset: { width: 0, height: 14 },
-    elevation: 8,
+    elevation: 20,
   },
 };

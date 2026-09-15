@@ -38,7 +38,9 @@ export interface ThemedTextInputProps extends Omit<TextInputProps, "style"> {
   textVariant?: ThemedTextVariant;
 
   leftIcon?: React.ReactNode;
+  leftIconOnPress?: () => {};
   rightIcon?: React.ReactNode;
+  rightIconOnPress?: () => {};
 
   paddingHorizontal?: keyof typeof sizes;
   paddingVertical?: keyof typeof sizes;

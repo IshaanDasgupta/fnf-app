@@ -1,4 +1,5 @@
 import { radius } from "@/src/theme/radius";
+import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
 import { ThemedColorToken } from "@/src/types/theme-color";
 import { ViewProps } from "react-native";
@@ -38,6 +39,8 @@ export interface ThemedViewProps extends ViewProps {
   marginRight?: keyof typeof sizes;
 
   gap?: keyof typeof sizes;
+
+  shadow?: keyof typeof shadows;
 
   children?: React.ReactNode;
 }

@@ -18,6 +18,7 @@ import { useMapListings } from "@/src/hooks/react-query/useMapListings";
 import { useDebouncedValue } from "@/src/hooks/useDebouncedValue";
 import { useSupercluster } from "@/src/hooks/useSupercluster";
 
+import { Locality } from "@/src/api/locality";
 import { LoadingErrorScreen } from "@/src/components/shared/LoadingErrorScreen";
 import { LoadingScreen } from "@/src/components/shared/LoadingScreen";
 import SearchFilter from "@/src/components/shared/SearchFilter";
@@ -47,7 +48,7 @@ export default function MapContent({ latitude, longitude }: MapContentProps) {
   const router = useRouter();
 
   const [selectedListingId, setSelectedListingId] = useState<string>();
-  const [searchLocality, setSearchLocality] = useState<string | undefined>(
+  const [searchLocality, setSearchLocality] = useState<Locality | undefined>(
     undefined,
   );
 
@@ -125,6 +126,30 @@ export default function MapContent({ latitude, longitude }: MapContentProps) {
     );
   };
 
+  const goToLocality = (locality?: Locality) => {
+    setSelectedListingId(undefined);
+
+    if (!locality && !searchLocality) {
+      Toast.show({
+        type: "error",
+        text1: "Please select a locality to search!",
+      });
+      return;
+    }
+
+    const tgt = locality || searchLocality;
+
+    mapRef.current?.animateToRegion(
+      {
+        latitude: tgt!.location.latitude,
+        longitude: tgt!.location.longitude,
+        latitudeDelta: INIT_MAP_REGION_DELTA,
+        longitudeDelta: INIT_MAP_REGION_DELTA,
+      },
+      500,
+    );
+  };
+
   if (isMapDataLoading) {
     return <LoadingScreen />;
   }
@@ -133,7 +158,7 @@ export default function MapContent({ latitude, longitude }: MapContentProps) {
     return (
       <LoadingErrorScreen
         title="Couldn't load listings"
-        message="Something went wrong while loading listings. Please try again."
+        message={`We couldn’t connect to our servers.\n Please check your internet connection and try again.`}
         onRetry={async () => {
           const result = await refetchMapListings();
 
@@ -253,32 +278,28 @@ export default function MapContent({ latitude, longitude }: MapContentProps) {
           <Spacer size="md" />
 
           <SearchFilter
-            onLocalitySelect={setSearchLocality}
-            onSearch={() => {
-              if (!searchLocality) {
-                Toast.show({
-                  type: "error",
-                  text1: "Please select a locality to search!",
-                });
-                return;
+            onLocalitySelect={(locality) => {
+              setSearchLocality(locality);
+              if (locality) {
+                goToLocality(locality);
               }
-              console.log(searchLocality);
             }}
+            onSearch={goToLocality}
             onFilterPress={() =>
               router.push({
-                pathname: navigation.filters,
+                pathname: navigation.searchFilter.filters,
                 params: { source: "map" },
               })
             }
             activeFilterCount={activeMapFilterCount}
-            placeholder='Try "Indiranagar, 3 bhk"'
+            placeholder="Search any locality"
           />
 
           <Spacer size="xl" />
 
           <ThemedIconButton
             icon={<Ionicons name="locate" size={26} />}
-            variant="inverse"
+            variant="primary"
             size="xl"
             radius="card"
             onPress={goToUserLocation}
@@ -291,11 +312,13 @@ export default function MapContent({ latitude, longitude }: MapContentProps) {
             <ListingPreviewCard
               listingId={selectedProperty.id}
               image={selectedProperty.coverImage}
-              title={selectedProperty.title}
               location={`${selectedProperty.address.locality}, ${selectedProperty.address.city}`}
               bhk={selectedProperty.bhk}
               rent={selectedProperty.rent}
               occupancy={selectedProperty.occupancy}
+              totalOccupancy={selectedProperty.totalOccupancy}
+              furnishedStatus={selectedProperty.furnishedStatus}
+              genderPreference={selectedProperty.genderPreference}
               favourite={selectedProperty.favorite}
             />
           </ThemedView>

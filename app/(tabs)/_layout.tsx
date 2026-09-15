@@ -9,7 +9,7 @@ import { Redirect, Tabs } from "expo-router";
 export default function TabsLayout() {
   const { isAuthenticated, basicOnboardingCompleted, isHydrated } = useAuth();
 
-  const { permission, isLoading: isLocationLoading } = useUserLocation();
+  const { permission, city, isLoading: isLocationLoading } = useUserLocation();
 
   if (!isHydrated || isLocationLoading) {
     return <LoadingScreen />;
@@ -24,7 +24,11 @@ export default function TabsLayout() {
   }
 
   if (permission !== Location.PermissionStatus.GRANTED) {
-    return <Redirect href={navigation.permissions} />;
+    return <Redirect href={navigation.standalone.permissions} />;
+  }
+
+  if (!city) {
+    return <Redirect href={navigation.standalone.citySelection} />;
   }
 
   return (

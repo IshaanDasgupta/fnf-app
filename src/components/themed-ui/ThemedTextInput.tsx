@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, TextInput } from "react-native";
+import { Pressable, StyleSheet, TextInput } from "react-native";
 
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
@@ -21,7 +21,9 @@ export function ThemedTextInput({
   textVariant = "body",
 
   leftIcon,
+  leftIconOnPress,
   rightIcon,
+  rightIconOnPress,
 
   paddingHorizontal = "sm",
   paddingVertical = "sm",
@@ -71,7 +73,11 @@ export function ThemedTextInput({
         containerStyle,
       ]}
     >
-      {leftIcon && renderIcon(leftIcon, iconColor)}
+      {leftIcon && (
+        <Pressable onPress={leftIconOnPress}>
+          {renderIcon(leftIcon, iconColor)}
+        </Pressable>
+      )}
 
       <ThemedView
         style={[
@@ -89,6 +95,7 @@ export function ThemedTextInput({
 
         <TextInput
           {...props}
+          allowFontScaling={false}
           style={[
             typography[textVariant],
             {
@@ -111,8 +118,11 @@ export function ThemedTextInput({
           }}
         />
       </ThemedView>
-
-      {rightIcon && renderIcon(rightIcon, iconColor)}
+      {rightIcon && (
+        <Pressable onPress={rightIconOnPress}>
+          {renderIcon(rightIcon, iconColor)}
+        </Pressable>
+      )}
     </ThemedView>
   );
 }

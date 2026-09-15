@@ -17,7 +17,9 @@ export type AppRoute =
   | `/property/${string}`
   | "/permissions"
   | "/filters"
-  | "/search";
+  | "/search"
+  | "/city-selection"
+  | "/not-found";
 
 export const navigation = {
   splash: "/splash" as const,
@@ -28,10 +30,12 @@ export const navigation = {
     otp: "/otp" as const,
   },
 
-  filters: "/filters" as const,
-  search: "/search" as const,
-
-  searchWithQuery: (q: string) => `/search?q=${encodeURIComponent(q)}` as const,
+  searchFilter: {
+    filters: "/filters" as const,
+    search: "/search" as const,
+    searchWithQuery: (q: string) =>
+      `/search?q=${encodeURIComponent(q)}` as const,
+  },
 
   onboarding: {
     basic: "/basic" as const,
@@ -52,7 +56,11 @@ export const navigation = {
 
   property: (id: string) => `/property/${id}` as const,
 
-  permissions: "/permissions" as const,
+  standalone: {
+    permissions: "/permissions" as const,
+    citySelection: "/city-selection" as const,
+    notFound: "/not-found" as const,
+  },
 } as const;
 
 export function useAppRouter() {

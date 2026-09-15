@@ -5,7 +5,6 @@ import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 import { useResolveThemeColor } from "@/src/hooks/theme/useResolveThemeColor";
 import { renderIcon } from "@/src/lib/utils/iconUtils";
-import { sizes } from "@/src/theme/size";
 
 interface HouseRuleItemProps {
   icon: React.ReactNode;
@@ -24,22 +23,11 @@ export default function HouseRuleItem({
     <ThemedView
       style={{
         flexDirection: "row",
-        alignItems: "flex-start",
+        alignItems: "center",
       }}
       gap="md"
     >
-      <ThemedView
-        variant="tertiary"
-        style={{
-          width: sizes["4xl"],
-          height: sizes["4xl"],
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        borderRadius="button"
-      >
-        {renderIcon(icon, resolvedIconColor)}
-      </ThemedView>
+      {renderIcon(icon, resolvedIconColor)}
 
       <ThemedView gap="xs" style={{ flex: 1 }}>
         <ThemedIconText

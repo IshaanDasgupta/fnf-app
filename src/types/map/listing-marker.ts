@@ -6,7 +6,7 @@ export interface ListingMarkerProps {
 
   price: number;
 
-  selected?: boolean;
+  selected: boolean;
 
   onPress(id: string): void;
 }

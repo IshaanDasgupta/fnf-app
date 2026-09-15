@@ -77,7 +77,7 @@ export function FilterSection({
           >
             <ThemedText
               variant="label"
-              color="foreground.black"
+              color="foreground.white"
               style={styles.badgeText}
             >
               {badge}
@@ -120,13 +120,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 16,
-    lineHeight: 22,
+    fontSize: 12.8,
+    lineHeight: 17.6,
     fontWeight: "700",
   },
   subtitle: {
     marginTop: 2,
-    fontSize: 12,
+    fontSize: 9.6,
   },
   badge: {
     paddingHorizontal: sizes.sm,
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   badgeText: {
-    fontSize: 11,
+    fontSize: 8.8,
     fontWeight: "700",
   },
   content: {

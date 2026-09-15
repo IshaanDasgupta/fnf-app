@@ -12,44 +12,52 @@ export function ChipSelectionList({
   onSelect,
 }: ChipSelectionListProps) {
   return (
-    <ThemedView>
-      <FlatList
-        horizontal={true}
-        data={items}
-        keyExtractor={(item) => item.id}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.content}
-        ItemSeparatorComponent={() => <ThemedView style={styles.separator} />}
-        renderItem={({ item }) => (
-          <ThemedChip
-            variant="tertiary"
-            selectedVariant="accent-primary"
-            label={item.label}
-            leftIcon={item.icon}
-            labelVariant="subTitle"
-            style={{
-              paddingVertical: sizes.md,
-              paddingHorizontal: sizes.xl,
-            }}
-            selected={
-              selectedChipsIds.includes(item.id) ||
-              (item.id === "all" && selectedChipsIds.length === 0)
-            }
-            onPress={() => onSelect(item.id)}
-          />
-        )}
-      />
-    </ThemedView>
+    <FlatList
+      horizontal
+      data={items}
+      style={styles.list}
+      keyExtractor={(item) => item.id}
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.content}
+      ItemSeparatorComponent={() => <ThemedView style={styles.separator} />}
+      renderItem={({ item }) => (
+        <ThemedChip
+          variant="secondary"
+          shadow="lg"
+          selectedVariant="accent-primary"
+          label={item.label}
+          leftIcon={item.icon}
+          labelVariant="subTitle"
+          style={styles.chip}
+          selected={
+            selectedChipsIds.includes(item.id) ||
+            (item.id === "all" && selectedChipsIds.length === 0)
+          }
+          onPress={() => onSelect(item.id)}
+          controlled
+        />
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
+  list: {
+    overflow: "visible",
+  },
+
   content: {
     paddingVertical: sizes.lg,
+    paddingBottom: sizes["2xl"],
   },
 
   separator: {
     width: sizes.sm,
+  },
+
+  chip: {
+    paddingVertical: sizes.md,
+    paddingHorizontal: sizes.xl,
   },
 });
 

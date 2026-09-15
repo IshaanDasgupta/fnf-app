@@ -2,7 +2,7 @@ import "dotenv/config";
 import { ExpoConfig } from "expo/config";
 
 const config: ExpoConfig = {
-  name: "fnf-app",
+  name: "Friendly Floors: Flatmates",
   slug: "fnf-app",
   version: "1.0.0",
   orientation: "portrait",
@@ -17,13 +17,12 @@ const config: ExpoConfig = {
     supportsTablet: true,
     infoPlist: {
       NSLocationWhenInUseUsageDescription:
-        "Friendly Floors uses your location to show listings near you.",
+        "Friendly Floors uses your location to show rooms and flatmates near you.",
     },
   },
 
   android: {
     package: "com.aquiem.friendlyfloors",
-    versionCode: 1,
 
     adaptiveIcon: {
       backgroundColor: "#E6F4FE",
@@ -55,9 +54,9 @@ const config: ExpoConfig = {
         image: "./assets/icons/logo.png",
         imageWidth: 200,
         resizeMode: "contain",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#FFFFFF",
         dark: {
-          backgroundColor: "#000000",
+          backgroundColor: "#121417",
         },
       },
     ],

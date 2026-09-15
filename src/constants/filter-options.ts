@@ -22,32 +22,24 @@ export const BHK_VISUAL_OPTIONS: VisualOptionItem<BhkType>[] = [
     title: "1 RK",
     subtitle: "Studio room",
     iconName: "home-outline",
-    tintBg: "rgba(77, 164, 232, 0.12)",
-    tintColor: "#4DA4E8",
   },
   {
     id: "1BHK",
     title: "1 BHK",
     subtitle: "1 Bed + Hall",
     iconName: "business-outline",
-    tintBg: "rgba(221, 245, 229, 0.7)",
-    tintColor: "#15803D",
   },
   {
     id: "2BHK",
     title: "2 BHK",
     subtitle: "2 Bed + Hall",
     iconName: "business-outline",
-    tintBg: "rgba(255, 229, 214, 0.7)",
-    tintColor: "#C2410C",
   },
   {
     id: "3BHK",
     title: "3 BHK",
     subtitle: "3+ Bed + Hall",
     iconName: "business-outline",
-    tintBg: "rgba(232, 236, 255, 0.7)",
-    tintColor: "#4338CA",
   },
 ];
 
@@ -57,24 +49,18 @@ export const OCCUPANCY_VISUAL_OPTIONS: VisualOptionItem<OccupancyType>[] = [
     title: "Single",
     subtitle: "Private room",
     iconName: "person-outline",
-    tintBg: "rgba(77, 164, 232, 0.12)",
-    tintColor: "#4DA4E8",
   },
   {
     id: "double",
     title: "Double",
     subtitle: "Twin sharing",
     iconName: "people-outline",
-    tintBg: "rgba(221, 245, 229, 0.7)",
-    tintColor: "#15803D",
   },
   {
     id: "triple",
     title: "Triple",
     subtitle: "3+ sharing",
     iconName: "people-circle-outline",
-    tintBg: "rgba(255, 229, 214, 0.7)",
-    tintColor: "#C2410C",
   },
 ];
 
@@ -84,24 +70,18 @@ export const FURNISHING_VISUAL_OPTIONS: VisualOptionItem<FurnishedStatus>[] = [
     title: "Fully",
     subtitle: "Move-in ready",
     iconName: "bed-outline",
-    tintBg: "rgba(221, 245, 229, 0.7)",
-    tintColor: "#15803D",
   },
   {
     id: "semi-furnished",
     title: "Semi",
     subtitle: "Basic fittings",
     iconName: "cube-outline",
-    tintBg: "rgba(255, 243, 213, 0.7)",
-    tintColor: "#B45309",
   },
   {
     id: "unfurnished",
     title: "Unfurnished",
     subtitle: "Bring your own",
     iconName: "layers-outline",
-    tintBg: "rgba(232, 236, 255, 0.7)",
-    tintColor: "#4338CA",
   },
 ];
 
@@ -111,66 +91,42 @@ export const GENDER_VISUAL_OPTIONS: VisualOptionItem<GenderPreference>[] = [
     title: "Male only",
     subtitle: "Men flatmates",
     iconName: "man-outline",
-    tintBg: "rgba(232, 236, 255, 0.7)",
-    tintColor: "#4338CA",
   },
   {
     id: "female",
     title: "Female only",
     subtitle: "Women flatmates",
     iconName: "woman-outline",
-    tintBg: "rgba(255, 229, 214, 0.7)",
-    tintColor: "#C2410C",
   },
 ];
 
-const AMENITY_METAS: Partial<
-  Record<AmenityType, { iconName: IconName; tintBg: string; tintColor: string }>
-> = {
+const AMENITY_METAS: Partial<Record<AmenityType, { iconName: IconName }>> = {
   Gym: {
     iconName: "barbell-outline",
-    tintBg: "rgba(221, 245, 229, 0.7)",
-    tintColor: "#15803D",
   },
   "Swimming Pool": {
     iconName: "water-outline",
-    tintBg: "rgba(77, 164, 232, 0.15)",
-    tintColor: "#0284C7",
   },
   "Power Backup": {
     iconName: "battery-charging-outline",
-    tintBg: "rgba(255, 243, 213, 0.7)",
-    tintColor: "#B45309",
   },
   Lift: {
     iconName: "swap-vertical-outline",
-    tintBg: "rgba(232, 236, 255, 0.7)",
-    tintColor: "#4338CA",
   },
   "24x7 Security": {
     iconName: "shield-checkmark-outline",
-    tintBg: "rgba(221, 245, 229, 0.7)",
-    tintColor: "#15803D",
   },
   "Gated Community": {
     iconName: "key-outline",
-    tintBg: "rgba(255, 229, 214, 0.7)",
-    tintColor: "#C2410C",
   },
   "Car Parking": {
     iconName: "car-outline",
-    tintBg: "rgba(77, 164, 232, 0.15)",
-    tintColor: "#0284C7",
   },
   "Bike Parking": {
     iconName: "bicycle-outline",
-    tintBg: "rgba(255, 243, 213, 0.7)",
-    tintColor: "#B45309",
   },
   "EV Charging": {
     iconName: "flash-outline",
-    tintBg: "rgba(221, 245, 229, 0.7)",
-    tintColor: "#15803D",
   },
 };
 
@@ -194,53 +150,33 @@ export const POPULAR_AMENITIES: FilterTileItem<AmenityType>[] = [
       id: item,
       label: item,
       iconName: meta?.iconName ?? "sparkles-outline",
-      categoryTint: meta?.tintBg,
-      categoryIconColor: meta?.tintColor,
     };
   });
 
-const ADDON_METAS: Partial<
-  Record<AddOnType, { iconName: IconName; tintBg: string; tintColor: string }>
-> = {
+const ADDON_METAS: Partial<Record<AddOnType, { iconName: IconName }>> = {
   "Air Conditioning": {
     iconName: "snow-outline",
-    tintBg: "rgba(77, 164, 232, 0.15)",
-    tintColor: "#0284C7",
   },
   WiFi: {
     iconName: "wifi-outline",
-    tintBg: "rgba(232, 236, 255, 0.7)",
-    tintColor: "#4338CA",
   },
   "Washing Machine": {
     iconName: "shirt-outline",
-    tintBg: "rgba(221, 245, 229, 0.7)",
-    tintColor: "#15803D",
   },
   Refrigerator: {
     iconName: "cafe-outline",
-    tintBg: "rgba(255, 243, 213, 0.7)",
-    tintColor: "#B45309",
   },
   "Attached Bathroom": {
     iconName: "water-outline",
-    tintBg: "rgba(77, 164, 232, 0.15)",
-    tintColor: "#0284C7",
   },
   Balcony: {
     iconName: "sunny-outline",
-    tintBg: "rgba(255, 229, 214, 0.7)",
-    tintColor: "#C2410C",
   },
   Cook: {
     iconName: "restaurant-outline",
-    tintBg: "rgba(255, 243, 213, 0.7)",
-    tintColor: "#B45309",
   },
   Maid: {
     iconName: "sparkles-outline",
-    tintBg: "rgba(232, 236, 255, 0.7)",
-    tintColor: "#4338CA",
   },
 };
 
@@ -263,43 +199,27 @@ export const POPULAR_ADDONS: FilterTileItem<AddOnType>[] = [
       id: item,
       label: item,
       iconName: meta?.iconName ?? "apps-outline",
-      categoryTint: meta?.tintBg,
-      categoryIconColor: meta?.tintColor,
     };
   });
 
-const HOUSE_RULE_METAS: Partial<
-  Record<
-    HouseRuleType,
-    { iconName: IconName; tintBg: string; tintColor: string }
-  >
-> = {
-  "No Smoking": {
-    iconName: "ban-outline",
-    tintBg: "rgba(239, 68, 68, 0.12)",
-    tintColor: "#DC2626",
-  },
-  "No Alcohol": {
-    iconName: "wine-outline",
-    tintBg: "rgba(239, 68, 68, 0.12)",
-    tintColor: "#DC2626",
-  },
-  "Vegetarian Only": {
-    iconName: "leaf-outline",
-    tintBg: "rgba(221, 245, 229, 0.7)",
-    tintColor: "#15803D",
-  },
-  "Pets Allowed": {
-    iconName: "paw-outline",
-    tintBg: "rgba(255, 229, 214, 0.7)",
-    tintColor: "#C2410C",
-  },
-  "Guests Allowed": {
-    iconName: "people-outline",
-    tintBg: "rgba(77, 164, 232, 0.15)",
-    tintColor: "#0284C7",
-  },
-};
+const HOUSE_RULE_METAS: Partial<Record<HouseRuleType, { iconName: IconName }>> =
+  {
+    "No Smoking": {
+      iconName: "ban-outline",
+    },
+    "No Alcohol": {
+      iconName: "wine-outline",
+    },
+    "Vegetarian Only": {
+      iconName: "leaf-outline",
+    },
+    "Pets Allowed": {
+      iconName: "paw-outline",
+    },
+    "Guests Allowed": {
+      iconName: "people-outline",
+    },
+  };
 
 export const POPULAR_HOUSE_RULES: FilterTileItem<HouseRuleType>[] = [
   "No Smoking",
@@ -317,7 +237,5 @@ export const POPULAR_HOUSE_RULES: FilterTileItem<HouseRuleType>[] = [
       id: item,
       label: item,
       iconName: meta?.iconName ?? "checkmark-circle-outline",
-      categoryTint: meta?.tintBg,
-      categoryIconColor: meta?.tintColor,
     };
   });

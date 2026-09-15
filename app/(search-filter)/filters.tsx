@@ -19,6 +19,7 @@ import {
   POPULAR_AMENITIES,
   POPULAR_HOUSE_RULES,
 } from "@/src/constants/filter-options";
+import { FilterNavConfig } from "@/src/constants/filters";
 import { countActiveFilters, useFilterStore } from "@/src/stores/filter";
 import {
   countActiveMapFilters,
@@ -34,7 +35,7 @@ import { Pressable, StyleSheet } from "react-native";
 export default function FiltersScreen() {
   const router = useRouter();
   const { source } = useLocalSearchParams<{
-    source: "home" | "map";
+    source: "home" | "map" | "search";
   }>();
 
   const homeFilters = useFilterStore((state) => state.appliedFilters);
@@ -82,7 +83,12 @@ export default function FiltersScreen() {
 
   const handleApply = () => {
     setAppliedFilters(draftFilters);
-    router.back();
+
+    if (FilterNavConfig[source]) {
+      router.replace(FilterNavConfig[source]);
+    } else {
+      router.back();
+    }
   };
 
   const handleClear = () => {
@@ -410,7 +416,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   availabilityTitle: {
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: "700",
   },
   hotBadge: {
@@ -421,13 +427,13 @@ const styles = StyleSheet.create({
   },
   hotBadgeText: {
     color: "#E65100",
-    fontSize: 9,
+    fontSize: 7.2,
     fontWeight: "800",
     letterSpacing: 0.5,
   },
   availabilitySubtitle: {
     marginTop: 2,
-    fontSize: 11,
+    fontSize: 8.8,
   },
   switchToggle: {
     width: 46,
