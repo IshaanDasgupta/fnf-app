@@ -1,4 +1,5 @@
 import { FilterValues } from "@/src/api/listing";
+import { SERVICE_DISPLAY_NAMES } from "@/src/constants/filter-options";
 import { DEFAULT_FILTER_VALUES } from "@/src/types/filter";
 import { formatOccupancy } from "@/src/utils/occupancy";
 import { create } from "zustand";
@@ -15,6 +16,7 @@ export function countActiveFilters(filters: FilterValues): number {
   if (filters.rentMin !== undefined || filters.rentMax !== undefined)
     count += 1;
   if (filters.availableImmediately) count += 1;
+  if (filters.attachedWashroom === true) count += 1;
   if (filters.amenities.length > 0) count += filters.amenities.length;
   if (filters.addOns.length > 0) count += filters.addOns.length;
   if (filters.houseRules.length > 0) count += filters.houseRules.length;
@@ -140,6 +142,19 @@ export function getActiveFilterPills(
     });
   }
 
+  // Attached washroom
+  if (filters.attachedWashroom === true) {
+    pills.push({
+      id: "attached-washroom",
+      label: "Attached Washroom",
+      onRemove: () =>
+        updateFilters((prev) => ({
+          ...prev,
+          attachedWashroom: undefined,
+        })),
+    });
+  }
+
   // Amenities
   filters.amenities.forEach((a) => {
     pills.push({
@@ -183,7 +198,7 @@ export function getActiveFilterPills(
   filters.services.forEach((service) => {
     pills.push({
       id: `service-${service}`,
-      label: service,
+      label: SERVICE_DISPLAY_NAMES[service] ?? service,
       onRemove: () =>
         updateFilters((prev) => ({
           ...prev,

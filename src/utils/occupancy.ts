@@ -7,11 +7,11 @@ export function formatOccupancy(occupancy: CapacityFilter | number | string) {
       ? String(occupancy)
       : occupancy.trim().toLowerCase();
 
-  if (normalized === "1") return "Single";
-  if (normalized === "2") return "Double";
+  if (normalized === "1") return "Single Occupancy";
+  if (normalized === "2") return "Double Occupancy";
   if (normalized === "3" || normalized === "3plus" || normalized === "3+")
-    return "Triple";
-  return `${occupancy} Shared`;
+    return "Triple Occupancy";
+  return `${occupancy} Shared Occupancy`;
 }
 
 export function formatRentalType(type: RentalScopeType) {

@@ -20,6 +20,8 @@ export const DEFAULT_FILTER_VALUES: FilterValues = {
   totalOccupancyMin: undefined,
   totalOccupancyMax: undefined,
 
+  attachedWashroom: undefined,
+
   gender: undefined,
 
   availableImmediately: false,

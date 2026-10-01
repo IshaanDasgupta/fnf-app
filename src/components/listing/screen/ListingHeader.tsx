@@ -162,7 +162,7 @@ export default function ListingHeader({
   return (
     <ThemedView>
       <ThemedText variant="display">
-        {`${formatOccupancy(occupancy)} Occupancy ${formatRentalType(rentalType)}`}
+        {`${formatOccupancy(occupancy)} ${formatRentalType(rentalType)}`}
       </ThemedText>
 
       <Spacer size="xs" />

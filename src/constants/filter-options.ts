@@ -1,3 +1,4 @@
+import { CapacityFilter } from "@/src/api/listing";
 import { FilterTileItem } from "@/src/components/filter/FilterTileGrid";
 import { VisualOptionItem } from "@/src/components/filter/VisualGridCard";
 import {
@@ -11,8 +12,9 @@ import {
   HOUSE_RULE_TYPES,
   HouseRuleType,
   RentalScopeType,
+  SERVICES_TYPES,
+  ServiceType,
 } from "@/src/constants/api-constants";
-import { CapacityFilter } from "@/src/api/listing";
 import { Ionicons } from "@expo/vector-icons";
 
 type IconName = keyof typeof Ionicons.glyphMap;
@@ -65,21 +67,20 @@ export const OCCUPANCY_VISUAL_OPTIONS: VisualOptionItem<CapacityFilter>[] = [
   },
 ];
 
-export const RENTAL_TYPE_VISUAL_OPTIONS: VisualOptionItem<RentalScopeType>[] =
-  [
-    {
-      id: "room",
-      title: "Room",
-      subtitle: "Private room",
-      iconName: "bed-outline",
-    },
-    {
-      id: "hall",
-      title: "Hall",
-      subtitle: "Shared hall",
-      iconName: "people-outline",
-    },
-  ];
+export const RENTAL_TYPE_VISUAL_OPTIONS: VisualOptionItem<RentalScopeType>[] = [
+  {
+    id: "room",
+    title: "Room",
+    subtitle: "Private room",
+    iconName: "bed-outline",
+  },
+  {
+    id: "hall",
+    title: "Hall",
+    subtitle: "Shared hall",
+    iconName: "people-outline",
+  },
+];
 
 export const FURNISHING_VISUAL_OPTIONS: VisualOptionItem<FurnishedStatus>[] = [
   {
@@ -241,6 +242,51 @@ export const POPULAR_HOUSE_RULES: FilterTileItem<HouseRuleType>[] = [
     return {
       id: item,
       label: item,
+      iconName: meta?.iconName ?? "checkmark-circle-outline",
+    };
+  });
+
+const SERVICE_METAS: Partial<Record<ServiceType, { iconName: IconName }>> = {
+  cook: {
+    iconName: "restaurant-outline",
+  },
+  maid: {
+    iconName: "person-outline",
+  },
+  housekeeping: {
+    iconName: "sparkles-outline",
+  },
+  laundry: {
+    iconName: "shirt-outline",
+  },
+  other: {
+    iconName: "information-circle-outline",
+  },
+};
+
+export const SERVICE_DISPLAY_NAMES: Record<ServiceType, string> = {
+  cook: "Cook",
+  maid: "Maid",
+  housekeeping: "House Keeping",
+  laundry: "Laundry",
+  other: "Other",
+};
+
+function formatServiceLabel(service: ServiceType) {
+  return SERVICE_DISPLAY_NAMES[service];
+}
+
+export const POPULAR_SERVICES: FilterTileItem<ServiceType>[] = (
+  ["cook", "maid", "housekeeping", "laundry"] as readonly string[]
+)
+  .filter((item): item is ServiceType =>
+    (SERVICES_TYPES as readonly string[]).includes(item),
+  )
+  .map((item) => {
+    const meta = SERVICE_METAS[item];
+    return {
+      id: item,
+      label: formatServiceLabel(item),
       iconName: meta?.iconName ?? "checkmark-circle-outline",
     };
   });

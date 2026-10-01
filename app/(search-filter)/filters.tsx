@@ -4,11 +4,11 @@ import FilterHeader from "@/src/components/filter/FilterHeader";
 import FilterSection from "@/src/components/filter/FilterSection";
 import FilterTileGrid from "@/src/components/filter/FilterTileGrid";
 import PriceRangeFilter from "@/src/components/filter/PriceRangeFilter";
+import ToggleFilterCard from "@/src/components/filter/ToggleFilterCard";
 import VisualGridCard from "@/src/components/filter/VisualGridCard";
 import Spacer from "@/src/components/themed-ui/Spacer";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
 import { ThemedScrollView } from "@/src/components/themed-ui/ThemedScrollView";
-import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 import {
   BHK_VISUAL_OPTIONS,
@@ -18,6 +18,7 @@ import {
   POPULAR_ADDONS,
   POPULAR_AMENITIES,
   POPULAR_HOUSE_RULES,
+  POPULAR_SERVICES,
   RENTAL_TYPE_VISUAL_OPTIONS,
 } from "@/src/constants/filter-options";
 import { FilterNavConfig } from "@/src/constants/filters";
@@ -28,10 +29,9 @@ import {
 } from "@/src/stores/map-filters";
 import { sizes } from "@/src/theme/size";
 import { DEFAULT_FILTER_VALUES } from "@/src/types/filter";
-import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 export default function FiltersScreen() {
   const router = useRouter();
@@ -231,82 +231,33 @@ export default function FiltersScreen() {
             />
           </FilterSection>
 
-          {/* Availability - Feature Card */}
-          <ThemedView style={styles.availabilitySection}>
-            <Pressable
-              onPress={() =>
-                setDraftFilters((prev) => ({
-                  ...prev,
-                  availableImmediately: !prev.availableImmediately,
-                }))
-              }
-            >
-              <ThemedView
-                variant="tertiary"
-                borderRadius="card"
-                style={[
-                  styles.availabilityCard,
-                  draftFilters.availableImmediately &&
-                    styles.availabilityCardActive,
-                ]}
-              >
-                <ThemedView
-                  style={[
-                    styles.availabilityIconCircle,
-                    {
-                      backgroundColor: draftFilters.availableImmediately
-                        ? "#4DA4E8"
-                        : "rgba(77, 164, 232, 0.15)",
-                    },
-                  ]}
-                >
-                  <Ionicons
-                    name="flash"
-                    size={22}
-                    color={
-                      draftFilters.availableImmediately ? "#161B24" : "#4DA4E8"
-                    }
-                  />
-                </ThemedView>
+          {/* Availability toggles */}
+          <ToggleFilterCard
+            title="Available Immediately"
+            subtitle="Only show listings ready for instant possession"
+            iconName="flash"
+            active={!!draftFilters.availableImmediately}
+            onToggle={() =>
+              setDraftFilters((prev) => ({
+                ...prev,
+                availableImmediately: !prev.availableImmediately,
+              }))
+            }
+          />
 
-                <ThemedView style={styles.availabilityTexts}>
-                  <ThemedView style={styles.hotBadgeRow}>
-                    <ThemedText
-                      variant="title"
-                      style={styles.availabilityTitle}
-                    >
-                      Available Immediately
-                    </ThemedText>
-                  </ThemedView>
-                  <ThemedText
-                    variant="caption"
-                    color="foreground.secondary"
-                    style={styles.availabilitySubtitle}
-                  >
-                    Only show listings ready for instant possession
-                  </ThemedText>
-                </ThemedView>
-
-                <ThemedView
-                  style={[
-                    styles.switchToggle,
-                    draftFilters.availableImmediately
-                      ? styles.switchToggleOn
-                      : styles.switchToggleOff,
-                  ]}
-                >
-                  <ThemedView
-                    style={[
-                      styles.switchThumb,
-                      draftFilters.availableImmediately
-                        ? styles.switchThumbOn
-                        : styles.switchThumbOff,
-                    ]}
-                  />
-                </ThemedView>
-              </ThemedView>
-            </Pressable>
-          </ThemedView>
+          <ToggleFilterCard
+            title="Attached Washroom"
+            subtitle="Only show listings with a private washroom"
+            iconName="water-outline"
+            active={draftFilters.attachedWashroom === true}
+            onToggle={() =>
+              setDraftFilters((prev) => ({
+                ...prev,
+                attachedWashroom:
+                  prev.attachedWashroom === true ? undefined : true,
+              }))
+            }
+          />
 
           {/* Key Amenities */}
           <FilterSection
@@ -359,6 +310,23 @@ export default function FiltersScreen() {
             />
           </FilterSection>
 
+          {/* Services */}
+          <FilterSection
+            iconName="construct-outline"
+            iconTintBg="rgba(232, 236, 255, 0.7)"
+            iconTintColor="#4338CA"
+            title="Services"
+            subtitle="Cook, maid, laundry & more"
+            badge={draftFilters.services.length}
+          >
+            <FilterTileGrid
+              items={POPULAR_SERVICES}
+              selected={draftFilters.services}
+              columns={2}
+              onToggle={(id) => toggleArrayItem("services", id)}
+            />
+          </FilterSection>
+
           <Spacer size="6xl" />
         </ThemedScrollView>
 
@@ -403,86 +371,5 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: "#4DA4E8",
-  },
-  availabilitySection: {
-    marginVertical: sizes.xs,
-  },
-  availabilityCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: sizes.lg,
-    gap: sizes.md,
-    borderWidth: 1,
-    borderColor: "rgba(0, 0, 0, 0.04)",
-  },
-  availabilityCardActive: {
-    borderColor: "rgba(77, 164, 232, 0.6)",
-    backgroundColor: "rgba(77, 164, 232, 0.06)",
-  },
-  availabilityIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  availabilityTexts: {
-    flex: 1,
-  },
-  hotBadgeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: sizes.xs,
-    flexWrap: "wrap",
-  },
-  availabilityTitle: {
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  hotBadge: {
-    backgroundColor: "rgba(255, 138, 0, 0.15)",
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-  },
-  hotBadgeText: {
-    color: "#E65100",
-    fontSize: 7.2,
-    fontWeight: "800",
-    letterSpacing: 0.5,
-  },
-  availabilitySubtitle: {
-    marginTop: 2,
-    fontSize: 8.8,
-  },
-  switchToggle: {
-    width: 46,
-    height: 26,
-    borderRadius: 13,
-    padding: 2,
-    justifyContent: "center",
-  },
-  switchToggleOff: {
-    backgroundColor: "rgba(0, 0, 0, 0.1)",
-  },
-  switchToggleOn: {
-    backgroundColor: "#4DA4E8",
-  },
-  switchThumb: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  switchThumbOff: {
-    alignSelf: "flex-start",
-  },
-  switchThumbOn: {
-    alignSelf: "flex-end",
   },
 });

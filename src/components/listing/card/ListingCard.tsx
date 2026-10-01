@@ -50,7 +50,7 @@ export function ListingCard(listing: ListingCardResponse) {
           <ThemedView
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            <ThemedText variant="h3">{`${formatOccupancy(listing.rentalScope.capacity)} Occupancy ${formatRentalType(listing.rentalScope.type)}`}</ThemedText>
+            <ThemedText variant="h3">{`${formatOccupancy(listing.rentalScope.capacity)} ${formatRentalType(listing.rentalScope.type)}`}</ThemedText>
             <ThemedText variant="bodySmall">
               {listing.availableFrom
                 ? `${new Date(listing.availableFrom!).toLocaleDateString(

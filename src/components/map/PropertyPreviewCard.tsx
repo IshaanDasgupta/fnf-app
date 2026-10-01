@@ -76,7 +76,7 @@ export function ListingPreviewCard({
 
   const details = [
     genderPreference ? capitalize(genderPreference) : undefined,
-    `${formatOccupancy(capacity)} Occupancy ${formatRentalType(rentalType)}`,
+    `${formatOccupancy(capacity)} ${formatRentalType(rentalType)}`,
     bhk,
   ].filter((item): item is string => Boolean(item));
 
@@ -106,7 +106,7 @@ export function ListingPreviewCard({
               </ThemedView>
 
               <ThemedIconButton
-                variant="tertiary"
+                variant="fav"
                 loading={isPending}
                 size="sm"
                 icon={

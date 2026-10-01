@@ -94,7 +94,7 @@ export default function SavedListingCard(listing: ProfileListingResponse) {
               numberOfLines={1}
               ellipsizeMode="tail"
               variant="h3"
-            >{`${formatOccupancy(listing.rentalScope.capacity)} Occupancy ${formatRentalType(listing.rentalScope.type)}`}</ThemedText>
+            >{`${formatOccupancy(listing.rentalScope.capacity)} ${formatRentalType(listing.rentalScope.type)}`}</ThemedText>
 
             <ThemedText
               variant="h3"
