@@ -13,6 +13,7 @@ import { useTheme } from "@/src/hooks/theme/useTheme";
 import { navigation } from "@/src/lib/navigation";
 import { radius } from "@/src/theme/radius";
 import { sizes } from "@/src/theme/size";
+import { formatOccupancy, formatRentalType } from "@/src/utils/occupancy";
 import { Ionicons } from "@expo/vector-icons";
 
 const capitalize = (value: string) =>
@@ -27,8 +28,11 @@ export function ListingCard(listing: ListingCardResponse) {
   };
 
   const details = [
-    capitalize(listing.genderPreference),
-    listing.totalOccupancy ? `${listing.totalOccupancy} Roomates` : undefined,
+    listing.genderPreference ? capitalize(listing.genderPreference) : undefined,
+    listing.bhk,
+    listing.rentalScope.totalOccupancy
+      ? `${listing.rentalScope.totalOccupancy} Roomates`
+      : undefined,
     listing.furnishedStatus ? capitalize(listing.furnishedStatus) : undefined,
   ].filter((item): item is string => Boolean(item));
 
@@ -39,14 +43,14 @@ export function ListingCard(listing: ListingCardResponse) {
           source={listing.coverImage}
           favourite={listing.favorite}
           listingId={listing.id}
-          occupancy={listing.occupancy}
+          locality={listing.address.locality}
         />
 
         <ThemedView style={styles.content}>
           <ThemedView
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            <ThemedText variant="h3">{`${listing.bhk[0]} ${listing.bhk.slice(1)} in ${listing.address.locality}`}</ThemedText>
+            <ThemedText variant="h3">{`${formatOccupancy(listing.rentalScope.capacity)} Occupancy ${formatRentalType(listing.rentalScope.type)}`}</ThemedText>
             <ThemedText variant="bodySmall">
               {listing.availableFrom
                 ? `${new Date(listing.availableFrom!).toLocaleDateString(

@@ -1,12 +1,14 @@
 import { FilterValues } from "@/src/api/listing";
 import { DEFAULT_FILTER_VALUES } from "@/src/types/filter";
+import { formatOccupancy } from "@/src/utils/occupancy";
 import { create } from "zustand";
 
 export function countActiveFilters(filters: FilterValues): number {
   let count = 0;
 
   if (filters.bhk.length > 0) count += filters.bhk.length;
-  if (filters.occupancy.length > 0) count += filters.occupancy.length;
+  if (filters.capacity.length > 0) count += filters.capacity.length;
+  if (filters.rentalType.length > 0) count += filters.rentalType.length;
   if (filters.furnishedStatus.length > 0)
     count += filters.furnishedStatus.length;
   if (filters.gender !== undefined) count += 1;
@@ -16,6 +18,7 @@ export function countActiveFilters(filters: FilterValues): number {
   if (filters.amenities.length > 0) count += filters.amenities.length;
   if (filters.addOns.length > 0) count += filters.addOns.length;
   if (filters.houseRules.length > 0) count += filters.houseRules.length;
+  if (filters.services.length > 0) count += filters.services.length;
 
   return count;
 }
@@ -67,15 +70,28 @@ export function getActiveFilterPills(
     });
   });
 
-  // Occupancy
-  filters.occupancy.forEach((occ) => {
+  // Capacity (Occupancy)
+  filters.capacity.forEach((occ) => {
     pills.push({
-      id: `occ-${occ}`,
-      label: `${occ.charAt(0).toUpperCase() + occ.slice(1)} occupancy`,
+      id: `capacity-${occ}`,
+      label: formatOccupancy(occ),
       onRemove: () =>
         updateFilters((prev) => ({
           ...prev,
-          occupancy: prev.occupancy.filter((item) => item !== occ),
+          capacity: prev.capacity.filter((item) => item !== occ),
+        })),
+    });
+  });
+
+  // Rental Type (room / hall)
+  filters.rentalType.forEach((type) => {
+    pills.push({
+      id: `rentalType-${type}`,
+      label: type === "room" ? "Room" : "Hall",
+      onRemove: () =>
+        updateFilters((prev) => ({
+          ...prev,
+          rentalType: prev.rentalType.filter((item) => item !== type),
         })),
     });
   });
@@ -103,7 +119,7 @@ export function getActiveFilterPills(
   if (filters.gender) {
     pills.push({
       id: `gender-${filters.gender}`,
-      label: filters.gender === "male" ? "Male only" : "Female only",
+      label: filters.gender === "Male" ? "Male only" : "Female only",
       onRemove: () =>
         updateFilters((prev) => ({
           ...prev,
@@ -159,6 +175,19 @@ export function getActiveFilterPills(
         updateFilters((prev) => ({
           ...prev,
           houseRules: prev.houseRules.filter((item) => item !== rule),
+        })),
+    });
+  });
+
+  // Services
+  filters.services.forEach((service) => {
+    pills.push({
+      id: `service-${service}`,
+      label: service,
+      onRemove: () =>
+        updateFilters((prev) => ({
+          ...prev,
+          services: prev.services.filter((item) => item !== service),
         })),
     });
   });

@@ -10,59 +10,76 @@ import {
   GenderPreference,
   HOUSE_RULE_TYPES,
   HouseRuleType,
-  OccupancyType,
+  RentalScopeType,
 } from "@/src/constants/api-constants";
+import { CapacityFilter } from "@/src/api/listing";
 import { Ionicons } from "@expo/vector-icons";
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
 export const BHK_VISUAL_OPTIONS: VisualOptionItem<BhkType>[] = [
   {
-    id: "1RK",
+    id: "1 RK",
     title: "1 RK",
     subtitle: "Studio room",
     iconName: "home-outline",
   },
   {
-    id: "1BHK",
+    id: "1 BHK",
     title: "1 BHK",
     subtitle: "1 Bed + Hall",
     iconName: "business-outline",
   },
   {
-    id: "2BHK",
+    id: "2 BHK",
     title: "2 BHK",
     subtitle: "2 Bed + Hall",
     iconName: "business-outline",
   },
   {
-    id: "3BHK",
+    id: "3 BHK",
     title: "3 BHK",
     subtitle: "3+ Bed + Hall",
     iconName: "business-outline",
   },
 ];
 
-export const OCCUPANCY_VISUAL_OPTIONS: VisualOptionItem<OccupancyType>[] = [
+export const OCCUPANCY_VISUAL_OPTIONS: VisualOptionItem<CapacityFilter>[] = [
   {
-    id: "single",
+    id: "1",
     title: "Single",
     subtitle: "Private room",
     iconName: "person-outline",
   },
   {
-    id: "double",
+    id: "2",
     title: "Double",
     subtitle: "Twin sharing",
     iconName: "people-outline",
   },
   {
-    id: "triple",
+    id: "3plus",
     title: "Triple",
     subtitle: "3+ sharing",
     iconName: "people-circle-outline",
   },
 ];
+
+export const RENTAL_TYPE_VISUAL_OPTIONS: VisualOptionItem<RentalScopeType>[] =
+  [
+    {
+      id: "room",
+      title: "Room",
+      subtitle: "Private room",
+      iconName: "bed-outline",
+    },
+    {
+      id: "hall",
+      title: "Hall",
+      subtitle: "Shared hall",
+      iconName: "people-outline",
+    },
+  ];
 
 export const FURNISHING_VISUAL_OPTIONS: VisualOptionItem<FurnishedStatus>[] = [
   {
@@ -87,13 +104,13 @@ export const FURNISHING_VISUAL_OPTIONS: VisualOptionItem<FurnishedStatus>[] = [
 
 export const GENDER_VISUAL_OPTIONS: VisualOptionItem<GenderPreference>[] = [
   {
-    id: "male",
+    id: "Male",
     title: "Male only",
     subtitle: "Men flatmates",
     iconName: "man-outline",
   },
   {
-    id: "female",
+    id: "Female",
     title: "Female only",
     subtitle: "Women flatmates",
     iconName: "woman-outline",
@@ -166,17 +183,8 @@ const ADDON_METAS: Partial<Record<AddOnType, { iconName: IconName }>> = {
   Refrigerator: {
     iconName: "cafe-outline",
   },
-  "Attached Bathroom": {
-    iconName: "water-outline",
-  },
   Balcony: {
     iconName: "sunny-outline",
-  },
-  Cook: {
-    iconName: "restaurant-outline",
-  },
-  Maid: {
-    iconName: "sparkles-outline",
   },
 };
 
@@ -185,10 +193,7 @@ export const POPULAR_ADDONS: FilterTileItem<AddOnType>[] = [
   "WiFi",
   "Washing Machine",
   "Refrigerator",
-  "Attached Bathroom",
   "Balcony",
-  "Cook",
-  "Maid",
 ]
   .filter((item): item is AddOnType =>
     (ADD_ON_TYPES as readonly string[]).includes(item),

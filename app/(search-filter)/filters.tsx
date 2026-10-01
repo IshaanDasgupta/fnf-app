@@ -18,6 +18,7 @@ import {
   POPULAR_ADDONS,
   POPULAR_AMENITIES,
   POPULAR_HOUSE_RULES,
+  RENTAL_TYPE_VISUAL_OPTIONS,
 } from "@/src/constants/filter-options";
 import { FilterNavConfig } from "@/src/constants/filters";
 import { countActiveFilters, useFilterStore } from "@/src/stores/filter";
@@ -59,15 +60,17 @@ export default function FiltersScreen() {
     ? countActiveMapFilters(draftFilters)
     : countActiveFilters(draftFilters);
 
-  const toggleArrayItem = <T extends string>(
+  const toggleArrayItem = <T extends string | number>(
     key: keyof Pick<
       FilterValues,
       | "bhk"
-      | "occupancy"
+      | "capacity"
+      | "rentalType"
       | "furnishedStatus"
       | "amenities"
       | "addOns"
       | "houseRules"
+      | "services"
     >,
     item: T,
   ) => {
@@ -155,6 +158,23 @@ export default function FiltersScreen() {
             />
           </FilterSection>
 
+          {/* Rental Type */}
+          <FilterSection
+            iconName="bed-outline"
+            iconTintBg="rgba(232, 236, 255, 0.7)"
+            iconTintColor="#4338CA"
+            title="Rental Type"
+            subtitle="Choose room or hall rental"
+            badge={draftFilters.rentalType.length}
+          >
+            <VisualGridCard
+              items={RENTAL_TYPE_VISUAL_OPTIONS}
+              selected={draftFilters.rentalType}
+              columns={2}
+              onToggle={(id) => toggleArrayItem("rentalType", id)}
+            />
+          </FilterSection>
+
           {/* Occupancy */}
           <FilterSection
             iconName="people-outline"
@@ -162,13 +182,13 @@ export default function FiltersScreen() {
             iconTintColor="#C2410C"
             title="Occupancy Type"
             subtitle="Choose private room or sharing"
-            badge={draftFilters.occupancy.length}
+            badge={draftFilters.capacity.length}
           >
             <VisualGridCard
               items={OCCUPANCY_VISUAL_OPTIONS}
-              selected={draftFilters.occupancy}
+              selected={draftFilters.capacity}
               columns={3}
-              onToggle={(id) => toggleArrayItem("occupancy", id)}
+              onToggle={(id) => toggleArrayItem("capacity", id)}
             />
           </FilterSection>
 

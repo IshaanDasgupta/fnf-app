@@ -20,14 +20,11 @@ import Animated, {
 
 const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons);
 
-const capitalize = (value: string) =>
-  value.charAt(0).toUpperCase() + value.slice(1);
-
 export function ListingImage({
   source,
   favourite,
   listingId,
-  occupancy,
+  locality,
 }: ListingImageProps) {
   const { mutateAsync: toggleFavourite, isPending } = useToggleFavourite();
 
@@ -75,19 +72,15 @@ export function ListingImage({
         }
       />
 
-      {occupancy && (
-        <ThemedView
-          variant="secondary"
-          borderRadius="button"
-          style={styles.occupancyBadge}
-          paddingHorizontal="md"
-          paddingVertical="sm"
-        >
-          <ThemedText variant="caption">
-            {capitalize(occupancy)} Occupancy
-          </ThemedText>
-        </ThemedView>
-      )}
+      <ThemedView
+        variant="secondary"
+        borderRadius="button"
+        style={styles.occupancyBadge}
+        paddingHorizontal="md"
+        paddingVertical="sm"
+      >
+        <ThemedText variant="caption">{locality}</ThemedText>
+      </ThemedView>
     </ThemedView>
   );
 }

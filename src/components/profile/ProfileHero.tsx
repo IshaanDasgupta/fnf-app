@@ -14,10 +14,12 @@ import { sizes } from "@/src/theme/size";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
+import { GenderPreference } from "@/src/constants/api-constants";
+
 type ProfileHeroProps = {
   name: string;
   age?: number;
-  gender?: "male" | "female";
+  gender?: GenderPreference;
 };
 
 const capitalize = (value: string) =>

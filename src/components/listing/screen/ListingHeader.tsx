@@ -8,6 +8,7 @@ import { ThemedIconText } from "@/src/components/themed-ui/ThemedIconText";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 import { sizes } from "@/src/theme/size";
+import { formatOccupancy, formatRentalType } from "@/src/utils/occupancy";
 
 interface ListingHeaderProps {
   bhk: ListingResponse["bhk"];
@@ -15,12 +16,14 @@ interface ListingHeaderProps {
   address: string;
   city: ListingResponse["address"]["city"];
 
-  occupancy: ListingResponse["occupancy"];
+  occupancy: ListingResponse["rentalScope"]["capacity"];
+  rentalType: ListingResponse["rentalScope"]["type"];
   genderPreference: ListingResponse["genderPreference"];
   floor?: number;
   furnishedStatus: ListingResponse["furnishedStatus"];
   carpetArea?: number;
   totalOccupancy?: number;
+  attachedWashroom?: boolean;
 
   availableImmediately: boolean;
   availableFrom?: string;
@@ -35,12 +38,6 @@ function formatLabel(value: string) {
 
 function formatBhk(bhk: string) {
   return bhk.replace(/^(\d+)(.*)$/, "$1 $2").trim();
-}
-
-function formatOccupancy(occupancy: string) {
-  const value = formatLabel(occupancy);
-
-  return value.toLowerCase().includes("shared") ? value : `${value} / Shared`;
 }
 
 function formatGenderPreference(gender: string) {
@@ -99,11 +96,13 @@ export default function ListingHeader({
   address,
   city,
   occupancy,
+  rentalType,
   genderPreference,
   floor,
   furnishedStatus,
   carpetArea,
   totalOccupancy,
+  attachedWashroom,
   availableImmediately,
   availableFrom,
 }: ListingHeaderProps) {
@@ -130,11 +129,22 @@ export default function ListingHeader({
     },
     {
       label: "Preference",
-      value: formatGenderPreference(genderPreference),
+      value: genderPreference
+        ? formatGenderPreference(genderPreference)
+        : undefined,
     },
     {
       label: "Total Occupancy",
       value: totalOccupancy !== undefined ? `${totalOccupancy}` : undefined,
+    },
+    {
+      label: "Washroom",
+      value:
+        attachedWashroom === undefined
+          ? undefined
+          : attachedWashroom
+            ? "Attached"
+            : "Shared",
     },
   ].filter(
     (detail): detail is { label: string; value: string } =>
@@ -152,7 +162,7 @@ export default function ListingHeader({
   return (
     <ThemedView>
       <ThemedText variant="display">
-        {`${formatBhk(bhk)} in ${locality}`}
+        {`${formatOccupancy(occupancy)} Occupancy ${formatRentalType(rentalType)}`}
       </ThemedText>
 
       <Spacer size="xs" />

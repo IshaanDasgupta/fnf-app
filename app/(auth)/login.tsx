@@ -63,10 +63,6 @@ export default function LoginScreen() {
       const { user, accessToken, refreshToken, refreshExpiresAt } =
         await googleLogin(idToken);
 
-      const res = await googleLogin(idToken);
-
-      console.log(res);
-
       login(user, accessToken, refreshToken, refreshExpiresAt);
 
       if (user.basicOnboardingCompleted) {

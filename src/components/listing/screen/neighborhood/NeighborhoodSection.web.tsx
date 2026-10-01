@@ -4,20 +4,16 @@ import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
 import NearbyChip from "@/src/components/listing/screen/neighborhood/NeighborhoodChip";
 import { Ionicons } from "@expo/vector-icons";
-
-interface NeighborhoodItem {
-  type: string;
-  distance: number;
-}
+import { ListingResponse } from "@/src/api/listing";
 
 interface NeighborhoodSectionProps {
   latitude: number;
   longitude: number;
-  neighborhood: NeighborhoodItem[];
+  nearbyPlaces: ListingResponse["nearbyPlaces"];
 }
 
 export default function NeighborhoodSectionWeb({
-  neighborhood,
+  nearbyPlaces,
 }: NeighborhoodSectionProps) {
   return (
     <ThemedView>
@@ -40,10 +36,10 @@ export default function NeighborhoodSectionWeb({
       <Spacer size="lg" />
 
       <ThemedView style={styles.chips} gap="md">
-        {neighborhood.map((item) => (
+        {nearbyPlaces.map((item) => (
           <NearbyChip
-            key={`${item.type}-${item.distance}`}
-            title={item.type}
+            key={`${item.type}-${item.name}-${item.distance}`}
+            title={item.name ? `${item.type}: ${item.name}` : item.type}
             value={`${item.distance} min`}
           />
         ))}

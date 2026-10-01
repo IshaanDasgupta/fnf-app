@@ -6,17 +6,28 @@ import {
   FurnishedStatus,
   GenderPreference,
   HouseRuleType,
+  ListingStatus,
   NeighborhoodType,
-  OccupancyType,
+  RentalScopeType,
+  ServiceType,
 } from "@/src/constants/api-constants";
 import { ENDPOINTS } from "@/src/constants/endpoints";
 import axiosClient from "@/src/lib/axios-client";
+
+export interface RentalScope {
+  type: RentalScopeType;
+  capacity: number;
+  totalOccupancy: number;
+}
+
+export type CapacityFilter = "1" | "2" | "3plus";
 
 export interface FilterValues {
   locality?: string;
 
   bhk: BhkType[];
-  occupancy: OccupancyType[];
+  capacity: CapacityFilter[];
+  rentalType: RentalScopeType[];
   furnishedStatus: FurnishedStatus[];
 
   rentMin?: number;
@@ -31,6 +42,8 @@ export interface FilterValues {
   totalOccupancyMin?: number;
   totalOccupancyMax?: number;
 
+  attachedWashroom?: boolean;
+
   gender?: GenderPreference;
 
   availableImmediately?: boolean;
@@ -39,6 +52,7 @@ export interface FilterValues {
   addOns: AddOnType[];
   amenities: AmenityType[];
   houseRules: HouseRuleType[];
+  services: ServiceType[];
 }
 
 function serializeFilters(filters: FilterValues) {
@@ -47,8 +61,11 @@ function serializeFilters(filters: FilterValues) {
 
     bhk: filters.bhk.length > 0 ? filters.bhk.join(",") : undefined,
 
-    occupancy:
-      filters.occupancy.length > 0 ? filters.occupancy.join(",") : undefined,
+    capacity:
+      filters.capacity.length > 0 ? filters.capacity.join(",") : undefined,
+
+    rentalType:
+      filters.rentalType.length > 0 ? filters.rentalType.join(",") : undefined,
 
     furnishedStatus:
       filters.furnishedStatus.length > 0
@@ -67,12 +84,14 @@ function serializeFilters(filters: FilterValues) {
     totalOccupancyMin: filters.totalOccupancyMin,
     totalOccupancyMax: filters.totalOccupancyMax,
 
+    attachedWashroom:
+      filters.attachedWashroom !== undefined
+        ? String(filters.attachedWashroom)
+        : undefined,
+
     gender: filters.gender,
 
-    availableImmediately:
-      filters.availableImmediately !== undefined
-        ? String(filters.availableImmediately)
-        : undefined,
+    availableImmediately: filters.availableImmediately ? "true" : undefined,
 
     availableAfter: filters.availableAfter?.toISOString(),
 
@@ -83,6 +102,9 @@ function serializeFilters(filters: FilterValues) {
 
     houseRules:
       filters.houseRules.length > 0 ? filters.houseRules.join(",") : undefined,
+
+    services:
+      filters.services.length > 0 ? filters.services.join(",") : undefined,
   };
 }
 
@@ -95,15 +117,14 @@ export interface ListingCardResponse {
     city: City;
   };
 
-  totalOccupancy?: number;
-  furnishedStatus: FurnishedStatus;
-
-  genderPreference: GenderPreference;
-
   rent: number;
 
   bhk: BhkType;
-  occupancy: OccupancyType;
+  rentalScope: RentalScope;
+
+  furnishedStatus: FurnishedStatus;
+
+  genderPreference?: GenderPreference;
 
   availableFrom?: string;
   availableImmediately: boolean;
@@ -112,6 +133,7 @@ export interface ListingCardResponse {
 }
 
 export interface GetListingsResponse {
+  success: boolean;
   data: ListingCardResponse[];
 
   pagination: {
@@ -175,10 +197,6 @@ export interface MapListingsResponse {
 
   rent: number;
 
-  totalOccupancy?: number;
-  furnishedStatus: FurnishedStatus;
-
-  genderPreference: GenderPreference;
   coverImage: string;
 
   address: {
@@ -187,14 +205,17 @@ export interface MapListingsResponse {
   };
 
   bhk: BhkType;
-  occupancy: OccupancyType;
+  rentalScope: RentalScope;
+  furnishedStatus: FurnishedStatus;
+
+  genderPreference?: GenderPreference;
 
   favorite: boolean;
 }
 
 export interface GetMapListingsResponse {
+  success: boolean;
   data: MapListingsResponse[];
-  hasMore: boolean;
 }
 
 export async function getMapListings({
@@ -252,7 +273,9 @@ export interface ListingResponse {
 
   carpetArea?: number;
 
-  status: string;
+  attachedWashroom?: boolean;
+
+  status: ListingStatus;
 
   address: {
     locality: string;
@@ -265,15 +288,21 @@ export interface ListingResponse {
     longitude: number;
   };
 
-  genderPreference: GenderPreference;
+  genderPreference?: GenderPreference;
 
   bhk: BhkType;
-  occupancy: OccupancyType;
-  totalOccupancy?: number;
+  rentalScope: RentalScope;
 
   furnishedStatus: FurnishedStatus;
 
   floor?: number;
+
+  services: {
+    type: ServiceType;
+    desc?: string;
+    price?: number;
+    included: boolean;
+  }[];
 
   addOns: {
     type: AddOnType;
@@ -294,12 +323,14 @@ export interface ListingResponse {
   deposit?: number;
   brokerage?: number;
   setupCost?: number;
+  moveInCharges?: number;
 
   availableFrom?: string;
   availableImmediately: boolean;
 
-  neighborhood: {
+  nearbyPlaces: {
     type: NeighborhoodType;
+    name: string;
     distance: number;
   }[];
 
@@ -308,17 +339,12 @@ export interface ListingResponse {
 
   favorite: boolean;
 
-  lister?: {
-    name: string;
-    age?: number;
-    profilePic?: string;
-    contactNumber?: string;
-    lifestyle: string[];
-  };
+  listerId?: string;
 
   externalListing?: {
     source: string;
     url: string;
+    author: string;
   };
 }
 
@@ -350,6 +376,7 @@ export interface GetSearchListingsParams extends FilterValues {
 }
 
 export interface SearchListingsResponse {
+  success: boolean;
   data: ListingCardResponse[];
 
   pagination: {

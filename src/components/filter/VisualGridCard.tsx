@@ -7,14 +7,14 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
 
-export interface VisualOptionItem<T extends string = string> {
+export interface VisualOptionItem<T extends string | number = string> {
   id: T;
   title: string;
   subtitle?: string;
   iconName: keyof typeof Ionicons.glyphMap;
 }
 
-export interface VisualGridCardProps<T extends string = string> {
+export interface VisualGridCardProps<T extends string | number = string> {
   items: VisualOptionItem<T>[];
   selected: T[];
   onToggle: (id: T) => void;
@@ -22,7 +22,7 @@ export interface VisualGridCardProps<T extends string = string> {
   style?: StyleProp<ViewStyle>;
 }
 
-export function VisualGridCard<T extends string = string>({
+export function VisualGridCard<T extends string | number = string>({
   items,
   selected,
   onToggle,

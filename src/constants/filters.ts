@@ -40,17 +40,17 @@ export const QUICK_FILTERS: QuickFilter[] = [
   {
     id: "single-occupancy",
     label: "Single Occupancy",
-    filter: (listing) => listing.occupancy === "single",
+    filter: (listing) => listing.rentalScope.capacity === 1,
   },
   {
     id: "1bhk",
     label: "1 BHK",
-    filter: (listing) => listing.bhk === "1BHK",
+    filter: (listing) => listing.bhk === "1 BHK",
   },
   {
     id: "2bhk",
     label: "2 BHK",
-    filter: (listing) => listing.bhk === "2BHK",
+    filter: (listing) => listing.bhk === "2 BHK",
   },
 ];
 

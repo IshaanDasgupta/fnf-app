@@ -4,7 +4,8 @@ export const DEFAULT_FILTER_VALUES: FilterValues = {
   locality: undefined,
 
   bhk: [],
-  occupancy: [],
+  capacity: [],
+  rentalType: [],
   furnishedStatus: [],
 
   rentMin: undefined,
@@ -27,6 +28,7 @@ export const DEFAULT_FILTER_VALUES: FilterValues = {
   addOns: [],
   amenities: [],
   houseRules: [],
+  services: [],
 };
 
 export interface PricePreset {

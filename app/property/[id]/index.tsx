@@ -13,10 +13,10 @@ import AmenitiesSection from "@/src/components/listing/screen/amenities/AmenityS
 import ListingCostBreakdown from "@/src/components/listing/screen/cost/CostBreakdown";
 import ListingHero from "@/src/components/listing/screen/hero/ListingHero";
 import HouseRulesSection from "@/src/components/listing/screen/house-rules/HouseRulesSection";
+import ServicesSection from "@/src/components/listing/screen/services/ServicesSection";
 import ListingBottomBar from "@/src/components/listing/screen/ListingBottomBar";
 import ListingHeader from "@/src/components/listing/screen/ListingHeader";
 import NeighborhoodSection from "@/src/components/listing/screen/neighborhood/NeighborhoodSection";
-import OwnerCard from "@/src/components/listing/screen/OwnerCard";
 import { LoadingErrorScreen } from "@/src/components/shared/LoadingErrorScreen";
 import { LoadingScreen } from "@/src/components/shared/LoadingScreen";
 import { navigation } from "@/src/lib/navigation";
@@ -82,12 +82,14 @@ export default function ListingScreen() {
               address={listing.address.address}
               city={listing.address.city}
               bhk={listing.bhk}
-              occupancy={listing.occupancy}
+              occupancy={listing.rentalScope.capacity}
+              rentalType={listing.rentalScope.type}
               genderPreference={listing.genderPreference}
               floor={listing.floor}
               furnishedStatus={listing.furnishedStatus}
               carpetArea={listing.carpetArea}
-              totalOccupancy={listing.totalOccupancy}
+              totalOccupancy={listing.rentalScope.totalOccupancy}
+              attachedWashroom={listing.attachedWashroom}
               availableImmediately={listing.availableImmediately}
               availableFrom={listing.availableFrom}
             />
@@ -99,20 +101,12 @@ export default function ListingScreen() {
               deposit={listing.deposit}
               brokerage={listing.brokerage}
               setupCost={listing.setupCost}
+              moveInCharges={listing.moveInCharges}
             />
 
             <Spacer size="4xl" />
 
-            {!listing.externalListing && listing.lister && (
-              <>
-                <OwnerCard
-                  name={listing.lister.name}
-                  age={listing.lister.age}
-                  image={listing.lister.profilePic}
-                />
-                <Spacer size="4xl" />
-              </>
-            )}
+            {/* TODO: lister details now only listerId — fetch lister profile separately */}
 
             {listing.addOns.length > 0 && (
               <>
@@ -135,10 +129,17 @@ export default function ListingScreen() {
               </>
             )}
 
+            {(listing.services ?? []).length > 0 && (
+              <>
+                <ServicesSection services={listing.services ?? []} />
+                <Spacer size="4xl" />
+              </>
+            )}
+
             <NeighborhoodSection
               latitude={listing.location.latitude}
               longitude={listing.location.longitude}
-              neighborhood={listing.neighborhood}
+              nearbyPlaces={listing.nearbyPlaces}
             />
           </ThemedView>
         </ThemedScrollView>

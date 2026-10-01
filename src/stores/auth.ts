@@ -1,15 +1,16 @@
 import { UpsertBasicResponse } from "@/src/api/user";
+import { GenderPreference } from "@/src/constants/api-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 export interface AuthUser {
   id: string;
-  phone: string;
+  phone?: string;
   name?: string;
   email?: string;
   age?: number;
-  gender?: "male" | "female";
+  gender?: GenderPreference;
 
   basicOnboardingCompleted: boolean;
 }

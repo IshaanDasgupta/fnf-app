@@ -15,41 +15,35 @@ import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
 import { Ionicons } from "@expo/vector-icons";
 
-interface NeighborhoodItem {
-  type: string;
-  distance: number;
-}
+import { ListingResponse } from "@/src/api/listing";
 
 interface NeighborhoodSectionProps {
   latitude: number;
   longitude: number;
-  neighborhood: NeighborhoodItem[];
+  nearbyPlaces: ListingResponse["nearbyPlaces"];
 }
 
 export default function NeighborhoodSection({
   latitude,
   longitude,
-  neighborhood,
+  nearbyPlaces,
 }: NeighborhoodSectionProps) {
   const colorScheme = useColorScheme();
 
   const openInMaps = async () => {
-    if (Platform.OS === "ios") {
+    try {
+      if (Platform.OS === "ios") {
+        await Linking.openURL(
+          `https://maps.apple.com/?q=${latitude},${longitude}`,
+        );
+        return;
+      }
+
       await Linking.openURL(
-        `http://maps.apple.com/?ll=${latitude},${longitude}`,
+        `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`,
       );
-      return;
-    }
-
-    const googleMapsUrl = `comgooglemaps://?q=${latitude},${longitude}`;
-    const fallbackUrl = `geo:${latitude},${longitude}`;
-
-    const canOpenGoogleMaps = await Linking.canOpenURL(googleMapsUrl);
-
-    if (canOpenGoogleMaps) {
-      await Linking.openURL(googleMapsUrl);
-    } else {
-      await Linking.openURL(fallbackUrl);
+    } catch (error) {
+      console.error("Failed to open map:", error);
     }
   };
 
@@ -107,10 +101,10 @@ export default function NeighborhoodSection({
       <Spacer size="lg" />
 
       <ThemedView style={styles.chips} gap="md">
-        {neighborhood.map((item) => (
+        {nearbyPlaces.map((item) => (
           <NearbyChip
-            key={`${item.type}-${item.distance}`}
-            title={item.type}
+            key={`${item.type}-${item.name}-${item.distance}`}
+            title={item.name ? `${item.type}: ${item.name}` : item.type}
             value={`${item.distance} min`}
           />
         ))}

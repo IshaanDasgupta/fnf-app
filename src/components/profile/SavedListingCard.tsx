@@ -8,6 +8,7 @@ import { useToggleFavourite } from "@/src/hooks/react-query/useToggleFavourite";
 import { navigation } from "@/src/lib/navigation";
 import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
+import { formatOccupancy, formatRentalType } from "@/src/utils/occupancy";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Image, Pressable, StyleSheet } from "react-native";
@@ -34,7 +35,11 @@ export default function SavedListingCard(listing: ProfileListingResponse) {
   };
 
   const details = [
-    capitalize(listing.genderPreference),
+    listing.genderPreference ? capitalize(listing.genderPreference) : undefined,
+    listing.bhk,
+    listing.rentalScope.totalOccupancy
+      ? `${listing.rentalScope.totalOccupancy} Roomates`
+      : undefined,
     listing.furnishedStatus ? capitalize(listing.furnishedStatus) : undefined,
     listing.availableImmediately
       ? "Immediate"
@@ -70,19 +75,17 @@ export default function SavedListingCard(listing: ProfileListingResponse) {
             />
           </ThemedView>
 
-          {listing.occupancy && (
-            <ThemedView
-              variant="secondary"
-              borderRadius="button"
-              style={styles.occupancyBadge}
-              paddingHorizontal="md"
-              paddingVertical="sm"
-            >
-              <ThemedText variant="caption">
-                {capitalize(listing.occupancy)} Occupancy
-              </ThemedText>
-            </ThemedView>
-          )}
+          <ThemedView
+            variant="secondary"
+            borderRadius="button"
+            style={styles.occupancyBadge}
+            paddingHorizontal="md"
+            paddingVertical="sm"
+          >
+            <ThemedText variant="caption">
+              {listing.address.locality}
+            </ThemedText>
+          </ThemedView>
         </ThemedView>
 
         <ThemedView padding="lg">
@@ -91,7 +94,7 @@ export default function SavedListingCard(listing: ProfileListingResponse) {
               numberOfLines={1}
               ellipsizeMode="tail"
               variant="h3"
-            >{`${listing.bhk} in ${listing.address.locality}`}</ThemedText>
+            >{`${formatOccupancy(listing.rentalScope.capacity)} Occupancy ${formatRentalType(listing.rentalScope.type)}`}</ThemedText>
 
             <ThemedText
               variant="h3"

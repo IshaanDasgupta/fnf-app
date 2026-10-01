@@ -2,7 +2,7 @@ import {
   BhkType,
   FurnishedStatus,
   GenderPreference,
-  OccupancyType,
+  RentalScopeType,
 } from "@/src/constants/api-constants";
 
 export interface ListingPreviewCardProps {
@@ -10,11 +10,12 @@ export interface ListingPreviewCardProps {
   image: string;
   location: string;
   bhk: BhkType;
-  occupancy: OccupancyType;
+  capacity: number;
+  rentalType: RentalScopeType;
   totalOccupancy?: number;
   furnishedStatus: FurnishedStatus;
 
-  genderPreference: GenderPreference;
+  genderPreference?: GenderPreference;
   rent: number;
   favourite: boolean;
 }

@@ -315,8 +315,9 @@ export default function MapContent({ latitude, longitude }: MapContentProps) {
               location={`${selectedProperty.address.locality}, ${selectedProperty.address.city}`}
               bhk={selectedProperty.bhk}
               rent={selectedProperty.rent}
-              occupancy={selectedProperty.occupancy}
-              totalOccupancy={selectedProperty.totalOccupancy}
+              capacity={selectedProperty.rentalScope.capacity}
+              rentalType={selectedProperty.rentalScope.type}
+              totalOccupancy={selectedProperty.rentalScope.totalOccupancy}
               furnishedStatus={selectedProperty.furnishedStatus}
               genderPreference={selectedProperty.genderPreference}
               favourite={selectedProperty.favorite}

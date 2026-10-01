@@ -47,7 +47,7 @@ export const BasicOnboardingFormSchema = z.object({
     }, "Please enter a valid age")
     .refine((value) => Number(value) >= 18, "You must be at least 18"),
 
-  gender: z.enum(["male", "female"], {
+  gender: z.enum(["Male", "Female"], {
     message: "Please select your gender",
   }),
 
@@ -233,16 +233,16 @@ export default function BasicOnboardingScreen() {
                     <ThemedChip
                       variant="tertiary"
                       selectedVariant="primary"
-                      selected={value === "male"}
+                      selected={value === "Male"}
                       label="Male"
                       labelVariant="title"
-                      onPress={() => onChange("male")}
+                      onPress={() => onChange("Male")}
                       style={styles.genderChip}
                       borderRadius="card"
                       controlled
-                      shadow={value === "male" ? "lg" : undefined}
+                      shadow={value === "Male" ? "lg" : undefined}
                       rightIcon={
-                        value === "male" ? (
+                        value === "Male" ? (
                           <Entypo
                             name="dot-single"
                             color={colors.accent.primary}
@@ -263,16 +263,16 @@ export default function BasicOnboardingScreen() {
                     <ThemedChip
                       variant="tertiary"
                       selectedVariant="primary"
-                      selected={value === "female"}
+                      selected={value === "Female"}
                       label="Female"
                       labelVariant="title"
-                      onPress={() => onChange("female")}
+                      onPress={() => onChange("Female")}
                       style={styles.genderChip}
                       borderRadius="card"
                       controlled
-                      shadow={value === "female" ? "lg" : undefined}
+                      shadow={value === "Female" ? "lg" : undefined}
                       rightIcon={
-                        value === "female" ? (
+                        value === "Female" ? (
                           <Entypo
                             name="dot-single"
                             color={colors.accent.primary}

@@ -1,5 +1,7 @@
+import { navigation } from "@/src/lib/navigation";
 import { useLocationStore } from "@/src/stores/location";
 import * as Location from "expo-location";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 
@@ -14,14 +16,29 @@ export function useUserLocation() {
   const [permission, setPermission] =
     useState<Location.PermissionStatus | null>(null);
 
+  const ensurePermission =
+    async (): Promise<Location.PermissionStatus> => {
+      const current = await Location.getForegroundPermissionsAsync();
+
+      if (current.status === Location.PermissionStatus.GRANTED) {
+        setPermission(current.status);
+        return current.status;
+      }
+
+      const requested = await Location.requestForegroundPermissionsAsync();
+      setPermission(requested.status);
+      return requested.status;
+    };
+
   const refreshLocation = async () => {
     try {
       setIsRefreshing(true);
 
-      const { status } = await Location.getForegroundPermissionsAsync();
+      const status = await ensurePermission();
 
       if (status !== Location.PermissionStatus.GRANTED) {
-        return;
+        router.replace(navigation.standalone.permissions);
+        return null;
       }
 
       const currentLocation = await Location.getCurrentPositionAsync({
@@ -55,17 +72,11 @@ export function useUserLocation() {
 
     const initialize = async () => {
       try {
-        const { status } = await Location.getForegroundPermissionsAsync();
+        const status = await ensurePermission();
 
         if (!mounted) return;
 
-        setPermission(status);
-
         if (status !== Location.PermissionStatus.GRANTED) {
-          return;
-        }
-
-        if (location) {
           return;
         }
 
@@ -84,6 +95,7 @@ export function useUserLocation() {
           {
             accuracy: Location.Accuracy.Balanced,
             distanceInterval: 1000,
+            timeInterval: 60000,
           },
           (newLocation) => {
             if (!mounted) return;

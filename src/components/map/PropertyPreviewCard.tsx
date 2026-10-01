@@ -12,6 +12,7 @@ import { radius } from "@/src/theme/radius";
 import { shadows } from "@/src/theme/shadows";
 import { sizes } from "@/src/theme/size";
 import { ListingPreviewCardProps } from "@/src/types/map/listing-preview-card";
+import { formatOccupancy, formatRentalType } from "@/src/utils/occupancy";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Animated, {
@@ -32,7 +33,10 @@ export function ListingPreviewCard({
   image,
   location,
   bhk,
-  occupancy,
+  capacity,
+  rentalType,
+  totalOccupancy,
+  furnishedStatus,
   genderPreference,
   rent,
   favourite,
@@ -71,9 +75,9 @@ export function ListingPreviewCard({
   };
 
   const details = [
+    genderPreference ? capitalize(genderPreference) : undefined,
+    `${formatOccupancy(capacity)} Occupancy ${formatRentalType(rentalType)}`,
     bhk,
-    capitalize(genderPreference),
-    `${capitalize(occupancy)} Occupancy`,
   ].filter((item): item is string => Boolean(item));
 
   return (
@@ -131,7 +135,7 @@ export function ListingPreviewCard({
               >
                 <ThemedView style={styles.priceRow}>
                   <ThemedText variant="h3" color="foreground.primary">
-                    ₹{rent.toLocaleString()}
+                    ₹{rent.toLocaleString("en-IN")}
                   </ThemedText>
 
                   <ThemedText variant="bodySmall" color="foreground.primary">

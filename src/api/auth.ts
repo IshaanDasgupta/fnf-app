@@ -1,3 +1,4 @@
+import { GenderPreference } from "@/src/constants/api-constants";
 import { ENDPOINTS } from "@/src/constants/endpoints";
 import axiosClient from "@/src/lib/axios-client";
 
@@ -12,7 +13,7 @@ export interface AuthResponse {
     name?: string;
     email?: string;
     age?: number;
-    gender?: "male" | "female";
+    gender?: GenderPreference;
     basicOnboardingCompleted: boolean;
   };
   accessToken: string;

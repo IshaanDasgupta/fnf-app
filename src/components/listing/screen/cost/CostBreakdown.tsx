@@ -10,6 +10,7 @@ interface ListingCostBreakdownProps {
   deposit?: number;
   brokerage?: number;
   setupCost?: number;
+  moveInCharges?: number;
 }
 
 interface CostRowProps {
@@ -41,6 +42,7 @@ export default function ListingCostBreakdown({
   deposit,
   brokerage,
   setupCost,
+  moveInCharges,
 }: ListingCostBreakdownProps) {
   return (
     <ThemedView>
@@ -74,6 +76,15 @@ export default function ListingCostBreakdown({
         {setupCost !== undefined && (
           <>
             <CostRow label="Setup Cost" amount={setupCost} />
+            <ThemedView
+              variant="tertiary"
+              style={{ width: "100%", height: 2 }}
+            />
+          </>
+        )}
+        {moveInCharges !== undefined && (
+          <>
+            <CostRow label="Move-in Charges" amount={moveInCharges} />
             <ThemedView
               variant="tertiary"
               style={{ width: "100%", height: 2 }}

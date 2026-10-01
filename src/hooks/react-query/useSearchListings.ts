@@ -29,15 +29,19 @@ export function useSearchListings({
       latitude,
       longitude,
 
-      // filters
+      // filters (serialized to match wire format for stable keys)
       filters.locality,
-      filters.bhk,
-      filters.occupancy,
-      filters.furnishedStatus,
+      filters.bhk.length > 0 ? filters.bhk.join(",") : undefined,
+      filters.capacity.length > 0 ? filters.capacity.join(",") : undefined,
+      filters.rentalType.length > 0 ? filters.rentalType.join(",") : undefined,
+      filters.furnishedStatus.length > 0
+        ? filters.furnishedStatus.join(",")
+        : undefined,
       filters.gender,
-      filters.amenities,
-      filters.addOns,
-      filters.houseRules,
+      filters.amenities.length > 0 ? filters.amenities.join(",") : undefined,
+      filters.addOns.length > 0 ? filters.addOns.join(",") : undefined,
+      filters.houseRules.length > 0 ? filters.houseRules.join(",") : undefined,
+      filters.services.length > 0 ? filters.services.join(",") : undefined,
       filters.rentMin,
       filters.rentMax,
       filters.floorMin,
@@ -46,8 +50,9 @@ export function useSearchListings({
       filters.totalInitCostMax,
       filters.totalOccupancyMin,
       filters.totalOccupancyMax,
-      filters.availableImmediately,
-      filters.availableAfter,
+      filters.attachedWashroom,
+      filters.availableImmediately ? "true" : undefined,
+      filters.availableAfter?.toISOString(),
 
       // sorting
       sortBy,

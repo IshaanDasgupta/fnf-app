@@ -25,6 +25,10 @@ const axiosClient: AxiosInstance = axios.create({
 
 let refreshPromise: Promise<AuthResponse> | null = null;
 
+function isDeadRefreshToken(err: unknown): boolean {
+  return axios.isAxiosError(err) && err.response?.status === 401;
+}
+
 async function refreshTokens(): Promise<AuthResponse> {
   const store = useAuthStore.getState();
 
@@ -37,6 +41,7 @@ async function refreshTokens(): Promise<AuthResponse> {
     {
       refreshToken: store.refreshToken,
     },
+    { timeout: 5000 },
   );
 
   store.updateTokens(
@@ -77,7 +82,7 @@ axiosClient.interceptors.response.use(
       originalRequest._retry ||
       isRefreshRequest
     ) {
-      if (isRefreshRequest) {
+      if (isRefreshRequest && isDeadRefreshToken(error)) {
         useAuthStore.getState().logout();
       }
 
@@ -101,7 +106,9 @@ axiosClient.interceptors.response.use(
     } catch (err) {
       refreshPromise = null;
 
-      useAuthStore.getState().logout();
+      if (isDeadRefreshToken(err)) {
+        useAuthStore.getState().logout();
+      }
 
       return Promise.reject(err);
     }

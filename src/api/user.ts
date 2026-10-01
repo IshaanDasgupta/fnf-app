@@ -3,7 +3,7 @@ import {
   City,
   FurnishedStatus,
   GenderPreference,
-  OccupancyType,
+  RentalScopeType,
 } from "@/src/constants/api-constants";
 import { ENDPOINTS } from "@/src/constants/endpoints";
 import axiosClient from "@/src/lib/axios-client";
@@ -11,12 +11,11 @@ import axiosClient from "@/src/lib/axios-client";
 export interface UpsertBasicRequest {
   name: string;
   age: number;
-  gender: "male" | "female";
+  gender: GenderPreference;
 }
 
 export interface UpsertBasicResponse {
   id: string;
-  phone: string;
   name: string;
   email: string;
   age: number;
@@ -41,13 +40,15 @@ export interface ProfileListingResponse {
   rent: number;
 
   bhk: BhkType;
-  occupancy: OccupancyType;
-
-  totalOccupancy?: number;
+  rentalScope: {
+    type: RentalScopeType;
+    capacity: number;
+    totalOccupancy: number;
+  };
 
   furnishedStatus: FurnishedStatus;
 
-  genderPreference: GenderPreference;
+  genderPreference?: GenderPreference;
 
   availableFrom?: string;
   availableImmediately: boolean;
@@ -55,7 +56,6 @@ export interface ProfileListingResponse {
 
 export interface ProfileResponse {
   id: string;
-  phone: string;
   name: string;
   email: string;
   age: number;

@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet } from "react-native";
 
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
-import { useTheme } from "@/src/hooks/theme/useTheme";
 import { sizes } from "@/src/theme/size";
 
 interface OnboardingProgressBarProps {
@@ -14,8 +13,6 @@ export function OnboardingProgressBar({
   currentStep,
   totalSteps,
 }: OnboardingProgressBarProps) {
-  const { colors } = useTheme();
-
   return (
     <ThemedView
       style={styles.container}
