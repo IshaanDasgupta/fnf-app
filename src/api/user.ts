@@ -3,10 +3,10 @@ import {
   City,
   FurnishedStatus,
   GenderPreference,
-  RentalScopeType,
 } from "@/src/constants/api-constants";
 import { ENDPOINTS } from "@/src/constants/endpoints";
 import axiosClient from "@/src/lib/axios-client";
+import { RentalScope } from "@/src/api/listing";
 
 export interface UpsertBasicRequest {
   name: string;
@@ -40,11 +40,7 @@ export interface ProfileListingResponse {
   rent: number;
 
   bhk: BhkType;
-  rentalScope: {
-    type: RentalScopeType;
-    capacity: number;
-    totalOccupancy: number;
-  };
+  rentalScope: RentalScope;
 
   furnishedStatus: FurnishedStatus;
 

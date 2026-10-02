@@ -17,7 +17,7 @@ import axiosClient from "@/src/lib/axios-client";
 export interface RentalScope {
   type: RentalScopeType;
   capacity: number;
-  totalOccupancy: number;
+  totalOccupancy?: number;
 }
 
 export type CapacityFilter = "1" | "2" | "3plus";

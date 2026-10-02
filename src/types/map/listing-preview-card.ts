@@ -12,7 +12,6 @@ export interface ListingPreviewCardProps {
   bhk: BhkType;
   capacity: number;
   rentalType: RentalScopeType;
-  totalOccupancy?: number;
   furnishedStatus: FurnishedStatus;
 
   genderPreference?: GenderPreference;

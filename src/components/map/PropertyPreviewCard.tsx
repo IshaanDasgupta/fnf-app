@@ -35,7 +35,6 @@ export function ListingPreviewCard({
   bhk,
   capacity,
   rentalType,
-  totalOccupancy,
   furnishedStatus,
   genderPreference,
   rent,
