@@ -11,6 +11,7 @@ import {
 } from "react-native";
 
 import { Locality } from "@/src/api/locality";
+import ChipSelectionList from "@/src/components/home/ChipSelection";
 import ListingCard from "@/src/components/listing/card/ListingCard";
 import { LoadingErrorScreen } from "@/src/components/shared/LoadingErrorScreen";
 import { LoadingScreen } from "@/src/components/shared/LoadingScreen";
@@ -20,6 +21,7 @@ import { ThemedIconButton } from "@/src/components/themed-ui/ThemedIconButton";
 import { ThemedSafeArea } from "@/src/components/themed-ui/ThemedSafeArea";
 import { ThemedText } from "@/src/components/themed-ui/ThemedText";
 import { ThemedView } from "@/src/components/themed-ui/ThemedView";
+import { SORT_OPTIONS } from "@/src/constants/sort-options";
 import { useSearchListings } from "@/src/hooks/react-query/useSearchListings";
 import { useTheme } from "@/src/hooks/theme/useTheme";
 import { useUserLocation } from "@/src/hooks/useUserLocation";
@@ -51,6 +53,9 @@ export default function SearchScreen() {
     (state) => state.updateAppliedFilters,
   );
   const resetFilters = useFilterStore((state) => state.resetFilters);
+  const sortBy = useFilterStore((state) => state.sortBy);
+  const sortOrder = useFilterStore((state) => state.sortOrder);
+  const setSort = useFilterStore((state) => state.setSort);
 
   const activeFilterCount = countActiveFilters(appliedFilters);
   const activeFilterPills = useMemo(
@@ -59,6 +64,18 @@ export default function SearchScreen() {
   );
 
   const { location, city } = useUserLocation();
+
+  const activeSortId =
+    SORT_OPTIONS.find(
+      (option) => option.sortBy === sortBy && option.sortOrder === sortOrder,
+    )?.id ?? "nearest";
+
+  const handleSortSelect = (id: string) => {
+    const option = SORT_OPTIONS.find((item) => item.id === id);
+    if (option) {
+      setSort(option.sortBy, option.sortOrder);
+    }
+  };
 
   useEffect(() => {
     updateAppliedFilters((prev) => ({
@@ -81,8 +98,8 @@ export default function SearchScreen() {
     latitude: location?.latitude,
     longitude: location?.longitude,
     ...appliedFilters,
-    sortBy: "distance",
-    sortOrder: "asc",
+    sortBy,
+    sortOrder,
   });
 
   const listings = useMemo(
@@ -169,6 +186,18 @@ export default function SearchScreen() {
               placeholder="Search any locality"
             />
           </ThemedView>
+        </ThemedView>
+
+        <ThemedView paddingHorizontal="lg">
+          <ChipSelectionList
+            items={SORT_OPTIONS.map((option) => ({
+              id: option.id,
+              label: option.label,
+              icon: <Ionicons name={option.iconName} size={18} />,
+            }))}
+            selectedChipsIds={[activeSortId]}
+            onSelect={handleSortSelect}
+          />
         </ThemedView>
 
         {activeFilterPills.length > 0 && (
@@ -301,7 +330,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: sizes.lg,
-    paddingVertical: sizes.sm,
+    paddingTop: sizes.sm,
   },
   searchWrapper: {
     flex: 1,

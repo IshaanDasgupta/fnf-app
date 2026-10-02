@@ -363,6 +363,9 @@ export async function getListing(
   return data;
 }
 
+export type SortBy = "distance" | "rent" | "creation_date" | "favorites" | "views";
+export type SortOrder = "asc" | "desc";
+
 export interface GetSearchListingsParams extends FilterValues {
   city: City;
   latitude: number;
@@ -371,8 +374,8 @@ export interface GetSearchListingsParams extends FilterValues {
   cursor?: string;
   limit?: number;
 
-  sortBy: "distance" | "rent" | "creation_date" | "favorites" | "views";
-  sortOrder: "asc" | "desc";
+  sortBy: SortBy;
+  sortOrder: SortOrder;
 }
 
 export interface SearchListingsResponse {

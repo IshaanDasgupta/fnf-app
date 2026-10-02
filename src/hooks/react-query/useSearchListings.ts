@@ -2,7 +2,7 @@ import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 
 import { getSearchListings, GetSearchListingsParams } from "@/src/api/listing";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 5;
 
 type UseSearchListingsParams = Omit<
   GetSearchListingsParams,

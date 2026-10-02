@@ -1,4 +1,4 @@
-import { FilterValues } from "@/src/api/listing";
+import { FilterValues, SortBy, SortOrder } from "@/src/api/listing";
 import { SERVICE_DISPLAY_NAMES } from "@/src/constants/filter-options";
 import { DEFAULT_FILTER_VALUES } from "@/src/types/filter";
 import { formatOccupancy } from "@/src/utils/occupancy";
@@ -216,6 +216,9 @@ interface FilterState {
   updateAppliedFilters: (updater: (prev: FilterValues) => FilterValues) => void;
   resetFilters: () => void;
   getActiveCount: () => number;
+  sortBy: SortBy;
+  sortOrder: SortOrder;
+  setSort: (sortBy: SortBy, sortOrder: SortOrder) => void;
 }
 
 export const useFilterStore = create<FilterState>((set, get) => ({
@@ -233,10 +236,20 @@ export const useFilterStore = create<FilterState>((set, get) => ({
 
   resetFilters: () =>
     set({
+      // Note: sort is intentionally preserved on filter reset.
       appliedFilters: { ...DEFAULT_FILTER_VALUES },
     }),
 
   getActiveCount: () => {
     return countActiveFilters(get().appliedFilters);
   },
+
+  sortBy: "distance",
+  sortOrder: "asc",
+
+  setSort: (sortBy: SortBy, sortOrder: SortOrder) =>
+    set({
+      sortBy,
+      sortOrder,
+    }),
 }));

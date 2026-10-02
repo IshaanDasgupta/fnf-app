@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   chip: {
     paddingVertical: sizes.md,
     paddingHorizontal: sizes.xl,
+    gap: sizes.sm,
   },
 });
 
